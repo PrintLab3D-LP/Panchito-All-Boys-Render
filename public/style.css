@@ -1,0 +1,2128 @@
+
+*{box-sizing:border-box}body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:linear-gradient(135deg,#f8fafc,#eef2ff);color:#111827}.app{display:flex;min-height:100vh}.side{width:292px;background:linear-gradient(180deg,#1d1a78,#0b1029 62%,#020617);color:white;padding:22px;position:sticky;top:0;height:100vh;overflow:auto;border-right:5px solid #f4e438}.brand{display:flex;gap:12px;align-items:center;margin-bottom:26px}.logo,.logoImg{width:58px;height:58px;border-radius:18px;background:#fff;object-fit:contain;padding:5px;box-shadow:0 10px 24px #0004}.brand b{font-size:20px}.brand span{display:block;color:#f4e438;font-size:13px;font-weight:700}.nav{width:100%;padding:12px 14px;margin:4px 0;border:1px solid transparent;border-radius:14px;background:rgba(255,255,255,.06);color:#e5e7eb;text-align:left;font-size:15px;cursor:pointer}.nav:hover,.nav.active{background:#f4e438;color:#20176f;border-color:#fff;font-weight:900}.main{flex:1;padding:28px;overflow:auto}header{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}h1{margin:0;font-size:32px}h2{margin-top:0}header p{margin:6px 0;color:#64748b}.pill{background:#1d1a78;color:#f4e438;border:1px solid #f4e438;border-radius:999px;padding:9px 14px;font-weight:900}.tab{display:none}.tab.show{display:block}.cards{display:grid;grid-template-columns:repeat(6,minmax(130px,1fr));gap:16px}.card,.panel{background:rgba(255,255,255,.94);border:1px solid #e2e8f0;border-radius:24px;padding:18px;box-shadow:0 18px 45px #0f172a0c;backdrop-filter:blur(8px)}.card{border-top:4px solid #f4e438}.card b{font-size:27px;display:block;color:#1d1a78}.card span{color:#64748b}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px}.bar{height:18px;background:#e2e8f0;border-radius:999px;overflow:hidden}.bar span{display:block;height:100%;background:linear-gradient(90deg,#1d1a78,#f4e438);border-radius:999px}.botwrap{display:grid;grid-template-columns:520px 1fr;gap:22px}.phone{background:#111827;padding:14px;border-radius:34px;box-shadow:0 22px 60px #02061740;border:4px solid #f4e438;min-height: calc(100vh - 150px); height: calc(100vh - 150px);}.phoneTop{background:linear-gradient(90deg,#1d1a78,#0b1029);color:white;padding:14px;border-radius:24px 24px 0 0;display:flex;gap:12px;align-items:center;border-bottom:3px solid #f4e438}.phoneTop b{font-size:18px}.phoneTop small{display:block;color:#e5e7eb}.chatAvatar{width:50px;height:50px;border-radius:50%;background:white;object-fit:contain;padding:3px} .chat{background:linear-gradient(180deg,#ebe9d9,#dff3e6);padding:16px;overflow:auto;height: calc(100vh - 285px); min-height: 620px;}.msg{max-width:88%;padding:13px 15px;border-radius:17px;margin:10px 0;white-space:pre-wrap;line-height:1.35;box-shadow:0 5px 16px #0f172a12}.me{background:#dcf8c6;margin-left:auto}.bot{background:white;border-left:5px solid #1d1a78}.send{display:flex;gap:8px;background:#0b141a;padding:12px;border-radius:0 0 24px 24px}.send input,.search,input,textarea,select{width:100%;padding:12px 14px;border:1px solid #cbd5e1;border-radius:14px;font:inherit;background:white;margin:5px 0}textarea{min-height:120px;resize:vertical}button{border:0;border-radius:14px;background:#1d1a78;color:white;padding:12px 16px;font-weight:900;cursor:pointer}button:hover{filter:brightness(1.12)}.secondary{background:#e2e8f0;color:#0f172a}.row{display:flex;justify-content:space-between;gap:12px;align-items:center}.table{margin-top:14px;overflow:auto}table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:13px;border-bottom:1px solid #e2e8f0;vertical-align:top}th{color:#64748b;font-size:13px}.badge{padding:6px 10px;border-radius:999px;font-weight:900;font-size:12px;display:inline-block}.ok{background:#dcfce7;color:#166534}.bad{background:#fee2e2;color:#991b1b}.warn{background:#fef9c3;color:#854d0e}.activityGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px}.act{border:1px solid #e2e8f0;border-radius:18px;padding:16px;background:#fff}.act h3{color:#1d1a78}.hint{background:#fef9c3;border:1px solid #fde047;border-radius:18px;padding:16px;margin-top:12px}.quickCards{display:grid;grid-template-columns:repeat(2,minmax(130px,1fr));gap:12px;margin:16px 0}.quickCards button{background:#f4e438;color:#1d1a78;border:1px solid #1d1a78}.code{background:#020617;color:#86efac;border-radius:16px;padding:18px;font-family:monospace}.modal{display:none;position:fixed;inset:0;background:#0008;align-items:center;justify-content:center}.modal.show{display:flex}.modalCard{background:white;border-radius:24px;padding:24px;width:min(520px,92vw)}@media(max-width:900px){.app{display:block}.side{position:relative;width:100%;height:auto}.cards,.grid2,.botwrap{grid-template-columns:1fr}.main{padding:18px}.chat{height:460px}}
+
+/* Avatar oficial del bot dentro del chat */
+.msgRow{display:flex;align-items:flex-start;gap:8px;margin:10px 0;max-width:94%}
+.botRow{margin-right:auto}
+.bubbleAvatar{width:34px;height:34px;border-radius:50%;background:#fff;object-fit:contain;padding:2px;border:2px solid #f4e438;box-shadow:0 5px 12px #0f172a24;flex:0 0 34px}
+.msgRow .msg{margin:0;max-width:calc(100% - 42px)}
+
+
+/* V8 Premium Chat */
+.phone{
+  position:relative;
+  overflow:hidden;
+}
+.phoneTop{
+  position:relative;
+}
+.phoneTop::after{
+  content:"Asistente oficial";
+  margin-left:auto;
+  font-size:11px;
+  font-weight:900;
+  color:#1d1a78;
+  background:#f4e438;
+  padding:5px 9px;
+  border-radius:999px;
+}
+.chat{
+  position:relative;
+  background:
+    radial-gradient(circle at 18% 22%, rgba(244,228,56,.18), transparent 28%),
+    radial-gradient(circle at 80% 10%, rgba(29,26,120,.10), transparent 28%),
+    linear-gradient(180deg,#e7f1e7,#d9eadc);
+}
+.chat::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background-image:url('/allboys-escudo.jfif');
+  background-repeat:no-repeat;
+  background-position:center;
+  background-size:230px;
+  opacity:.055;
+  pointer-events:none;
+}
+.chat > *{
+  position:relative;
+  z-index:1;
+}
+.msg{
+  font-size:14.5px;
+}
+.msgText{
+  white-space:pre-wrap;
+}
+.msgMeta{
+  margin-top:6px;
+  text-align:right;
+  font-size:10.5px;
+  color:#64748b;
+}
+.me .msgMeta{
+  color:#3b7c49;
+}
+.me{
+  background:#d9fdd3;
+  border-bottom-right-radius:5px;
+}
+.bot{
+  background:#ffffff;
+  border-left:0;
+  border-bottom-left-radius:5px;
+  border-top:3px solid #f4e438;
+}
+.bubbleAvatar{
+  width:38px;
+  height:38px;
+  flex-basis:38px;
+}
+.msgRow .msg{
+  max-width:calc(100% - 48px);
+}
+.premiumQuick{
+  grid-template-columns:repeat(2,minmax(150px,1fr));
+}
+.premiumQuick button{
+  min-height:58px;
+  font-size:15px;
+  border-radius:18px;
+  box-shadow:0 10px 22px #0f172a14;
+}
+.premiumQuick button:hover{
+  transform:translateY(-1px);
+}
+.send input{
+  border-radius:999px;
+}
+.send button{
+  border-radius:999px;
+  background:#f4e438;
+  color:#1d1a78;
+}
+@media(max-width:900px){
+  .phoneTop::after{display:none}
+  .premiumQuick{grid-template-columns:1fr}
+}
+
+
+/* V9 Avatar deportivo + chat más club */
+.bubbleAvatar.clubAvatar{
+  width:42px;
+  height:42px;
+  flex:0 0 42px;
+  border-radius:50%;
+  background:linear-gradient(145deg,#1d1a78 0%,#21168a 55%,#f4e438 56%,#f4e438 100%);
+  border:3px solid #f4e438;
+  box-shadow:0 8px 18px rgba(29,26,120,.35);
+  display:grid;
+  place-items:center;
+  position:relative;
+  padding:0;
+}
+.bubbleAvatar.clubAvatar span{
+  color:#fff;
+  font-weight:1000;
+  font-size:13px;
+  letter-spacing:-.5px;
+  text-shadow:0 1px 2px #0008;
+}
+.bubbleAvatar.clubAvatar small{
+  position:absolute;
+  right:-7px;
+  bottom:-6px;
+  background:#fff;
+  border:2px solid #f4e438;
+  border-radius:50%;
+  width:22px;
+  height:22px;
+  display:grid;
+  place-items:center;
+  font-size:12px;
+}
+.bot{
+  border-top:0;
+  border-left:4px solid #f4e438;
+}
+.msg.bot{
+  background:linear-gradient(180deg,#ffffff,#fffef3);
+}
+.phoneTop .chatAvatar{
+  border:3px solid #f4e438;
+  box-shadow:0 8px 20px rgba(0,0,0,.25);
+}
+
+
+/* V10 Robot en encabezado + escudo oficial en mensajes */
+.phoneTop .chatAvatar{
+  content:url('/clubbot-robot-allboys.png');
+  width:76px;
+  height:76px;
+  border-radius:22px;
+  object-fit:cover;
+  object-position:50% 18%;
+  background:#fff;
+  padding:2px;
+  border:3px solid #f4e438;
+  box-shadow:0 10px 28px rgba(0,0,0,.35);
+}
+.phoneTop{
+  min-height:96px;
+}
+.phoneTop b::after{
+  content:" 🤖";
+}
+.phoneTop small{
+  font-weight:600;
+}
+.bubbleAvatar,
+.bubbleAvatar.clubAvatar{
+  width:42px !important;
+  height:42px !important;
+  flex:0 0 42px !important;
+  border-radius:50% !important;
+  object-fit:contain !important;
+  background:#fff !important;
+  padding:3px !important;
+  border:2px solid #f4e438 !important;
+  box-shadow:0 8px 18px rgba(29,26,120,.25) !important;
+  display:block !important;
+}
+.bubbleAvatar.clubAvatar span,
+.bubbleAvatar.clubAvatar small{
+  display:none !important;
+}
+.chat::after{
+  content:"ClubBot IA";
+  position:absolute;
+  right:18px;
+  bottom:74px;
+  font-weight:1000;
+  color:rgba(29,26,120,.07);
+  font-size:38px;
+  letter-spacing:-1px;
+  pointer-events:none;
+  z-index:0;
+}
+
+
+/* V11: robot IA en mensajes y memoria conversacional */
+.robotBubbleAvatar{
+  width:48px !important;
+  height:48px !important;
+  flex:0 0 48px !important;
+  border-radius:50% !important;
+  object-fit:cover !important;
+  object-position:50% 20% !important;
+  background:#fff !important;
+  padding:2px !important;
+  border:3px solid #f4e438 !important;
+  box-shadow:0 8px 20px rgba(29,26,120,.35) !important;
+}
+.msgRow .msg{
+  max-width:calc(100% - 58px) !important;
+}
+.msg.bot{
+  border-left:4px solid #f4e438;
+}
+a.button{display:inline-block;text-decoration:none;border:0;border-radius:14px;background:#1d1a78;color:white;padding:12px 16px;font-weight:900;cursor:pointer}
+
+/* V33 Responsive Pro - Panchito Admin */
+:root{
+  --ab-blue:#1d1a78;
+  --ab-dark:#0b1029;
+  --ab-yellow:#f4e438;
+  --bg:#f6f8ff;
+  --line:#e5e7eb;
+  --muted:#64748b;
+  --shadow:0 14px 34px rgba(15,23,42,.08);
+}
+html,body{max-width:100%;overflow-x:hidden}
+body{background:linear-gradient(135deg,#f8fafc,#eef2ff 55%,#fffbe6)}
+.app{width:100%;min-width:0}
+.side{width:270px;min-width:270px;padding:16px 14px}
+.main{min-width:0;padding:22px;max-width:1440px;width:100%;margin:0 auto}
+header{gap:14px;align-items:flex-start}
+header h1{font-size:clamp(24px,2.2vw,34px);line-height:1.1}
+header p{max-width:760px}
+.nav{padding:11px 13px;border-radius:13px;font-weight:800;white-space:normal}
+.brand{gap:10px;margin-bottom:18px}
+.logoImg{width:52px;height:52px;border-radius:15px}
+.cards{grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:12px}
+.card,.panel{border-radius:20px;padding:16px;box-shadow:var(--shadow)}
+.card b{font-size:clamp(21px,2vw,27px);word-break:break-word}
+.grid2{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.botwrap{grid-template-columns:minmax(330px,430px) minmax(0,1fr);gap:18px}
+.phone{max-width:100%;border-radius:28px}
+.chat{height:min(62vh,560px)}
+.row{flex-wrap:wrap}
+.table{overflow-x:auto;max-width:100%;border-radius:14px}
+table{min-width:720px}
+button,a.button{min-height:42px;display:inline-flex;align-items:center;justify-content:center;gap:6px;line-height:1.15}
+.activityGrid{grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
+.act{border-radius:18px;padding:16px;box-shadow:0 8px 24px rgba(15,23,42,.06);min-width:0}
+.act h3{margin:0;font-size:18px;line-height:1.25;word-break:break-word}
+.act p{margin:10px 0;color:#111827;word-break:break-word}
+.act .row{gap:8px}
+.act .row:last-child{justify-content:flex-start;border-top:1px solid var(--line);padding-top:12px;margin-top:12px}
+.act .row:last-child button,.act .row:last-child a.button{flex:1 1 145px;padding:10px 12px;border-radius:13px}
+.badge{white-space:nowrap}
+.hint{margin:10px 0 16px 0;color:#374151}
+.pendingToolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:12px 0 16px}
+.filterBtn{background:#eef2ff;color:var(--ab-blue);border:1px solid #dbeafe;padding:9px 12px;min-height:36px;border-radius:999px}
+.filterBtn.active{background:var(--ab-blue);color:#fff}
+.counterPill{background:#fff7c2;color:#854d0e;border:1px solid #fde047;border-radius:999px;padding:8px 12px;font-weight:900}
+.statusDot{width:14px;height:14px;border-radius:50%;display:inline-block;background:var(--ab-yellow);box-shadow:0 0 0 2px #fff,0 0 0 3px #d97706}
+.statusDot.okDot{background:#22c55e;box-shadow:0 0 0 2px #fff,0 0 0 3px #16a34a}
+.statusDot.redDot{background:#ef4444;box-shadow:0 0 0 2px #fff,0 0 0 3px #dc2626}
+.statusDot.blueDot{background:#3b82f6;box-shadow:0 0 0 2px #fff,0 0 0 3px #2563eb}
+#pendingGrid{align-items:start}
+#pendingGrid .act{display:flex;flex-direction:column}
+#pendingGrid .act .pendingTitle{display:flex;gap:10px;align-items:flex-start}
+#pendingGrid .act .pendingTitle h3{flex:1}
+@media(max-width:1180px){
+  .side{width:232px;min-width:232px}
+  .main{padding:18px}
+  .botwrap{grid-template-columns:1fr}
+  .phone{max-width:520px;margin:0 auto}
+  .grid2{grid-template-columns:1fr}
+}
+@media(max-width:760px){
+  .app{display:block}
+  .side{position:sticky;top:0;z-index:30;width:100%;min-width:0;height:auto;max-height:220px;overflow:auto;border-right:0;border-bottom:4px solid var(--ab-yellow);padding:12px}
+  .brand{position:sticky;top:0;background:linear-gradient(180deg,#1d1a78,#11125b);z-index:2;padding:4px 0 10px;margin-bottom:8px}
+  .side .nav{display:inline-flex;width:auto;margin:4px;min-height:38px;padding:9px 11px;font-size:14px}
+  .main{padding:14px}
+  header{display:block}
+  header .pill{display:inline-flex;margin-top:8px}
+  .cards{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .card,.panel{border-radius:18px;padding:14px}
+  .activityGrid{grid-template-columns:1fr}
+  .phone{border-width:3px;border-radius:24px;padding:10px}
+  .phoneTop{min-height:auto;padding:10px;border-radius:18px 18px 0 0}
+  .phoneTop .chatAvatar{width:58px;height:58px;border-radius:18px}
+  .chat{height:58vh;padding:12px}
+  .send{padding:10px;gap:6px}
+  .send input{padding:11px 12px}
+  .send button{padding:10px 12px}
+  .quickCards{grid-template-columns:1fr}
+  table{min-width:620px}
+}
+@media(max-width:430px){
+  .cards{grid-template-columns:1fr}
+  .main{padding:10px}
+  .side{max-height:185px}
+  .act .row:last-child button,.act .row:last-child a.button{flex-basis:100%}
+}
+.waChatLink{display:inline-block;margin-top:6px;padding:10px 12px;border-radius:14px;background:#25D366;color:#073b1a!important;font-weight:800;text-decoration:none;}
+
+/* Limpieza demo Panchito: se ocultan paneles internos que no se muestran al club */
+.sideNote{background:#fff7b3;color:#1d1a78;border:1px solid #f4e438;border-radius:18px;padding:14px;margin-top:18px;font-weight:700;line-height:1.35}
+.unusedPanel{display:none!important}
+#bot.show .botwrap{grid-template-columns:minmax(420px,520px) minmax(320px,1fr);align-items:start}
+#bot.show .phone{max-width:520px;margin:0 auto}
+@media(max-width:900px){#bot.show .botwrap{grid-template-columns:1fr}.sideNote{display:none}}
+
+/* V44 Limpieza visual Panchito - UI más profesional */
+:root{
+  --ab-blue:#1c1978;
+  --ab-blue-2:#11145f;
+  --ab-dark:#070b25;
+  --ab-yellow:#f6e632;
+  --soft:#f5f7ff;
+  --card:#ffffff;
+  --text:#101828;
+  --muted:#667085;
+}
+body{
+  font-family:Inter,Segoe UI,system-ui,-apple-system,Arial,sans-serif;
+  background:
+    radial-gradient(circle at 78% 8%, rgba(246,230,50,.20), transparent 28%),
+    radial-gradient(circle at 12% 18%, rgba(28,25,120,.12), transparent 30%),
+    linear-gradient(135deg,#f7f8ff 0%,#eef2ff 48%,#fffbea 100%);
+  color:var(--text);
+}
+.app{min-height:100vh;}
+.side{
+  background:linear-gradient(180deg,var(--ab-blue) 0%,#15145f 48%,var(--ab-dark) 100%);
+  border-right:5px solid var(--ab-yellow);
+  box-shadow:12px 0 36px rgba(15,23,42,.16);
+}
+.brand{
+  padding:8px 6px 14px;
+  border-bottom:1px solid rgba(255,255,255,.10);
+}
+.brand b{font-size:22px;letter-spacing:-.3px}
+.brand span{font-size:12.5px;color:#fff266;font-weight:800;line-height:1.25}
+.logoImg{transition:transform .25s ease, box-shadow .25s ease}
+.logoImg:hover{transform:scale(1.04) rotate(-2deg)}
+.nav{
+  position:relative;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin:7px 0;
+  border-radius:16px;
+  background:rgba(255,255,255,.075);
+  color:#f8fafc;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.035);
+  transition:transform .18s ease, background .18s ease, box-shadow .18s ease;
+}
+.nav:hover{transform:translateX(3px);background:rgba(255,255,255,.13)}
+.nav.active{
+  background:linear-gradient(135deg,var(--ab-yellow),#fff168);
+  color:var(--ab-blue);
+  box-shadow:0 12px 24px rgba(246,230,50,.20);
+}
+.sideNote{
+  margin-top:22px;
+  background:linear-gradient(180deg,#fffad1,#fff4a8);
+  color:var(--ab-blue);
+  border:0;
+  box-shadow:0 12px 28px rgba(0,0,0,.16);
+  font-size:13.5px;
+}
+.main{padding:26px;}
+header{
+  background:rgba(255,255,255,.52);
+  border:1px solid rgba(226,232,240,.85);
+  border-radius:26px;
+  padding:18px 20px;
+  box-shadow:0 18px 45px rgba(15,23,42,.07);
+  backdrop-filter:blur(14px);
+}
+header h1{letter-spacing:-.8px;color:#0f172a}
+header p{font-size:15.5px;color:var(--muted)}
+.pill{
+  background:linear-gradient(135deg,var(--ab-blue),var(--ab-blue-2));
+  color:var(--ab-yellow);
+  border:1px solid var(--ab-yellow);
+  box-shadow:0 10px 24px rgba(28,25,120,.22);
+}
+.panel,.card,.act{
+  background:rgba(255,255,255,.90);
+  border:1px solid rgba(226,232,240,.90);
+  box-shadow:0 20px 50px rgba(15,23,42,.09);
+  transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+.panel:hover,.act:hover,.card:hover{
+  transform:translateY(-2px);
+  box-shadow:0 26px 60px rgba(15,23,42,.13);
+  border-color:rgba(246,230,50,.75);
+}
+.botwrap{align-items:start;}
+.phone{
+  background:linear-gradient(180deg,#10172a,#06111b);
+  border:4px solid var(--ab-yellow);
+  box-shadow:0 28px 70px rgba(4,7,20,.32);
+}
+.phoneTop{
+  background:linear-gradient(135deg,var(--ab-blue) 0%,#11135b 65%,#090e2a 100%);
+}
+.phoneTop b{font-size:20px;letter-spacing:-.3px}
+.phoneTop small{font-size:13px;color:#f8fafc;line-height:1.25}
+.phoneTop .chatAvatar{transition:transform .25s ease}.phone:hover .chatAvatar{transform:scale(1.03)}
+.chat{height:min(66vh,610px);scroll-behavior:smooth;}
+.msg{font-size:15px;line-height:1.42;box-shadow:0 10px 26px rgba(15,23,42,.10)}
+.msg.bot{background:linear-gradient(180deg,#fff,#fffef6);border-left:4px solid var(--ab-yellow)}
+.me{background:#dcffd7}
+.send{background:#08111a;padding:13px}
+.send input{border:2px solid transparent;box-shadow:inset 0 1px 2px rgba(0,0,0,.06)}
+.send input:focus{outline:0;border-color:var(--ab-yellow);box-shadow:0 0 0 4px rgba(246,230,50,.20)}
+.send button,.premiumQuick button,button,a.button{
+  transition:transform .16s ease, box-shadow .16s ease, filter .16s ease;
+}
+.send button:hover,.premiumQuick button:hover,button:hover,a.button:hover{
+  transform:translateY(-1px);
+  box-shadow:0 12px 26px rgba(15,23,42,.16);
+}
+.heroPanel h2{font-size:26px;letter-spacing:-.5px;margin-bottom:6px;color:#0f172a}
+.heroPanel p{color:var(--muted);line-height:1.45}
+.premiumQuick{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.premiumQuick button{
+  background:linear-gradient(135deg,var(--ab-yellow),#fff15d);
+  color:var(--ab-blue);
+  border:1px solid rgba(28,25,120,.22);
+  min-height:66px;
+  border-radius:20px;
+  font-size:15px;
+}
+.cleanHint{background:#fff8c8;border:1px solid #f5df38;color:#3f3b00}
+.activityGrid{grid-template-columns:repeat(auto-fit,minmax(285px,1fr));}
+.act h3{color:var(--ab-blue);letter-spacing:-.25px}
+.badge{font-weight:900}.ok{background:#e8fff0}.warn{background:#fff6bd}.bad{background:#ffe9e9}
+.pendingToolbar{background:#f8fafc;border:1px solid #e2e8f0;border-radius:20px;padding:10px}
+.filterBtn,.regFilterBtn{
+  background:#eef2ff!important;
+  color:var(--ab-blue)!important;
+  border:1px solid #dbeafe!important;
+  border-radius:999px!important;
+  min-height:38px;
+}
+.filterBtn.active,.regFilterBtn.active{
+  background:linear-gradient(135deg,var(--ab-blue),#17136b)!important;
+  color:#fff!important;
+}
+.whatsappPanel .stepGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:18px 0}
+.stepGrid div{background:#f8fafc;border:1px solid #e2e8f0;border-radius:18px;padding:16px;display:grid;gap:8px}
+.stepGrid b{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--ab-yellow);color:var(--ab-blue)}
+.stepGrid span{color:#344054;line-height:1.35}
+.unusedPanel{display:none!important}
+#dashboard,#knowledge,#documents,#conversations,#portal,#importer,#settings{display:none!important}
+@media(max-width:1180px){
+  header{border-radius:22px}.botwrap{grid-template-columns:1fr}.heroPanel{max-width:720px;margin:0 auto}.phone{max-width:560px}
+}
+@media(max-width:760px){
+  .side{max-height:none;position:relative;display:block;padding:10px;border-bottom:4px solid var(--ab-yellow)}
+  .brand{border-bottom:0;margin-bottom:6px}.side .nav{font-size:13.5px;padding:9px 10px;border-radius:999px}
+  header{padding:14px;margin-bottom:16px}header h1{font-size:26px}header p{font-size:14px}
+  .main{padding:12px}.phone{border-radius:24px;padding:9px}.chat{height:58vh}.premiumQuick{grid-template-columns:1fr}.whatsappPanel .stepGrid{grid-template-columns:1fr}
+}
+
+/* V46 - chat más ancho y sin doble scroll molesto */
+#bot .botwrap{grid-template-columns:minmax(520px,620px) minmax(320px,1fr);align-items:start;}
+#bot .phone{width:100%;max-width:620px;margin:0 auto;}
+#bot .chat{height:min(70vh,640px);overflow-y:auto;overflow-x:hidden;}
+#bot .msg{max-width:92%;font-size:15px;}
+#bot .msgRow{max-width:96%;}
+#bot .bot{max-width:100%;}
+#bot .waChatLink{display:inline-block;margin-top:8px;padding:10px 12px;border-radius:14px;background:#25d366;color:#062b13!important;font-weight:900;text-decoration:none;}
+@media(max-width:1100px){#bot .botwrap{grid-template-columns:1fr}.quickCards{grid-template-columns:repeat(2,minmax(130px,1fr));}}
+@media(max-width:700px){#bot .phone{max-width:100%;}.chat{height:60vh}#bot .msg{max-width:94%;}}
+
+/* V50 - botones limpios dentro del chat */
+.msgText .waChatLink{display:inline-flex;align-items:center;gap:6px;width:max-content;max-width:100%;margin:10px 0 6px 0;padding:11px 14px;border-radius:14px;background:#25d366;color:#062b13!important;font-weight:900;text-decoration:none;box-shadow:0 8px 18px #0001;}
+.msgText .waChatLink:hover{filter:brightness(1.05);}
+.chatOption{display:block;width:100%;margin:8px 0;padding:10px 12px;border-radius:14px;background:#f4e438;color:#1d1a78;border:1px solid #1d1a78;text-align:left;font-weight:900;}
+.chatOption:hover{filter:brightness(1.03);}
+
+
+/* V52 UI Pro - Consultas/Reclamos prolijo */
+#pendingCount{
+  display:flex !important;
+  gap:10px;
+  flex-wrap:wrap;
+  align-items:center;
+  background:linear-gradient(135deg,#fffbea,#fff);
+  border:1px solid #fde047;
+  border-radius:18px;
+  padding:10px 12px;
+  color:#1f2937;
+  font-weight:800;
+}
+#pendingCount span{
+  background:white;
+  border:1px solid #e5e7eb;
+  border-radius:999px;
+  padding:8px 11px;
+  box-shadow:0 6px 16px rgba(15,23,42,.05);
+}
+.pendingToolbar{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+  margin:14px 0 18px;
+  padding:12px !important;
+  background:#f8fafc !important;
+  border:1px solid #e2e8f0 !important;
+  border-radius:22px !important;
+}
+.filterBtn{
+  min-width:112px;
+  height:42px;
+  border-radius:999px !important;
+  padding:0 16px !important;
+  font-size:14px;
+  font-weight:900;
+  box-shadow:none !important;
+}
+.filterBtn.active{
+  background:linear-gradient(135deg,var(--ab-blue),#121052) !important;
+  color:#fff !important;
+  border-color:var(--ab-yellow) !important;
+}
+#pendingGrid.activityGrid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(310px,1fr));
+  gap:16px;
+  align-items:stretch !important;
+}
+.pendingCard{
+  min-height:440px;
+  display:flex !important;
+  flex-direction:column !important;
+  padding:16px !important;
+  border-radius:22px !important;
+  background:linear-gradient(180deg,#ffffff,#fbfdff) !important;
+  border:1px solid #e2e8f0 !important;
+  box-shadow:0 14px 34px rgba(15,23,42,.08) !important;
+  overflow:hidden;
+}
+.pendingCardTop{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:8px;
+}
+.pendingTitle{
+  display:flex;
+  align-items:flex-start;
+  gap:10px;
+  min-width:0;
+}
+.pendingTitle h3{
+  margin:0 !important;
+  color:var(--ab-blue) !important;
+  font-size:18px !important;
+  line-height:1.2 !important;
+  display:-webkit-box;
+  -webkit-line-clamp:2;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
+}
+.pendingMeta{
+  color:#64748b;
+  font-size:13px;
+  margin:0 0 12px 24px;
+}
+.pendingInfo{
+  display:grid;
+  gap:8px;
+  margin:8px 0 12px;
+}
+.pendingInfo div{
+  background:#f8fafc;
+  border:1px solid #e5e7eb;
+  border-radius:14px;
+  padding:9px 10px;
+}
+.pendingInfo small{
+  display:block;
+  color:#64748b;
+  font-size:12px;
+  font-weight:800;
+  text-transform:uppercase;
+  letter-spacing:.02em;
+  margin-bottom:2px;
+}
+.pendingInfo strong{
+  display:block;
+  color:#0f172a;
+  font-size:14px;
+  word-break:break-word;
+}
+.pendingMessage,.pendingNote{
+  background:#fff;
+  border:1px solid #e5e7eb;
+  border-radius:16px;
+  padding:11px 12px;
+  margin:0 0 10px;
+}
+.pendingMessage b,.pendingNote b{
+  display:block;
+  color:#0f172a;
+  margin-bottom:5px;
+}
+.pendingMessage span,.pendingNote span{
+  display:-webkit-box;
+  -webkit-line-clamp:4;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
+  color:#334155;
+  line-height:1.35;
+  word-break:break-word;
+}
+.pendingActions{
+  margin-top:auto;
+  padding-top:12px;
+  border-top:1px solid #e5e7eb;
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:9px;
+}
+.pendingActions button,.pendingActions a.button{
+  width:100%;
+  min-height:42px;
+  padding:9px 10px !important;
+  border-radius:13px !important;
+  font-size:13px;
+  text-align:center;
+  white-space:nowrap;
+}
+.pendingActions .waBtn{
+  background:#22c55e !important;
+  color:#052e16 !important;
+  border:1px solid #16a34a !important;
+}
+.pendingActions .okBtn{
+  background:var(--ab-blue) !important;
+  color:white !important;
+}
+.pendingActions .dangerBtn{
+  background:#fee2e2 !important;
+  color:#991b1b !important;
+}
+.emptyState{
+  grid-column:1/-1;
+  background:white;
+  border:1px dashed #cbd5e1;
+  border-radius:18px;
+  padding:24px;
+  text-align:center;
+  color:#64748b;
+  font-weight:800;
+}
+@media(max-width:1180px){
+  #pendingGrid.activityGrid{grid-template-columns:repeat(2,minmax(0,1fr));}
+}
+@media(max-width:760px){
+  #pendingGrid.activityGrid{grid-template-columns:1fr;}
+  .pendingActions{grid-template-columns:1fr;}
+  .filterBtn{flex:1 1 135px;}
+}
+
+/* V53 - Layout fijo: menú, encabezado y scroll por módulo */
+html, body{
+  height:100%;
+  width:100%;
+  overflow:hidden !important;
+}
+body{
+  min-height:100vh;
+}
+.app{
+  height:100vh !important;
+  min-height:100vh !important;
+  display:flex !important;
+  overflow:hidden !important;
+}
+.side{
+  position:relative !important;
+  flex:0 0 270px !important;
+  width:270px !important;
+  min-width:270px !important;
+  height:100vh !important;
+  max-height:100vh !important;
+  overflow-y:auto !important;
+  overflow-x:hidden !important;
+  padding:18px 14px !important;
+  z-index:20;
+}
+.side::-webkit-scrollbar,
+.main::-webkit-scrollbar,
+.chat::-webkit-scrollbar{
+  width:10px;
+}
+.side::-webkit-scrollbar-thumb,
+.main::-webkit-scrollbar-thumb,
+.chat::-webkit-scrollbar-thumb{
+  background:rgba(29,26,120,.35);
+  border-radius:999px;
+  border:2px solid transparent;
+  background-clip:content-box;
+}
+.brand{
+  display:flex !important;
+  align-items:center !important;
+  gap:10px !important;
+  min-height:74px !important;
+  margin-bottom:14px !important;
+}
+.brand .logoImg{
+  flex:0 0 52px !important;
+}
+.brand div{
+  min-width:0;
+}
+.brand b,
+.brand span{
+  display:block;
+  line-height:1.12 !important;
+}
+.nav{
+  width:100% !important;
+  min-height:44px !important;
+  padding:0 14px !important;
+  margin:8px 0 !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:8px !important;
+  text-align:center !important;
+  line-height:1.15 !important;
+  font-size:15.5px !important;
+  white-space:normal !important;
+}
+.nav:hover{
+  transform:none !important;
+}
+.sideNote{
+  max-height:170px;
+  overflow:auto;
+  font-size:13px !important;
+  line-height:1.35 !important;
+}
+.main{
+  flex:1 1 auto !important;
+  min-width:0 !important;
+  height:100vh !important;
+  max-height:100vh !important;
+  overflow-y:auto !important;
+  overflow-x:hidden !important;
+  padding:26px 28px 34px !important;
+  margin:0 !important;
+  max-width:none !important;
+}
+.main > header{
+  position:sticky !important;
+  top:0 !important;
+  z-index:15 !important;
+  margin:0 0 20px 0 !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:space-between !important;
+  gap:18px !important;
+  background:rgba(255,255,255,.86) !important;
+  backdrop-filter:blur(18px) !important;
+  -webkit-backdrop-filter:blur(18px) !important;
+}
+.main > header h1{
+  line-height:1.1 !important;
+}
+.main > header p{
+  margin:6px 0 0 !important;
+}
+.main > header .pill{
+  flex:0 0 auto !important;
+  align-self:center !important;
+  white-space:nowrap !important;
+}
+.tab.show{
+  display:block !important;
+  min-height:calc(100vh - 160px);
+}
+.panel{
+  overflow:visible;
+}
+.grid2{
+  align-items:start !important;
+}
+#activities .grid2{
+  grid-template-columns:minmax(360px, .95fr) minmax(420px, 1.05fr) !important;
+}
+#activities .panel{
+  min-width:0;
+}
+#activities .activityGrid{
+  grid-template-columns:1fr !important;
+  max-height:calc(100vh - 290px);
+  overflow-y:auto;
+  padding-right:6px;
+}
+#pending .panel,
+#registrations .panel,
+#surveys .panel{
+  min-height:calc(100vh - 150px);
+}
+#pendingGrid.activityGrid,
+#registrationsGrid.activityGrid,
+#surveyGrid.activityGrid{
+  max-height:calc(100vh - 360px);
+  overflow-y:auto;
+  padding:2px 8px 10px 2px;
+}
+.pendingToolbar{
+  position:sticky;
+  top:98px;
+  z-index:10;
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+}
+#pending .panel > .row,
+#registrations .panel > .row,
+#surveys .panel > .row{
+  align-items:center !important;
+}
+#pending .panel > .row h2,
+#registrations .panel > .row h2,
+#surveys .panel > .row h2{
+  margin:0 !important;
+}
+.card,.panel,.act{
+  transform:none !important;
+}
+.card:hover,.panel:hover,.act:hover{
+  transform:none !important;
+}
+@media(max-width:1180px){
+  .side{
+    flex-basis:250px !important;
+    width:250px !important;
+    min-width:250px !important;
+  }
+  .main{padding:22px 20px 30px !important;}
+  #activities .grid2{grid-template-columns:1fr !important;}
+  #activities .activityGrid{max-height:none;overflow:visible;}
+  .pendingToolbar{top:92px;}
+}
+@media(max-width:760px){
+  html, body{overflow:auto !important;height:auto;}
+  .app{display:block !important;height:auto !important;min-height:100vh !important;overflow:visible !important;}
+  .side{
+    position:sticky !important;
+    top:0 !important;
+    width:100% !important;
+    min-width:0 !important;
+    height:auto !important;
+    max-height:250px !important;
+    overflow-y:auto !important;
+    border-right:0 !important;
+    border-bottom:4px solid var(--ab-yellow) !important;
+  }
+  .nav{
+    display:flex !important;
+    width:100% !important;
+    min-height:40px !important;
+    margin:6px 0 !important;
+  }
+  .main{
+    height:auto !important;
+    max-height:none !important;
+    overflow:visible !important;
+    padding:12px !important;
+  }
+  .main > header{
+    position:sticky !important;
+    top:0 !important;
+    display:block !important;
+    z-index:12 !important;
+  }
+  .main > header .pill{margin-top:10px !important;display:inline-flex !important;}
+  #pendingGrid.activityGrid,
+  #registrationsGrid.activityGrid,
+  #surveyGrid.activityGrid{
+    max-height:none !important;
+    overflow:visible !important;
+    padding-right:0 !important;
+  }
+  .pendingToolbar{position:relative !important;top:auto !important;}
+}
+
+/* V54: estructura fija real + sin header tapando contenido */
+html,body{
+  width:100% !important;
+  height:100vh !important;
+  min-height:100vh !important;
+  overflow:hidden !important;
+}
+body{
+  display:block !important;
+}
+.app{
+  height:100vh !important;
+  min-height:100vh !important;
+  max-height:100vh !important;
+  width:100% !important;
+  display:flex !important;
+  overflow:hidden !important;
+}
+.side{
+  position:relative !important;
+  left:auto !important;
+  top:auto !important;
+  flex:0 0 270px !important;
+  width:270px !important;
+  min-width:270px !important;
+  height:100vh !important;
+  max-height:100vh !important;
+  overflow-y:auto !important;
+  overflow-x:hidden !important;
+  padding:18px 14px 22px !important;
+}
+.main{
+  flex:1 1 auto !important;
+  min-width:0 !important;
+  height:100vh !important;
+  max-height:100vh !important;
+  overflow:hidden !important;
+  display:flex !important;
+  flex-direction:column !important;
+  padding:18px 28px 24px !important;
+  margin:0 !important;
+}
+.main > header{
+  position:relative !important;
+  top:auto !important;
+  z-index:5 !important;
+  flex:0 0 auto !important;
+  margin:0 0 14px 0 !important;
+  padding:18px 22px !important;
+  border-radius:24px !important;
+  border:1px solid #e2e8f0 !important;
+  background:rgba(255,255,255,.94) !important;
+  box-shadow:0 16px 34px rgba(15,23,42,.08) !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:space-between !important;
+}
+.main > header h1{font-size:30px !important;margin:0 !important;}
+.main > header p{margin:6px 0 0 !important;line-height:1.3 !important;}
+.main > header .pill{align-self:center !important;}
+.tab{
+  min-height:0 !important;
+}
+.tab.show{
+  display:block !important;
+  flex:1 1 auto !important;
+  min-height:0 !important;
+  height:auto !important;
+  overflow-y:auto !important;
+  overflow-x:hidden !important;
+  padding:4px 8px 28px 0 !important;
+  scrollbar-gutter:stable;
+}
+.tab.show::-webkit-scrollbar,
+.side::-webkit-scrollbar,
+.chat::-webkit-scrollbar{
+  width:8px !important;
+}
+.tab.show::-webkit-scrollbar-thumb,
+.side::-webkit-scrollbar-thumb,
+.chat::-webkit-scrollbar-thumb{
+  background:rgba(29,26,120,.32) !important;
+  border-radius:999px !important;
+}
+.botwrap{
+  height:100% !important;
+  min-height:0 !important;
+  grid-template-columns:minmax(380px,520px) minmax(360px,1fr) !important;
+  align-items:start !important;
+}
+.phone{
+  min-height:0 !important;
+  height:100% !important;
+  max-height:calc(100vh - 150px) !important;
+  display:flex !important;
+  flex-direction:column !important;
+}
+.phoneTop{flex:0 0 auto !important;}
+.chat{
+  flex:1 1 auto !important;
+  min-height:0 !important;
+  height:auto !important;
+  max-height:none !important;
+}
+.send{flex:0 0 auto !important;}
+.nav{
+  min-height:44px !important;
+  height:auto !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  text-align:center !important;
+  line-height:1.12 !important;
+  padding:9px 12px !important;
+  font-size:15px !important;
+}
+.brand{border-bottom:1px solid rgba(255,255,255,.12);padding-bottom:14px !important;}
+.sideNote{margin-top:14px !important;}
+#pending .panel,
+#registrations .panel,
+#surveys .panel{
+  min-height:auto !important;
+}
+.pendingToolbar{
+  position:sticky !important;
+  top:0 !important;
+  z-index:4 !important;
+  background:rgba(248,250,252,.92) !important;
+  border:1px solid #e2e8f0 !important;
+  border-radius:18px !important;
+  padding:10px !important;
+  margin:12px 0 16px !important;
+}
+#pendingGrid.activityGrid,
+#registrationsGrid.activityGrid,
+#surveyGrid.activityGrid,
+#activities .activityGrid{
+  max-height:none !important;
+  overflow:visible !important;
+  padding-right:0 !important;
+}
+.activityGrid{align-items:stretch !important;}
+.act{min-height:220px !important;display:flex !important;flex-direction:column !important;}
+.act .row,.actActions{margin-top:auto !important;}
+@media(max-width:1180px){
+  .side{flex-basis:248px !important;width:248px !important;min-width:248px !important;}
+  .main{padding:16px 18px 22px !important;}
+  .botwrap{grid-template-columns:1fr !important;height:auto !important;}
+  .phone{height:calc(100vh - 170px) !important;max-height:680px !important;}
+  .main > header{padding:16px 18px !important;}
+}
+@media(max-width:760px){
+  html,body{height:auto !important;min-height:100vh !important;overflow:auto !important;}
+  .app{display:block !important;height:auto !important;max-height:none !important;overflow:visible !important;}
+  .side{width:100% !important;min-width:0 !important;height:auto !important;max-height:260px !important;position:sticky !important;top:0 !important;z-index:30 !important;}
+  .main{height:auto !important;max-height:none !important;display:block !important;overflow:visible !important;padding:12px !important;}
+  .main > header{position:sticky !important;top:0 !important;z-index:20 !important;display:block !important;}
+  .tab.show{height:auto !important;overflow:visible !important;padding-right:0 !important;}
+  .phone{height:620px !important;max-height:none !important;}
+}
+
+
+/* v56 - Panchito más largo hacia abajo */
+.phone{
+  display:flex !important;
+  flex-direction:column !important;
+}
+.chat{
+  flex:1 1 auto !important;
+  overflow-y:auto !important;
+}
+.composer,
+.chat-input,
+.input-row,
+.inputbar{
+  margin-top:auto !important;
+  flex-shrink:0 !important;
+}
+.bot-layout,
+.panchito-grid,
+.main-grid{
+  align-items:stretch !important;
+}
+
+
+/* =========================================================
+   v57 - VISOR PANCHITO TIPO CELULAR ALTO
+   ========================================================= */
+
+html, body {
+  height: 100% !important;
+  overflow: hidden !important;
+}
+
+.app {
+  height: 100vh !important;
+  min-height: 100vh !important;
+  overflow: hidden !important;
+}
+
+.side {
+  width: 250px !important;
+  min-width: 250px !important;
+  height: 100vh !important;
+  position: sticky !important;
+  top: 0 !important;
+  overflow-y: auto !important;
+  padding: 18px 14px !important;
+}
+
+.main {
+  height: 100vh !important;
+  overflow: hidden !important;
+  padding: 18px 28px 18px 28px !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.main > header {
+  flex: 0 0 auto !important;
+  margin: 0 0 16px 0 !important;
+  min-height: 94px !important;
+  padding: 18px 22px !important;
+  background: rgba(255,255,255,.94) !important;
+  border: 1px solid #e5e7eb !important;
+  border-radius: 24px !important;
+  box-shadow: 0 14px 34px rgba(15,23,42,.08) !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+.main > header h1 {
+  font-size: 30px !important;
+  line-height: 1.05 !important;
+}
+
+.main > header p {
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  max-width: 720px !important;
+}
+
+.tab.show {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+#bot.tab.show {
+  display: block !important;
+  height: calc(100vh - 128px) !important;
+}
+
+.botwrap {
+  height: 100% !important;
+  min-height: 0 !important;
+  display: grid !important;
+  grid-template-columns: minmax(540px, 610px) minmax(360px, 1fr) !important;
+  gap: 24px !important;
+  align-items: stretch !important;
+}
+
+.phone {
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  display: flex !important;
+  flex-direction: column !important;
+  background: #071018 !important;
+  border: 4px solid #f4e438 !important;
+  border-radius: 32px !important;
+  padding: 14px !important;
+  box-shadow: 0 24px 55px rgba(2,6,23,.28) !important;
+  overflow: hidden !important;
+}
+
+.phoneTop {
+  flex: 0 0 auto !important;
+  min-height: 94px !important;
+  padding: 16px !important;
+  border-radius: 22px 22px 0 0 !important;
+}
+
+.chatAvatar {
+  width: 62px !important;
+  height: 62px !important;
+}
+
+.phoneTop b {
+  font-size: 22px !important;
+}
+
+.chat {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  height: auto !important;
+  overflow-y: auto !important;
+  padding: 18px 24px !important;
+  background: linear-gradient(180deg,#ebe9d9,#dff3e6) !important;
+  scroll-behavior: smooth !important;
+}
+
+.msg {
+  max-width: 86% !important;
+  font-size: 15px !important;
+  line-height: 1.45 !important;
+}
+
+.send {
+  flex: 0 0 auto !important;
+  display: flex !important;
+  gap: 12px !important;
+  align-items: center !important;
+  padding: 16px !important;
+  background: #071018 !important;
+  border-radius: 0 0 22px 22px !important;
+}
+
+.send input {
+  height: 54px !important;
+  border-radius: 999px !important;
+  padding: 0 18px !important;
+  margin: 0 !important;
+  font-size: 15px !important;
+}
+
+.send button {
+  width: 86px !important;
+  height: 58px !important;
+  border-radius: 999px !important;
+  background: #f4e438 !important;
+  color: #0b1029 !important;
+  flex: 0 0 auto !important;
+}
+
+.heroPanel {
+  height: 100% !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+}
+
+.quickCards,
+.premiumQuick {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(140px,1fr)) !important;
+  gap: 14px !important;
+}
+
+.quickCards button,
+.premiumQuick button {
+  min-height: 64px !important;
+}
+
+/* Notebook: priorizo que Panchito sea grande */
+@media (max-width: 1180px) {
+  .botwrap {
+    grid-template-columns: minmax(560px, 1fr) 320px !important;
+    gap: 18px !important;
+  }
+
+  .main {
+    padding: 14px 18px !important;
+  }
+
+  .main > header {
+    min-height: 82px !important;
+    padding: 14px 18px !important;
+  }
+
+  #bot.tab.show {
+    height: calc(100vh - 110px) !important;
+  }
+}
+
+/* Pantallas chicas: el teléfono ocupa todo, accesos abajo */
+@media (max-width: 920px) {
+  html, body {
+    overflow: auto !important;
+  }
+
+  .app {
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  .side {
+    position: relative !important;
+    width: 100% !important;
+    height: auto !important;
+  }
+
+  .main {
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  .botwrap {
+    grid-template-columns: 1fr !important;
+  }
+
+  .phone {
+    height: 82vh !important;
+    min-height: 720px !important;
+  }
+
+  .heroPanel {
+    height: auto !important;
+  }
+}
+
+
+/* FIX CHAT TIPO CELULAR LARGO */
+.sideNote{display:none!important;}
+
+.phone{
+ height:auto!important;
+ min-height:820px!important;
+ max-width:520px!important;
+}
+
+.chat{
+ min-height:720px!important;
+ height:720px!important;
+}
+
+.send{
+ margin-top:auto!important;
+ position:relative!important;
+}
+
+@media (min-width:901px){
+ .phone{
+   min-height:840px!important;
+ }
+ .chat{
+   min-height:740px!important;
+   height:740px!important;
+ }
+}
+
+/* =========================================================
+   v58 - Dejar página con scroll y Panchito largo hacia abajo
+   Corrige que quedaba todo inmóvil en notebook/PC.
+   ========================================================= */
+html, body{
+  height:auto !important;
+  min-height:100% !important;
+  overflow-y:auto !important;
+  overflow-x:hidden !important;
+}
+.app{
+  height:auto !important;
+  min-height:100vh !important;
+  max-height:none !important;
+  overflow:visible !important;
+  align-items:stretch !important;
+}
+.side{
+  position:sticky !important;
+  top:0 !important;
+  height:100vh !important;
+  max-height:100vh !important;
+  overflow-y:auto !important;
+}
+.main{
+  height:auto !important;
+  min-height:100vh !important;
+  max-height:none !important;
+  overflow:visible !important;
+  display:block !important;
+  padding-bottom:40px !important;
+}
+.main > header{
+  position:relative !important;
+  top:auto !important;
+}
+.tab.show,
+#bot.tab.show{
+  height:auto !important;
+  min-height:0 !important;
+  max-height:none !important;
+  overflow:visible !important;
+}
+.botwrap{
+  height:auto !important;
+  min-height:0 !important;
+  align-items:start !important;
+}
+.phone{
+  height:auto !important;
+  min-height:900px !important;
+  max-height:none !important;
+  overflow:hidden !important;
+}
+.chat{
+  height:760px !important;
+  min-height:760px !important;
+  max-height:none !important;
+  overflow-y:auto !important;
+}
+.send{
+  flex:0 0 auto !important;
+  margin-top:0 !important;
+}
+.sideNote{display:none !important;}
+@media (max-height:760px) and (min-width:921px){
+  .phone{min-height:940px !important;}
+  .chat{height:800px !important;min-height:800px !important;}
+}
+@media (max-width:920px){
+  .app{display:block !important;}
+  .side{position:relative !important;height:auto !important;max-height:none !important;}
+  .main{display:block !important;overflow:visible !important;}
+  .phone{min-height:820px !important;}
+  .chat{height:680px !important;min-height:680px !important;}
+}
+
+/* =========================================================
+   v59 - Ajuste final: chat tipo celular, largo moderado
+   - No queda inmóvil: la página puede bajar.
+   - No queda gigante: apenas más bajo que el menú izquierdo.
+   - El campo de escribir queda al final del celular.
+   ========================================================= */
+html, body{
+  height:auto !important;
+  min-height:100% !important;
+  overflow-y:auto !important;
+  overflow-x:hidden !important;
+}
+.app{
+  min-height:100vh !important;
+  height:auto !important;
+  overflow:visible !important;
+}
+.side{
+  position:sticky !important;
+  top:0 !important;
+  height:100vh !important;
+  max-height:100vh !important;
+  overflow-y:auto !important;
+}
+.sideNote,
+.cleanPanel,
+.panelClean,
+.adminCleanNote,
+#panelLimpio,
+[data-panel="limpio"]{
+  display:none !important;
+}
+.main{
+  height:auto !important;
+  min-height:100vh !important;
+  overflow:visible !important;
+  padding-bottom:32px !important;
+}
+.botwrap{
+  align-items:start !important;
+  height:auto !important;
+  overflow:visible !important;
+}
+#bot .phone,
+.phone{
+  width:100% !important;
+  max-width:620px !important;
+  height:720px !important;
+  min-height:720px !important;
+  max-height:none !important;
+  display:flex !important;
+  flex-direction:column !important;
+  overflow:hidden !important;
+  margin:0 auto !important;
+}
+.phoneTop{
+  flex:0 0 auto !important;
+}
+#bot .chat,
+.chat{
+  flex:1 1 auto !important;
+  height:auto !important;
+  min-height:0 !important;
+  max-height:none !important;
+  overflow-y:auto !important;
+  overflow-x:hidden !important;
+}
+.send{
+  flex:0 0 auto !important;
+  margin-top:0 !important;
+  position:relative !important;
+}
+@media (max-height:760px) and (min-width:921px){
+  #bot .phone,
+  .phone{
+    height:760px !important;
+    min-height:760px !important;
+  }
+}
+@media (max-width:920px){
+  .app{display:block !important;}
+  .side{position:relative !important;height:auto !important;max-height:none !important;}
+  .main{overflow:visible !important;}
+  #bot .phone,
+  .phone{
+    max-width:520px !important;
+    height:calc(100vh - 24px) !important;
+    min-height:720px !important;
+  }
+}
+
+
+/* =========================================================
+   v60 - Restaurar scrolls + encabezado fijo + escudo oficial
+   - Header queda fijo arriba mientras se baja la página.
+   - El lateral mantiene su propio scroll.
+   - La página completa vuelve a poder scrollear normal.
+   - La pastilla "Oficial All Boys" usa el escudo.
+   ========================================================= */
+html, body{
+  height:auto !important;
+  min-height:100% !important;
+  overflow-y:auto !important;
+  overflow-x:hidden !important;
+}
+body{
+  margin:0 !important;
+}
+.app{
+  min-height:100vh !important;
+  height:auto !important;
+  overflow:visible !important;
+  align-items:stretch !important;
+}
+.main{
+  height:auto !important;
+  min-height:100vh !important;
+  overflow:visible !important;
+  padding-bottom:48px !important;
+}
+.main > header{
+  position:sticky !important;
+  top:10px !important;
+  z-index:80 !important;
+  margin-bottom:22px !important;
+}
+.side{
+  position:sticky !important;
+  top:0 !important;
+  height:100vh !important;
+  max-height:100vh !important;
+  overflow-y:auto !important;
+  overflow-x:hidden !important;
+  flex:0 0 270px !important;
+}
+.sideNote,
+.cleanPanel,
+.panelClean,
+.adminCleanNote,
+#panelLimpio,
+[data-panel="limpio"]{
+  display:none !important;
+}
+.officialPill{
+  display:inline-flex !important;
+  align-items:center !important;
+  gap:8px !important;
+  white-space:nowrap !important;
+}
+.officialPill img{
+  width:23px !important;
+  height:23px !important;
+  object-fit:contain !important;
+  border-radius:50% !important;
+  background:#fff !important;
+  padding:1px !important;
+  box-shadow:0 0 0 1px rgba(246,230,50,.75) !important;
+}
+#bot.show .botwrap,
+#bot .botwrap,
+.botwrap{
+  height:auto !important;
+  overflow:visible !important;
+  align-items:start !important;
+}
+#bot .phone,
+.phone{
+  width:100% !important;
+  max-width:620px !important;
+  height:735px !important;
+  min-height:735px !important;
+  max-height:none !important;
+  display:flex !important;
+  flex-direction:column !important;
+  overflow:hidden !important;
+  margin:0 auto !important;
+}
+.phoneTop{
+  flex:0 0 auto !important;
+}
+#bot .chat,
+.chat{
+  flex:1 1 auto !important;
+  height:auto !important;
+  min-height:0 !important;
+  max-height:none !important;
+  overflow-y:auto !important;
+  overflow-x:hidden !important;
+  scrollbar-width:auto !important;
+}
+.send{
+  flex:0 0 auto !important;
+  position:relative !important;
+  bottom:auto !important;
+}
+.table,
+.activityGrid,
+#pendingGrid,
+#registrationsGrid{
+  overflow:visible !important;
+}
+.table{
+  overflow-x:auto !important;
+}
+@media (max-width:1180px){
+  .side{flex-basis:232px !important;}
+  .main > header{top:8px !important;}
+}
+@media (max-width:920px){
+  .app{display:block !important;}
+  .side{
+    position:relative !important;
+    width:100% !important;
+    min-width:0 !important;
+    height:auto !important;
+    max-height:none !important;
+    overflow:visible !important;
+    flex-basis:auto !important;
+  }
+  .main > header{
+    position:sticky !important;
+    top:0 !important;
+    z-index:80 !important;
+  }
+  #bot .phone,
+  .phone{
+    max-width:520px !important;
+    height:calc(100vh - 38px) !important;
+    min-height:720px !important;
+  }
+}
+
+/* V60 - Boceto final: encabezado fijo, iconos en título y scroll restaurado */
+html,body{height:100%;overflow:hidden!important;}
+.app{height:100vh;min-height:100vh;overflow:hidden;display:flex;background:linear-gradient(135deg,#f7f8ff 0%,#eef2ff 52%,#fffbea 100%);}
+.side{position:relative!important;height:100vh!important;min-height:100vh!important;overflow-y:auto!important;overflow-x:hidden!important;flex:0 0 270px;z-index:20;}
+.main{height:100vh!important;overflow-y:auto!important;overflow-x:hidden!important;max-width:none!important;margin:0!important;padding:26px 28px 34px!important;scroll-behavior:smooth;}
+.appHeader{position:sticky!important;top:0!important;z-index:50!important;margin-bottom:24px!important;display:flex!important;align-items:center!important;justify-content:space-between!important;background:rgba(255,255,255,.88)!important;backdrop-filter:blur(16px)!important;border:1px solid rgba(226,232,240,.95)!important;box-shadow:0 18px 42px rgba(15,23,42,.09)!important;}
+.pageHead{display:flex;align-items:center;gap:16px;min-width:0;}
+.pageIcon,.pageEmojiIcon{width:72px;height:72px;border-radius:18px;background:#fff;object-fit:contain;padding:7px;box-shadow:0 12px 28px rgba(15,23,42,.14);border:1px solid #e5e7eb;flex:0 0 72px;}
+.pageEmojiIcon{display:grid;place-items:center;font-size:35px;padding:0;color:#1c1978;background:linear-gradient(180deg,#fff,#fffbea);border:2px solid rgba(246,230,50,.85);}
+.officialPill{display:inline-flex;align-items:center;gap:8px;white-space:nowrap;padding:9px 16px!important;}
+.officialPill img{width:28px;height:28px;border-radius:50%;object-fit:contain;background:#fff;padding:2px;}
+.sideNote{display:none!important;}
+#bot.show .botwrap{grid-template-columns:minmax(560px,680px) minmax(320px,430px)!important;justify-content:center;align-items:start;gap:34px!important;}
+#bot.show .phone{width:100%!important;max-width:680px!important;height:auto!important;min-height:0!important;margin:0!important;border-radius:28px!important;padding:10px!important;}
+#bot.show .phoneTop{min-height:94px!important;border-radius:22px 22px 0 0!important;padding:14px 16px!important;}
+#bot.show .chat{height:505px!important;min-height:0!important;max-height:505px!important;overflow-y:auto!important;padding:24px!important;}
+#bot.show .send{border-radius:0 0 22px 22px!important;padding:14px!important;align-items:center;}
+#bot.show .send input{min-height:56px;border-radius:999px!important;padding:0 22px!important;}
+#bot.show .send button{min-height:56px;min-width:92px;border-radius:999px!important;}
+.heroPanel{min-height:520px;}
+.botwrap .panel{border-radius:24px;}
+@media(max-width:1180px){
+  #bot.show .botwrap{grid-template-columns:1fr!important;}
+  #bot.show .phone{margin:0 auto!important;}
+  .heroPanel{max-width:680px;min-height:auto;}
+}
+@media(max-width:760px){
+  html,body{overflow:auto!important;height:auto;}
+  .app{display:block;height:auto;min-height:100vh;overflow:visible;}
+  .side{position:relative!important;width:100%!important;min-width:0!important;height:auto!important;min-height:0!important;max-height:none!important;overflow:auto!important;}
+  .main{height:auto!important;overflow:visible!important;padding:12px!important;}
+  .appHeader{top:0!important;border-radius:20px!important;padding:12px!important;}
+  .pageIcon,.pageEmojiIcon{width:54px;height:54px;flex-basis:54px;border-radius:15px;font-size:28px;}
+  .officialPill{margin-top:10px;}
+  #bot.show .phone{max-width:100%!important;}
+  #bot.show .chat{height:58vh!important;max-height:none!important;padding:12px!important;}
+}
+
+
+/* BOCETO FINAL - encabezado superior fijo, scrolls y layout como maqueta */
+html,body{height:auto!important;min-height:100%!important;overflow-x:hidden!important;overflow-y:auto!important;}
+body{padding:0!important;}
+.topClubHeader{
+  position:sticky;top:0;z-index:5000;height:86px;width:100%;
+  display:flex;align-items:center;justify-content:space-between;gap:18px;
+  padding:12px 28px;background:linear-gradient(135deg,#070b25 0%,#11145f 55%,#070b25 100%);
+  border-bottom:5px solid var(--ab-yellow,#f6e632);box-shadow:0 16px 42px rgba(4,7,20,.25);
+  color:#fff;
+}
+.topLeft{display:flex;align-items:center;gap:16px;min-width:0}.hamb{font-size:36px;line-height:1;color:#f6e632;font-weight:900}.topLogo{width:64px;height:64px;border-radius:18px;background:#fff;object-fit:contain;padding:5px;border:2px solid #f6e632;box-shadow:0 10px 26px rgba(0,0,0,.28)}
+.topTitle b{display:block;font-size:27px;line-height:1;font-weight:1000;letter-spacing:-.6px}.topTitle span{display:block;margin-top:6px;color:#fff35c;font-weight:900;font-size:16px}.topTitle i{display:inline-block;width:12px;height:12px;background:#22c55e;border-radius:50%;box-shadow:0 0 0 2px rgba(255,255,255,.15);vertical-align:-1px;margin:0 3px 0 2px}.topOfficial{display:inline-flex;align-items:center;gap:10px;background:#11145f;color:#f6e632;border:2px solid #f6e632;border-radius:999px;padding:10px 18px;font-weight:1000;font-size:18px;box-shadow:0 14px 28px rgba(0,0,0,.28);white-space:nowrap}.topOfficial img{width:34px;height:34px;border-radius:50%;background:#fff;object-fit:contain;padding:3px}
+.app{min-height:calc(100vh - 86px)!important;align-items:flex-start!important;overflow:visible!important}.side{position:sticky!important;top:86px!important;height:calc(100vh - 86px)!important;overflow-y:auto!important;overflow-x:hidden!important;flex:0 0 270px!important}.main{overflow:visible!important;padding:28px 34px 42px!important;max-width:none!important}.appHeader{position:relative!important;display:flex!important;align-items:center!important;justify-content:space-between!important;margin:0 auto 22px!important;background:rgba(255,255,255,.92)!important;border:1px solid rgba(226,232,240,.95)!important;border-radius:26px!important;padding:18px 22px!important;box-shadow:0 18px 45px rgba(15,23,42,.09)!important;backdrop-filter:blur(12px)!important}.pageHead{display:flex;align-items:center;gap:18px;min-width:0}.pageIcon{display:block!important;width:70px!important;height:70px!important;border-radius:18px!important;background:#fff!important;object-fit:contain!important;padding:6px!important;box-shadow:0 12px 28px rgba(15,23,42,.14)!important}.pageEmojiIcon{width:70px;height:70px;border-radius:18px;background:#fff;display:grid;place-items:center;font-size:34px;box-shadow:0 12px 28px rgba(15,23,42,.14);flex:0 0 auto}.appHeader h1{font-size:32px!important;color:#101828!important;margin:0!important;letter-spacing:-.7px}.appHeader p{font-size:16px!important;color:#667085!important;margin:7px 0 0!important;max-width:850px!important}.officialPill{display:none!important}.botwrap{grid-template-columns:minmax(560px,760px) minmax(330px,420px)!important;gap:36px!important;justify-content:center!important;align-items:start!important}.phone{width:100%!important;max-width:760px!important;height:auto!important;min-height:0!important;padding:10px!important;border-radius:28px!important;background:#06111b!important;border:3px solid #f6e632!important;box-shadow:0 26px 70px rgba(15,23,42,.22)!important}.phoneTop{min-height:88px!important;border-radius:22px 22px 0 0!important;padding:14px 18px!important}.phoneTop .chatAvatar{width:64px!important;height:64px!important;border-radius:18px!important}.chat{height:455px!important;min-height:455px!important;overflow-y:auto!important;overflow-x:hidden!important;padding:24px!important}.send{padding:14px!important;gap:14px!important}.send input{height:58px!important;font-size:16px!important}.send button{width:74px!important;height:58px!important;font-size:0!important;position:relative!important;flex:0 0 74px!important}.send button:after{content:'➤';font-size:25px;color:#1d1a78;transform:rotate(-25deg);display:block}.heroPanel{min-height:610px!important;border-radius:26px!important;padding:26px!important}.heroPanel h2{font-size:28px!important}.premiumQuick button{min-height:74px!important;font-size:16px!important;border-radius:18px!important}.cleanHint{font-size:16px!important;line-height:1.4!important}.brand{margin-bottom:22px!important}.side .nav{font-size:17px!important;min-height:52px!important;justify-content:center!important;text-align:center!important}.sideNote{display:none!important}.clubFooter{display:flex;align-items:center;justify-content:center;gap:14px;background:#070b25;color:#fff;padding:14px 20px;border-top:4px solid #f6e632;font-weight:700}.clubFooter img{width:30px;height:30px;border-radius:50%;background:#fff;object-fit:contain;padding:2px}.clubFooter span{color:#f6e632}
+@media(max-width:1180px){.topClubHeader{height:auto;min-height:82px}.app{display:block!important}.side{position:relative!important;top:0!important;width:100%!important;height:auto!important;min-width:0!important;display:block!important;border-right:0!important;border-bottom:5px solid #f6e632!important}.main{padding:18px!important}.botwrap{grid-template-columns:1fr!important}.heroPanel{min-height:auto!important}.phone{max-width:760px!important}.topTitle b{font-size:24px}.topTitle span{font-size:14px}.topOfficial{font-size:15px}}
+@media(max-width:760px){.topClubHeader{padding:10px 12px}.hamb{font-size:28px}.topLogo{width:54px;height:54px}.topTitle b{font-size:22px}.topTitle span{font-size:12px}.topOfficial{display:none}.appHeader{display:flex!important;padding:14px!important;border-radius:20px!important}.pageIcon,.pageEmojiIcon{width:52px!important;height:52px!important;font-size:28px}.appHeader h1{font-size:24px!important}.appHeader p{font-size:13px!important}.chat{height:58vh!important;min-height:380px!important;padding:14px!important}.phoneTop:after{display:none!important}.premiumQuick{grid-template-columns:1fr!important}.side .nav{display:inline-flex!important;width:auto!important;font-size:14px!important;min-height:40px!important}.brand{display:none!important}}
+
+/* =========================================================
+   FIX FINAL - separacion header/sidebar + sin linea negra atras
+   ========================================================= */
+.clubFooter{
+  display:none !important;
+}
+.app{
+  padding-top:22px !important;
+  min-height:calc(100vh - 86px) !important;
+  background:linear-gradient(135deg,#f7f8ff 0%,#eef2ff 52%,#fffbea 100%) !important;
+}
+.side{
+  top:108px !important;
+  height:calc(100vh - 108px) !important;
+  border-top-right-radius:26px !important;
+  box-shadow:12px 0 32px rgba(15,23,42,.08) !important;
+}
+.main{
+  padding-top:0 !important;
+}
+.topClubHeader{
+  border-radius:0 0 24px 0 !important;
+}
+@media(max-width:1180px){
+  .app{padding-top:16px !important;}
+  .side{
+    top:0 !important;
+    height:auto !important;
+    border-top-right-radius:0 !important;
+  }
+  .main{padding-top:0 !important;}
+}
+
+
+/* =========================================================
+   FIX PEDIDO: header unido al panel izquierdo y sin tarjeta duplicada
+   ========================================================= */
+.appHeader{
+  display:none !important;
+}
+.topClubHeader{
+  border-radius:0 !important;
+  margin:0 !important;
+}
+.app{
+  padding-top:0 !important;
+  min-height:calc(100vh - 86px) !important;
+  background:linear-gradient(135deg,#f7f8ff 0%,#eef2ff 52%,#fffbea 100%) !important;
+}
+.side{
+  top:86px !important;
+  height:calc(100vh - 86px) !important;
+  border-top-right-radius:0 !important;
+  box-shadow:12px 0 32px rgba(15,23,42,.08) !important;
+  margin-top:0 !important;
+}
+.main{
+  padding-top:28px !important;
+}
+.emojiTopLogo{
+  width:64px !important;
+  height:64px !important;
+  border-radius:18px !important;
+  background:#fff !important;
+  border:2px solid #f6e632 !important;
+  color:#1d1a78 !important;
+  font-size:34px !important;
+  place-items:center !important;
+  box-shadow:0 10px 26px rgba(0,0,0,.28) !important;
+}
+@media(max-width:1180px){
+  .side{top:0 !important;height:auto !important;}
+  .main{padding-top:18px !important;}
+}
+
+
+/* =========================================================
+   FIX 24/06 - Sin tarjeta Panchito duplicada + contenido arriba
+   ========================================================= */
+.appHeader{display:none!important;}
+.main{padding-top:18px!important;}
+#bot.tab.show{margin-top:0!important;}
+.botwrap{margin-top:0!important;}
+.topClubHeader{position:sticky!important;top:0!important;z-index:9999!important;border-radius:0!important;}
+.app{padding-top:0!important;}
+.side{top:86px!important;height:calc(100vh - 86px)!important;border-top-right-radius:0!important;}
+@media(max-width:1180px){.side{top:0!important;height:auto!important}.main{padding-top:14px!important}}
+
+
+/* =========================================================
+   FIX FINAL SCROLL + HEADER SIEMPRE PANCHITO
+   ========================================================= */
+html, body{
+  height:100vh !important;
+  max-height:100vh !important;
+  overflow:hidden !important;
+}
+.topClubHeader{
+  position:sticky !important;
+  top:0 !important;
+  z-index:99999 !important;
+  height:86px !important;
+  min-height:86px !important;
+  flex:0 0 86px !important;
+}
+#topSectionIcon,
+.topLogo{
+  object-fit:contain !important;
+  background:#fff !important;
+}
+.app{
+  height:calc(100vh - 86px) !important;
+  min-height:0 !important;
+  overflow:hidden !important;
+  display:flex !important;
+  align-items:stretch !important;
+}
+.side{
+  position:relative !important;
+  top:0 !important;
+  height:calc(100vh - 86px) !important;
+  min-height:0 !important;
+  overflow-y:auto !important;
+  overflow-x:hidden !important;
+  flex:0 0 270px !important;
+}
+.main{
+  height:calc(100vh - 86px) !important;
+  min-height:0 !important;
+  overflow-y:auto !important;
+  overflow-x:hidden !important;
+  padding-top:28px !important;
+  padding-bottom:34px !important;
+}
+.tab.show{
+  min-height:0 !important;
+  overflow:visible !important;
+}
+.panel,
+.heroPanel{
+  max-height:calc(100vh - 170px) !important;
+  overflow-y:auto !important;
+  overflow-x:hidden !important;
+}
+#bot.show .heroPanel,
+#bot.show .panel.heroPanel{
+  max-height:calc(100vh - 150px) !important;
+}
+.phone{
+  max-height:calc(100vh - 145px) !important;
+  overflow:hidden !important;
+}
+.chat{
+  height:calc(100vh - 355px) !important;
+  min-height:310px !important;
+  max-height:520px !important;
+  overflow-y:auto !important;
+  overflow-x:hidden !important;
+}
+.table{
+  max-height:calc(100vh - 260px) !important;
+  overflow:auto !important;
+}
+.activityGrid{
+  max-height:calc(100vh - 330px) !important;
+  overflow-y:auto !important;
+  padding-right:8px !important;
+}
+.cards + .grid2,
+.grid2{
+  max-height:calc(100vh - 260px) !important;
+  overflow-y:auto !important;
+  padding-right:8px !important;
+}
+@media(max-width:1180px){
+  html,body{height:auto!important;max-height:none!important;overflow:auto!important;}
+  .topClubHeader{position:sticky!important;height:auto!important;min-height:82px!important;}
+  .app{display:block!important;height:auto!important;overflow:visible!important;}
+  .side{position:relative!important;height:auto!important;max-height:none!important;width:100%!important;}
+  .main{height:auto!important;overflow:visible!important;}
+  .panel,.heroPanel,.activityGrid,.table,.grid2{max-height:none!important;overflow:visible!important;}
+}
+
+/* FIX FINAL - barras de scroll invisibles en todo el sistema, pero mantiene el desplazamiento */
+* {
+  scrollbar-width: none !important; /* Firefox */
+  -ms-overflow-style: none !important; /* IE/Edge viejo */
+}
+*::-webkit-scrollbar {
+  width: 0 !important;
+  height: 0 !important;
+  display: none !important;
+  background: transparent !important;
+}
+*::-webkit-scrollbar-thumb,
+*::-webkit-scrollbar-track {
+  background: transparent !important;
+  display: none !important;
+}
+html, body, .app, .main, .side, .panel, .heroPanel, .tab.show, .chat, .table, .activityGrid, .grid2 {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+html::-webkit-scrollbar,
+body::-webkit-scrollbar,
+.app::-webkit-scrollbar,
+.main::-webkit-scrollbar,
+.side::-webkit-scrollbar,
+.panel::-webkit-scrollbar,
+.heroPanel::-webkit-scrollbar,
+.tab.show::-webkit-scrollbar,
+.chat::-webkit-scrollbar,
+.table::-webkit-scrollbar,
+.activityGrid::-webkit-scrollbar,
+.grid2::-webkit-scrollbar {
+  width: 0 !important;
+  height: 0 !important;
+  display: none !important;
+}
+
+/* PRO polish sin cambiar formato */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800;900&display=swap');
+:root{
+  --pro-font:'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+*{box-sizing:border-box}
+body,input,textarea,select,button{font-family:var(--pro-font)!important;-webkit-font-smoothing:antialiased;text-rendering:geometricPrecision;}
+body{letter-spacing:-.015em;}
+.topClubHeader{box-shadow:0 14px 34px rgba(15,23,42,.18)!important; backdrop-filter: blur(16px);}
+.topTitle b{font-size:28px!important;font-weight:900!important;letter-spacing:-.04em;text-shadow:0 2px 10px rgba(0,0,0,.18)}
+.topTitle span{font-weight:800!important;letter-spacing:-.02em;color:#ffef3b!important}
+.topOfficial{font-weight:900!important;letter-spacing:-.025em;box-shadow:0 12px 28px rgba(0,0,0,.22), inset 0 1px 0 rgba(255,255,255,.13)!important;}
+.brand b,.nav{letter-spacing:-.03em;text-shadow:0 1px 4px rgba(0,0,0,.18)}
+.nav{transition:transform .18s ease, box-shadow .18s ease, filter .18s ease;background:linear-gradient(180deg,rgba(45,42,137,.96),rgba(27,28,89,.96))!important;border:1px solid rgba(255,255,255,.08)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 10px 20px rgba(0,0,0,.12)!important;}
+.nav:hover{transform:translateX(3px);filter:brightness(1.08)}
+.nav.active{background:linear-gradient(135deg,#fff34f,#ffe22e)!important;color:#15135e!important;box-shadow:0 14px 26px rgba(244,228,56,.26), inset 0 1px 0 rgba(255,255,255,.65)!important;text-shadow:none!important;}
+.panel,.phone,.act{box-shadow:0 18px 46px rgba(15,23,42,.10)!important;}
+.panel{border-color:rgba(203,213,225,.72)!important;background:linear-gradient(180deg,rgba(255,255,255,.97),rgba(255,255,255,.91))!important;}
+h1,h2,h3,#pageTitle{letter-spacing:-.045em;font-weight:900!important;color:#111827;}
+h2{font-size:clamp(22px,2vw,30px)}
+h3{font-size:18px}.panel p,.hint,.act p,.chat,.msg{letter-spacing:-.018em}.hint{background:linear-gradient(135deg,#fff8ba,#fff3cf)!important;border-color:#f4d52a!important;color:#4b3b05!important;}
+input,textarea,select{transition:border-color .18s ease, box-shadow .18s ease, transform .18s ease;border-color:#d4dbea!important;background:rgba(255,255,255,.96)!important;}
+input:focus,textarea:focus,select:focus{outline:none!important;border-color:#f4e438!important;box-shadow:0 0 0 4px rgba(244,228,56,.22)!important;}
+button,.button{transition:transform .18s ease, box-shadow .18s ease, filter .18s ease;box-shadow:0 10px 20px rgba(29,26,120,.16);}
+button:hover,.button:hover{transform:translateY(-1px);box-shadow:0 14px 26px rgba(29,26,120,.22);}
+.quickCards button{background:linear-gradient(135deg,#fff34f,#ffdf25)!important;border:1px solid rgba(29,26,120,.14)!important;color:#141060!important;font-size:16px!important;letter-spacing:-.035em;}
+.phone{background:linear-gradient(180deg,#080e24,#070b18)!important;border-width:3px!important;}
+.phoneTop{background:linear-gradient(135deg,#1c1979,#080d2b)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.12)}
+.phoneTop b{font-weight:900!important;letter-spacing:-.04em}.phoneTop small{letter-spacing:-.025em}.msg{font-size:15px!important;line-height:1.48!important}.msg.bot{box-shadow:0 16px 34px rgba(15,23,42,.13)!important}.send input{font-weight:600;color:#111827}.send button{background:linear-gradient(135deg,#fff34f,#ffdb24)!important;color:#141060!important;min-width:92px;}
+.badge,.counterPill,.pill{letter-spacing:-.025em;font-weight:900!important}.act{transition:transform .18s ease, box-shadow .18s ease;border-color:rgba(226,232,240,.88)!important}.act:hover{transform:translateY(-2px);box-shadow:0 20px 42px rgba(15,23,42,.13)!important}.act h3{font-weight:900!important;color:#1d1a78!important}.logoImg,.topLogo,.chatAvatar,.bubbleAvatar{filter:drop-shadow(0 7px 12px rgba(15,23,42,.18))}.cleanHint b{font-weight:900;color:#5c4700}.table table{font-size:14px}th{font-weight:900!important;letter-spacing:-.02em;color:#475569!important}td{font-weight:600;color:#1f2937}.row h2{margin-bottom:0}
+
+/* FIX: botón de 3 rayitas esconde/muestra menú izquierdo y agranda la pestaña */
+.hamb{
+  cursor:pointer!important;
+  user-select:none!important;
+  transition:transform .18s ease, background .18s ease, box-shadow .18s ease!important;
+  border-radius:14px!important;
+  padding:6px 10px!important;
+}
+.hamb:hover{
+  background:rgba(244,228,56,.12)!important;
+  box-shadow:inset 0 0 0 1px rgba(244,228,56,.28)!important;
+  transform:scale(1.04)!important;
+}
+body.menu-collapsed .side{
+  width:0!important;
+  min-width:0!important;
+  flex:0 0 0!important;
+  padding-left:0!important;
+  padding-right:0!important;
+  border-right:0!important;
+  overflow:hidden!important;
+  opacity:0!important;
+  transform:translateX(-18px)!important;
+  pointer-events:none!important;
+}
+.side{
+  transition:width .24s ease, min-width .24s ease, flex-basis .24s ease, padding .24s ease, opacity .18s ease, transform .24s ease!important;
+}
+.main{
+  transition:max-width .24s ease, margin .24s ease, padding .24s ease!important;
+}
+body.menu-collapsed .main{
+  max-width:none!important;
+  width:100%!important;
+  margin:0!important;
+  padding-left:34px!important;
+  padding-right:34px!important;
+}
+body.menu-collapsed .botwrap{
+  grid-template-columns:minmax(520px,760px) minmax(330px,1fr)!important;
+}
+body.menu-collapsed #activities .grid2,
+body.menu-collapsed #payments .grid2,
+body.menu-collapsed #dashboard .grid2{
+  grid-template-columns:minmax(420px,.85fr) minmax(520px,1.15fr)!important;
+}
+body.menu-collapsed .phone{
+  width:100%!important;
+}
+@media(max-width:1180px){
+  body.menu-collapsed .side{display:none!important;}
+  body.menu-collapsed .main{padding-left:14px!important;padding-right:14px!important;}
+  body.menu-collapsed .botwrap,
+  body.menu-collapsed #activities .grid2,
+  body.menu-collapsed #payments .grid2,
+  body.menu-collapsed #dashboard .grid2{grid-template-columns:1fr!important;}
+}
+
+/* AJUSTE ACTIVIDADES: ventana un poco más larga hacia abajo */
+#activities.show{
+  height:100% !important;
+  min-height:0 !important;
+}
+#activities .grid2{
+  max-height:calc(100vh - 155px) !important;
+  height:calc(100vh - 155px) !important;
+  overflow:hidden !important;
+  align-items:stretch !important;
+}
+#activities .grid2 > .panel{
+  height:100% !important;
+  max-height:none !important;
+  overflow-y:auto !important;
+  overflow-x:hidden !important;
+  padding-bottom:26px !important;
+}
+#activities .activityGrid{
+  max-height:calc(100vh - 245px) !important;
+  min-height:calc(100vh - 245px) !important;
+  overflow-y:auto !important;
+  overflow-x:hidden !important;
+  padding-bottom:22px !important;
+}
+body.menu-collapsed #activities .grid2{
+  max-height:calc(100vh - 155px) !important;
+  height:calc(100vh - 155px) !important;
+}
+@media(max-width:1180px){
+  #activities .grid2,
+  body.menu-collapsed #activities .grid2{
+    height:auto !important;
+    max-height:none !important;
+    overflow:visible !important;
+  }
+  #activities .grid2 > .panel,
+  #activities .activityGrid{
+    height:auto !important;
+    min-height:0 !important;
+    max-height:none !important;
+    overflow:visible !important;
+  }
+}
+
+.importActions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;align-items:center}
+.importMsg{margin:8px 0 0;color:#155724;font-weight:800;font-size:13px}
+@media(max-width:760px){.importActions{width:100%;justify-content:flex-start}.importActions button{padding:10px 12px;font-size:13px}}
+
+/* V39 Fase 1 - WhatsApp humano */
+.msgRow,.msg.me{
+  animation:chatIn .22s ease both;
+}
+@keyframes chatIn{
+  from{opacity:0;transform:translateY(8px) scale(.985)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
+.typingBubble{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  width:auto;
+  max-width:none!important;
+  color:#475569;
+  font-size:13.5px;
+  padding:12px 15px;
+}
+.typingBubble span{font-weight:700;color:#334155;margin-right:2px}
+.typingBubble b{
+  width:6px;height:6px;border-radius:50%;background:#94a3b8;display:inline-block;
+  animation:typingDots 1.05s infinite ease-in-out;
+}
+.typingBubble b:nth-child(3){animation-delay:.16s}
+.typingBubble b:nth-child(4){animation-delay:.32s}
+@keyframes typingDots{
+  0%,80%,100%{transform:translateY(0);opacity:.45}
+  40%{transform:translateY(-4px);opacity:1}
+}
+#chatForm input:disabled{opacity:.72;cursor:not-allowed;background:#f8fafc}
+#chatForm button:disabled{opacity:.72;cursor:not-allowed}
+.phoneTop small i{
+  display:inline-block!important;width:9px;height:9px;border-radius:50%;background:#22c55e;margin:0 4px;vertical-align:middle;
+  box-shadow:0 0 0 rgba(34,197,94,.5);animation:onlinePulse 1.6s infinite;
+}
+@keyframes onlinePulse{
+  0%{box-shadow:0 0 0 0 rgba(34,197,94,.55)}
+  70%{box-shadow:0 0 0 7px rgba(34,197,94,0)}
+  100%{box-shadow:0 0 0 0 rgba(34,197,94,0)}
+}
+.robotBubbleAvatar{animation:avatarPop .24s ease both}
+@keyframes avatarPop{from{opacity:0;transform:scale(.88)}to{opacity:1;transform:scale(1)}}
+
+/* V40 - personalidad y fluidez */
+.msgText{line-height:1.45}
+.msg.bot,.msg.me{transition:transform .15s ease, box-shadow .15s ease}
+.msg.bot:hover,.msg.me:hover{transform:translateY(-1px)}
+.waChatLink{transition:transform .15s ease, filter .15s ease}
+.waChatLink:hover{transform:translateY(-1px);filter:brightness(1.03)}
+.chatOption, button, .button{transition:transform .15s ease, box-shadow .15s ease, filter .15s ease}
+.chatOption:hover, button:hover, .button:hover{transform:translateY(-1px);filter:brightness(1.02)}

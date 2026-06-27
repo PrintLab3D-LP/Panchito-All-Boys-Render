@@ -1,0 +1,1621 @@
+{
+  "club": {
+    "name": "Club Atlético All Boys",
+    "shortName": "All Boys",
+    "whatsapp": "2954592313",
+    "address": "Hilario Lagos 435, Santa Rosa, La Pampa",
+    "brand": "Panchito · Asistente virtual de All Boys",
+    "primary": "#1d1a78",
+    "accent": "#f4e438",
+    "paymentAlias": "allboyseslapampa",
+    "adminHours": "Lunes a viernes de 9:00 a 13:00 y de 17:00 a 20:00",
+    "logo": "/escudo-nuevo.png",
+    "website": "https://cluballboyslapampa.org/",
+    "officialWhatsapp": "+54 9 2954 592313",
+    "email": "info@cluballboyslapampa.org",
+    "botName": "Panchito",
+    "adminContacts": [
+      "Carolina",
+      "Mónica"
+    ]
+  },
+  "users": [
+    {
+      "id": 1,
+      "name": "Admin Club",
+      "email": "admin@clubbot.local",
+      "role": "Administrador"
+    }
+  ],
+  "members": [
+    {
+      "id": 1,
+      "dni": "12345678",
+      "memberNo": "1001",
+      "name": "Juan Pérez",
+      "phone": "5492954000001",
+      "email": "juan@mail.com",
+      "status": "Activo",
+      "feeStatus": "Al día",
+      "debt": 0,
+      "nextDue": "10/07/2026",
+      "activities": [
+        "Fútbol Infantil"
+      ],
+      "lastPayment": "10/06/2026",
+      "password": "1234"
+    },
+    {
+      "id": 2,
+      "dni": "87654321",
+      "memberNo": "1002",
+      "name": "María Gómez",
+      "phone": "5492954000002",
+      "email": "maria@mail.com",
+      "status": "Activo",
+      "feeStatus": "Pendiente",
+      "debt": 12000,
+      "nextDue": "10/06/2026",
+      "activities": [
+        "Natación",
+        "Zumba"
+      ],
+      "lastPayment": "10/05/2026",
+      "password": "1234"
+    },
+    {
+      "id": 3,
+      "dni": "30111222",
+      "memberNo": "1003",
+      "name": "Carlos Martínez",
+      "phone": "5492954000003",
+      "email": "carlos@mail.com",
+      "status": "Activo",
+      "feeStatus": "Pendiente",
+      "debt": 24000,
+      "nextDue": "10/06/2026",
+      "activities": [
+        "Básquet"
+      ],
+      "lastPayment": "10/04/2026",
+      "password": "1234"
+    },
+    {
+      "id": 101,
+      "dni": "22999888",
+      "memberNo": "1004",
+      "name": "Ana Torres",
+      "phone": "5492954000004",
+      "email": "ana@mail.com",
+      "status": "Activo",
+      "feeStatus": "Al día",
+      "debt": 0,
+      "nextDue": "10/07/2026",
+      "activities": [
+        "Gimnasia Artística"
+      ],
+      "lastPayment": "10/06/2026",
+      "password": "1234"
+    },
+    {
+      "id": 102,
+      "dni": "33444555",
+      "memberNo": "1005",
+      "name": "Lucas Fernández",
+      "phone": "5492954000005",
+      "email": "lucas@mail.com",
+      "status": "Activo",
+      "feeStatus": "Pendiente",
+      "debt": 8000,
+      "nextDue": "10/06/2026",
+      "activities": [
+        "Fútbol Infantil"
+      ],
+      "lastPayment": "10/05/2026",
+      "password": "1234"
+    }
+  ],
+  "activities": [
+    {
+      "id": 290001,
+      "name": "Gimnasia Artística",
+      "category": "Pulgas (3 y 4 años)",
+      "days": "Martes y jueves",
+      "time": "18:00 a 19:00",
+      "cost": 0,
+      "teacher": "",
+      "contact": "Administración",
+      "active": true,
+      "slots": 0,
+      "used": 0,
+      "notes": ""
+    },
+    {
+      "id": 290002,
+      "name": "Gimnasia Artística",
+      "category": "Escuela (5 a 7 años)",
+      "days": "Martes y jueves",
+      "time": "19:00 a 20:00",
+      "cost": 0,
+      "teacher": "",
+      "contact": "Administración",
+      "active": true,
+      "slots": 0,
+      "used": 0,
+      "notes": ""
+    },
+    {
+      "id": 290003,
+      "name": "Gimnasia Artística",
+      "category": "Promocional (8 a 10 años)",
+      "days": "Lunes, miércoles y viernes",
+      "time": "18:00 a 19:00",
+      "cost": 0,
+      "teacher": "",
+      "contact": "Administración",
+      "active": true,
+      "slots": 0,
+      "used": 0,
+      "notes": ""
+    },
+    {
+      "id": 290004,
+      "name": "Gimnasia Artística",
+      "category": "Pre federadas (11 años en adelante)",
+      "days": "Lunes, miércoles y viernes",
+      "time": "19:00 a 20:00",
+      "cost": 0,
+      "teacher": "",
+      "contact": "Administración",
+      "active": true,
+      "slots": 0,
+      "used": 0,
+      "notes": ""
+    },
+    {
+      "id": 290005,
+      "name": "Gimnasia Artística",
+      "category": "Federadas turno tarde",
+      "days": "Lunes a viernes",
+      "time": "15:00 a 18:00",
+      "cost": 0,
+      "teacher": "",
+      "contact": "Administración",
+      "active": true,
+      "slots": 0,
+      "used": 0,
+      "notes": ""
+    },
+    {
+      "id": 290006,
+      "name": "Gimnasia Artística",
+      "category": "Federadas turno noche",
+      "days": "Lunes a viernes",
+      "time": "20:00 a 21:30",
+      "cost": 0,
+      "teacher": "",
+      "contact": "Administración",
+      "active": true,
+      "slots": 0,
+      "used": 0,
+      "notes": ""
+    },
+    {
+      "id": 290007,
+      "name": "Básquet",
+      "category": "Femenino Sub 17 y Primera",
+      "days": "Martes y jueves",
+      "time": "16:00 a 17:15",
+      "cost": 0,
+      "teacher": "",
+      "contact": "Administración",
+      "active": true,
+      "slots": 0,
+      "used": 0,
+      "notes": ""
+    },
+    {
+      "id": 290008,
+      "name": "Básquet",
+      "category": "Femenino Sub 13 y Sub 15",
+      "days": "Martes y jueves",
+      "time": "17:15 a 18:30",
+      "cost": 0,
+      "teacher": "",
+      "contact": "Administración",
+      "active": true,
+      "slots": 0,
+      "used": 0,
+      "notes": ""
+    },
+    {
+      "id": 290009,
+      "name": "Básquet",
+      "category": "Femenino Sub 11",
+      "days": "Martes y jueves",
+      "time": "18:30 a 19:30",
+      "cost": 0,
+      "teacher": "",
+      "contact": "Administración",
+      "active": true,
+      "slots": 0,
+      "used": 0,
+      "notes": ""
+    },
+    {
+      "id": 290010,
+      "name": "Básquet",
+      "category": "Femenino Sub 17 y Primera",
+      "days": "Viernes",
+      "time": "16:30 a 18:00",
+      "cost": 0,
+      "teacher": "",
+      "contact": "Administración",
+      "active": true,
+      "slots": 0,
+      "used": 0,
+      "notes": ""
+    },
+    {
+      "id": 290011,
+      "name": "Básquet",
+      "category": "Femenino Sub 13",
+      "days": "Sábado",
+      "time": "08:30 a 09:30",
+      "cost": 0,
+      "teacher": "",
+      "contact": "Administración",
+      "active": true,
+      "slots": 0,
+      "used": 0,
+      "notes": ""
+    },
+    {
+      "id": 290012,
+      "name": "Básquet",
+      "category": "Femenino Sub 15",
+      "days": "Sábado",
+      "time": "09:30 a 10:30",
+      "cost": 0,
+      "teacher": "",
+      "contact": "Administración",
+      "active": true,
+      "slots": 0,
+      "used": 0,
+      "notes": ""
+    },
+    {
+      "id": 290013,
+      "name": "Básquet",
+      "category": "Femenino Sub 11",
+      "days": "Sábado",
+      "time": "10:00 a 11:00",
+      "cost": 0,
+      "teacher": "",
+      "contact": "Administración",
+      "active": true,
+      "slots": 0,
+      "used": 0,
+      "notes": ""
+    },
+    {
+      "id": 290014,
+      "name": "Básquet",
+      "category": "Masculino Sub 17",
+      "days": "Lunes y miércoles",
+      "time": "16:30 a 18:00",
+      "cost": 0,
+      "teacher": "",
+      "contact": "Administración",
+      "active": true,
+      "slots": 0,
+      "used": 0,
+      "notes": ""
+    },
+    {
+      "id": 290015,
+      "name": "Básquet",
+      "category": "Masculino Sub 17",
+      "days": "Viernes",
+      "time": "15:00 a 16:30",
+      "cost": 0,
+      "teacher": "",
+      "contact": "Administración",
+      "active": true,
+      "slots": 0,
+      "used": 0,
+      "notes": ""
+    },
+    {
+      "id": 290016,
+      "name": "Básquet",
+      "category": "Físico Sub 17",
+      "days": "Lunes",
+      "time": "15:30 a 16:30",
+      "cost": 0,
+      "teacher": "",
+      "contact": "Administración",
+      "active": true,
+      "slots": 0,
+      "used": 0,
+      "notes": ""
+    },
+    {
+      "id": 290017,
+      "name": "Básquet",
+      "category": "Físico Sub 17",
+      "days": "Martes y jueves",
+      "time": "15:30 a 16:30",
+      "cost": 0,
+      "teacher": "",
+      "contact": "Administración",
+      "active": true,
+      "slots": 0,
+      "used": 0,
+      "notes": ""
+    },
+    {
+      "id": 290018,
+      "name": "Básquet",
+      "category": "Masculino Sub 13",
+      "days": "Lunes y miércoles",
+      "time": "20:00 a 21:00",
+      "cost": 0,
+      "teacher": "",
+      "contact": "Administración",
+      "active": true,
+      "slots": 0,
+      "used": 0,
+      "notes": ""
+    },
+    {
+      "id": 290019,
+      "name": "Básquet",
+      "category": "Masculino Sub 13",
+      "days": "Martes y jueves",
+      "time": "18:30 a 19:30",
+      "cost": 0,
+      "teacher": "",
+      "contact": "Administración",
+      "active": true,
+      "slots": 0,
+      "used": 0,
+      "notes": ""
+    },
+    {
+      "id": 290020,
+      "name": "Básquet",
+      "category": "Físico Sub 13",
+      "days": "Martes y jueves",
+      "time": "17:30 a 18:30",
+      "cost": 0,
+      "teacher": "",
+      "contact": "Administración",
+      "active": true,
+      "slots": 0,
+      "used": 0,
+      "notes": ""
+    },
+    {
+      "id": 290021,
+      "name": "Básquet",
+      "category": "Masculino Sub 15",
+      "days": "Lunes y miércoles",
+      "time": "15:00 a 16:30",
+      "cost": 0,
+      "teacher": "",
+      "contact": "Administración",
+      "active": true,
+      "slots": 0,
+      "used": 0,
+      "notes": ""
+    },
+    {
+      "id": 290022,
+      "name": "Básquet",
+      "category": "Masculino Sub 15",
+      "days": "Viernes",
+      "time": "16:30 a 18:00",
+      "cost": 0,
+      "teacher": "",
+      "contact": "Administración",
+      "active": true,
+      "slots": 0,
+      "used": 0,
+      "notes": ""
+    },
+    {
+      "id": 290023,
+      "name": "Básquet",
+      "category": "Físico Sub 15",
+      "days": "Martes y jueves",
+      "time": "16:30 a 17:30",
+      "cost": 0,
+      "teacher": "",
+      "contact": "Administración",
+      "active": true,
+      "slots": 0,
+      "used": 0,
+      "notes": ""
+    },
+    {
+      "id": 290024,
+      "name": "Básquet",
+      "category": "Primera división",
+      "days": "Martes y jueves",
+      "time": "20:30 a 22:00",
+      "cost": 0,
+      "teacher": "",
+      "contact": "Administración",
+      "active": true,
+      "slots": 0,
+      "used": 0,
+      "notes": ""
+    },
+    {
+      "id": 290025,
+      "name": "Básquet",
+      "category": "Asociativo",
+      "days": "Martes y jueves",
+      "time": "19:30 a 20:30",
+      "cost": 0,
+      "teacher": "",
+      "contact": "Administración",
+      "active": true,
+      "slots": 0,
+      "used": 0,
+      "notes": ""
+    },
+    {
+      "id": 290026,
+      "name": "Básquet",
+      "category": "Asociativo",
+      "days": "Viernes",
+      "time": "20:00 a 21:00",
+      "cost": 0,
+      "teacher": "",
+      "contact": "Administración",
+      "active": true,
+      "slots": 0,
+      "used": 0,
+      "notes": ""
+    },
+    {
+      "id": 290027,
+      "name": "Básquet",
+      "category": "Sub 9",
+      "days": "Lunes, miércoles y viernes",
+      "time": "18:00 a 19:00",
+      "cost": 0,
+      "teacher": "",
+      "contact": "Administración",
+      "active": true,
+      "slots": 0,
+      "used": 0,
+      "notes": ""
+    },
+    {
+      "id": 290028,
+      "name": "Básquet",
+      "category": "Sub 9",
+      "days": "Sábados",
+      "time": "09:00 a 10:00",
+      "cost": 0,
+      "teacher": "",
+      "contact": "Administración",
+      "active": true,
+      "slots": 0,
+      "used": 0,
+      "notes": ""
+    },
+    {
+      "id": 290029,
+      "name": "Básquet",
+      "category": "Sub 11",
+      "days": "Lunes, miércoles y viernes",
+      "time": "19:00 a 20:00",
+      "cost": 0,
+      "teacher": "",
+      "contact": "Administración",
+      "active": true,
+      "slots": 0,
+      "used": 0,
+      "notes": ""
+    },
+    {
+      "id": 290030,
+      "name": "Básquet",
+      "category": "Sub 11",
+      "days": "Sábados",
+      "time": "09:00 a 10:00",
+      "cost": 0,
+      "teacher": "",
+      "contact": "Administración",
+      "active": true,
+      "slots": 0,
+      "used": 0,
+      "notes": ""
+    },
+    {
+      "id": 290031,
+      "name": "Básquet",
+      "category": "Escuelita",
+      "days": "Lunes, miércoles y viernes",
+      "time": "18:00 a 19:00",
+      "cost": 0,
+      "teacher": "",
+      "contact": "Administración",
+      "active": true,
+      "slots": 0,
+      "used": 0,
+      "notes": ""
+    },
+    {
+      "id": 290032,
+      "name": "Básquet",
+      "category": "Mosquitos",
+      "days": "Lunes, miércoles y viernes",
+      "time": "19:00 a 20:00",
+      "cost": 0,
+      "teacher": "",
+      "contact": "Administración",
+      "active": true,
+      "slots": 0,
+      "used": 0,
+      "notes": ""
+    },
+    {
+      "id": 290033,
+      "name": "Sóftbol",
+      "category": "Pre infantil mixto",
+      "days": "Martes y jueves",
+      "time": "18:00 a 19:15",
+      "cost": 0,
+      "teacher": "",
+      "contact": "Administración",
+      "active": true,
+      "slots": 0,
+      "used": 0,
+      "notes": ""
+    },
+    {
+      "id": 290034,
+      "name": "Sóftbol",
+      "category": "Infantil cadete mixto",
+      "days": "Lunes, miércoles y viernes",
+      "time": "18:00 a 19:30",
+      "cost": 0,
+      "teacher": "",
+      "contact": "Administración",
+      "active": true,
+      "slots": 0,
+      "used": 0,
+      "notes": ""
+    },
+    {
+      "id": 290035,
+      "name": "Sóftbol",
+      "category": "Femenino",
+      "days": "Miércoles y viernes",
+      "time": "20:00 a 21:30",
+      "cost": 0,
+      "teacher": "",
+      "contact": "Administración",
+      "active": true,
+      "slots": 0,
+      "used": 0,
+      "notes": ""
+    },
+    {
+      "id": 290036,
+      "name": "Pelota a Paleta",
+      "category": "Niños y niñas de 6 a 12 años",
+      "days": "Martes y jueves",
+      "time": "18:00 a 19:00",
+      "cost": 0,
+      "teacher": "",
+      "contact": "Administración",
+      "active": true,
+      "slots": 0,
+      "used": 0,
+      "notes": ""
+    },
+    {
+      "id": 290037,
+      "name": "Pelota a Paleta",
+      "category": "Niños y niñas de 6 a 12 años",
+      "days": "Sábados",
+      "time": "10:30 a 12:30",
+      "cost": 0,
+      "teacher": "",
+      "contact": "Administración",
+      "active": true,
+      "slots": 0,
+      "used": 0,
+      "notes": ""
+    },
+    {
+      "id": 290038,
+      "name": "Pelota a Paleta",
+      "category": "Adultos",
+      "days": "Martes y jueves",
+      "time": "17:00 a 18:00",
+      "cost": 0,
+      "teacher": "",
+      "contact": "Administración",
+      "active": true,
+      "slots": 0,
+      "used": 0,
+      "notes": ""
+    },
+    {
+      "id": 290039,
+      "name": "Fútbol",
+      "category": "Cuarta, Quinta y Sexta División",
+      "days": "Lunes a viernes",
+      "time": "16:00",
+      "cost": 0,
+      "teacher": "",
+      "contact": "Administración",
+      "active": true,
+      "slots": 0,
+      "used": 0,
+      "notes": ""
+    },
+    {
+      "id": 290040,
+      "name": "Fútbol",
+      "category": "Séptima y Octava División",
+      "days": "Lunes, miércoles, jueves y viernes",
+      "time": "18:00",
+      "cost": 0,
+      "teacher": "",
+      "contact": "Administración",
+      "active": true,
+      "slots": 0,
+      "used": 0,
+      "notes": ""
+    },
+    {
+      "id": 290041,
+      "name": "Fútbol",
+      "category": "Novena y Décima División",
+      "days": "Lunes a jueves",
+      "time": "18:00",
+      "cost": 0,
+      "teacher": "",
+      "contact": "Administración",
+      "active": true,
+      "slots": 0,
+      "used": 0,
+      "notes": ""
+    },
+    {
+      "id": 290042,
+      "name": "Fútbol",
+      "category": "Categoría 2017",
+      "days": "Lunes, miércoles y viernes",
+      "time": "18:00 a 19:30",
+      "cost": 0,
+      "teacher": "",
+      "contact": "Administración",
+      "active": true,
+      "slots": 0,
+      "used": 0,
+      "notes": ""
+    },
+    {
+      "id": 290043,
+      "name": "Fútbol",
+      "category": "Femenino Sub 12 y Sub 14",
+      "days": "Lunes, miércoles y viernes",
+      "time": "18:00 a 19:30",
+      "cost": 0,
+      "teacher": "",
+      "contact": "Administración",
+      "active": true,
+      "slots": 0,
+      "used": 0,
+      "notes": ""
+    },
+    {
+      "id": 290044,
+      "name": "Fútbol",
+      "category": "Categoría 2018",
+      "days": "Martes, jueves y viernes",
+      "time": "18:00 a 19:30",
+      "cost": 0,
+      "teacher": "",
+      "contact": "Administración",
+      "active": true,
+      "slots": 0,
+      "used": 0,
+      "notes": ""
+    },
+    {
+      "id": 290045,
+      "name": "Fútbol",
+      "category": "Categoría 2019",
+      "days": "Lunes, miércoles y viernes",
+      "time": "18:00 a 19:30",
+      "cost": 0,
+      "teacher": "",
+      "contact": "Administración",
+      "active": true,
+      "slots": 0,
+      "used": 0,
+      "notes": ""
+    },
+    {
+      "id": 290046,
+      "name": "Fútbol",
+      "category": "Categorías 2020-2021",
+      "days": "Martes, jueves y viernes",
+      "time": "18:00 a 19:30",
+      "cost": 0,
+      "teacher": "",
+      "contact": "Administración",
+      "active": true,
+      "slots": 0,
+      "used": 0,
+      "notes": ""
+    }
+  ],
+  "payments": [
+    {
+      "id": 1,
+      "memberId": 1,
+      "memberName": "Juan Pérez",
+      "amount": 12000,
+      "method": "Mercado Pago",
+      "period": "Junio 2026",
+      "date": "2026-06-10",
+      "note": "Pago demo"
+    }
+  ],
+  "enrollments": [],
+  "knowledge": [
+    {
+      "id": 1,
+      "q": "como asociarme",
+      "a": "Para asociarte acercate a administración con DNI, teléfono y una foto carnet. También podés iniciar la preinscripción por WhatsApp."
+    },
+    {
+      "id": 2,
+      "q": "medios de pago transferencia alias cbu mercado pago",
+      "a": "Podés pagar en efectivo en administración, por transferencia bancaria o Mercado Pago. Alias demo: ALLBOYS.CLUB.MP. Enviá el comprobante por WhatsApp para imputarlo."
+    },
+    {
+      "id": 3,
+      "q": "horario administracion atencion telefono",
+      "a": "Administración atiende de lunes a viernes de 9:00 a 13:00 y de 17:00 a 20:00."
+    },
+    {
+      "id": 4,
+      "q": "carnet digital",
+      "a": "El carnet digital estará disponible para socios activos. Se puede consultar con DNI o número de socio."
+    },
+    {
+      "q": "direccion ubicacion sede donde queda club",
+      "a": "La sede del Club Atlético All Boys Santa Rosa figura en Hilario Lagos 435, Santa Rosa, La Pampa."
+    },
+    {
+      "q": "telefono whatsapp contacto club",
+      "a": "El contacto publicado por el club es +54 9 2954 592312. También podés escribir a administración desde este asistente."
+    },
+    {
+      "q": "natatorio pileta natacion ismael amit",
+      "a": "La web oficial menciona el Natatorio Ismael Amit como una de las instalaciones/actividades destacadas del club."
+    },
+    {
+      "q": "futbol femenino gimnasia artistica cantina",
+      "a": "La web oficial destaca fútbol femenino, gimnasia artística y la Cantina del club, además del Natatorio Ismael Amit."
+    },
+    {
+      "q": "pileta natatorio piscina nadar clases natacion niños chicos",
+      "a": "Sí, All Boys cuenta con el Natatorio Ismael Amit. Para horarios, cupos, edades y valores actualizados conviene confirmarlo con administración."
+    },
+    {
+      "q": "quiero saber cuanto debo tengo deuda cuota estado",
+      "a": "Para consultar tu cuota necesito tu DNI o número de socio. Con eso reviso si estás al día o si registrás deuda pendiente."
+    },
+    {
+      "q": "menu ayuda opciones en que puedo ayudarte",
+      "a": "Puedo ayudarte con cuotas, actividades, inscripciones, medios de pago, noticias, sede/contacto o derivarte con administración."
+    },
+    {
+      "q": "cuota deuda debo cuanto debo estado de cuota",
+      "a": "Claro, te ayudo con eso. Pasame tu DNI o número de socio y reviso si registrás deuda."
+    },
+    {
+      "q": "pileta natatorio piscina natacion niños adultos horarios",
+      "a": "Sí, All Boys cuenta con el Natatorio Ismael Amit. Puedo orientarte, pero para cupos, valores y horarios actualizados conviene confirmarlo con administración."
+    },
+    {
+      "q": "hablar persona humano administracion telefono contacto",
+      "a": "Te puedo derivar con administración para que una persona del club continúe la atención."
+    },
+    {
+      "q": "natatorio pileta piscina nadar clases natacion chicos niños menor adulto se puede meter inscripción",
+      "a": "Sí, All Boys cuenta con el Natatorio Ismael Amit. Si te interesa ingresar o anotar a alguien, lo ideal es consultar horarios, cupos, edades y valores con administración."
+    },
+    {
+      "q": "hijo nene niño menor 8 años natacion pileta",
+      "a": "Para menores, administración puede orientarte con horarios, cupos y requisitos de inscripción del natatorio."
+    },
+    {
+      "q": "horarios natatorio pileta",
+      "a": "Los horarios del natatorio pueden variar según edad, nivel y cupos. Te puedo derivar con administración para confirmarlo."
+    },
+    {
+      "q": "natatorio pileta piscina natacion niños chicos menor se puede meter inscripcion",
+      "a": "Sí, All Boys cuenta con el Natatorio Ismael Amit. Para menores o inscripciones conviene confirmar edades, cupos, horarios y valores con administración."
+    },
+    {
+      "q": "como asociarme hacerme socio alta socio",
+      "a": "Para asociarte, el club puede pedir DNI, teléfono, datos personales y una forma de contacto. También se puede iniciar una preinscripción para que administración continúe el trámite."
+    },
+    {
+      "q": "medios de pago transferencia mercado pago comprobante",
+      "a": "Los medios de pago disponibles son efectivo en administración, transferencia y Mercado Pago. Si ya pagaste, podés enviar el comprobante para que administración lo impute."
+    },
+    {
+      "q": "panchito personalidad tono menu",
+      "a": "Panchito es el asistente virtual oficial de All Boys. Responde de forma cordial, clara, humana y servicial. No inventa información; si un dato no está cargado, deriva a administración."
+    },
+    {
+      "q": "alias pago allboys transferencia mercado pago",
+      "a": "Alias para pagos: allboyseslapampa. Después de pagar, enviar el comprobante al WhatsApp del club 2954-592313 para que administración lo revise."
+    },
+    {
+      "q": "natatorio pileta natacion horarios cupos precios coordinador",
+      "a": "Las consultas de natatorio, pileta, horarios, niveles, cupos y precios se derivan al coordinador o a administración para evitar informar datos desactualizados."
+    },
+    {
+      "q": "administracion carolina monica derivacion",
+      "a": "Las consultas que Panchito no puede resolver se derivan a administración. Actualmente responden Carolina y Mónica según disponibilidad."
+    }
+  ],
+  "documents": [
+    {
+      "id": 1,
+      "title": "Reglamento de actividades",
+      "type": "texto",
+      "content": "Para inscribirse a una actividad el socio debe estar activo y sin deuda. Las actividades pueden tener cupo limitado. Fútbol infantil entrena lunes y miércoles de 18:00 a 19:30.",
+      "createdAt": "2026-06-12T00:00:00.000Z"
+    },
+    {
+      "id": 7001,
+      "title": "Web oficial - Inicio All Boys Santa Rosa",
+      "source": "https://cluballboyslapampa.org/",
+      "type": "web",
+      "createdAt": "2026-06-12T00:00:00.000Z",
+      "content": "La web oficial identifica al club como ALL BOYS SANTA ROSA - LA PAMPA. En la página principal aparecen secciones Inicio, El Club, Actividades, La Cantina y Carnet Digital. También muestra referencias a la hinchada, la Cantina del club, el Natatorio Ismael Amit, gimnasia artística y fútbol femenino. La sede figura en Hilario Lagos 435, Santa Rosa. El contacto publicado es +54 9 2954 592312 y el email institucional publicado es info@cluballboyslapampa.org."
+    },
+    {
+      "id": 7002,
+      "title": "Actividades destacadas - All Boys",
+      "source": "https://cluballboyslapampa.org/",
+      "type": "web",
+      "createdAt": "2026-06-12T00:00:00.000Z",
+      "content": "Actividades e instalaciones mencionadas en la web oficial: Natatorio Ismael Amit, gimnasia artística, fútbol femenino y la Cantina del club. El bot debe responder que la información puede confirmarse con administración cuando se trate de horarios, cupos o valores actualizados."
+    },
+    {
+      "id": 7003,
+      "title": "Ubicación y contacto - All Boys",
+      "source": "https://cluballboyslapampa.org/",
+      "type": "web",
+      "createdAt": "2026-06-12T00:00:00.000Z",
+      "content": "La sede del Club Atlético All Boys Santa Rosa figura en Hilario Lagos 435, Santa Rosa, La Pampa. El WhatsApp de contacto publicado en la web es +54 9 2954 592312."
+    },
+    {
+      "id": 9001,
+      "title": "Relevamiento WhatsApp actual",
+      "type": "relevamiento",
+      "source": "WHATSAPP CONSULTAS ACTUALES.docx",
+      "createdAt": "2026-06-19",
+      "content": "El club recibe principalmente consultas por actividades, días, horarios y precios. Responden Carolina y Mónica, empleadas de ventanilla, cuando pueden. Están desbordadas y a veces pasan días sin responder. El objetivo del bot es responder más rápido, reducir trabajo administrativo, ordenar consultas, informar actividades, consultar cuotas y mejorar la atención a socios."
+    },
+    {
+      "id": 9002,
+      "title": "Reglas de Panchito",
+      "type": "flujo",
+      "source": "BOT DE WHATSAPP ALL BOYS.docx",
+      "createdAt": "2026-06-19",
+      "content": "Panchito debe usar opciones con letras A, B, C, D, E. Siempre ofrecer volver al menú. Siempre ofrecer hablar con administración cuando tenga sentido. Si no sabe algo, no inventa y deriva. Si la consulta es de natación, deriva al coordinador. Si escribe un menor, pedir que continúe un adulto para pagos, inscripción, natación o datos personales."
+    },
+    {
+      "id": 9003,
+      "title": "Horarios reales de actividades",
+      "type": "horarios",
+      "source": "HORARIOS BOOT.docx",
+      "createdAt": "2026-06-19",
+      "content": "Actividades reales: gimnasia artística, básquet femenino, básquet masculino, básquet escuelita, sóftbol, pelota a paleta, fútbol divisiones, fútbol infantil y fútbol femenino. Los horarios están cargados en la colección activities."
+    }
+  ],
+  "news": [
+    {
+      "title": "Inscripción abierta a actividades de invierno",
+      "date": "2026-06-12"
+    },
+    {
+      "title": "Recordatorio de vencimiento de cuotas el día 10",
+      "date": "2026-06-10"
+    }
+  ],
+  "sessions": [
+    {
+      "phone": "+5492954218753",
+      "state": "idle",
+      "data": {
+        "topic": "",
+        "menu": "",
+        "claimDraft": {}
+      },
+      "updatedAt": "2026-06-27T18:09:03.094Z"
+    },
+    {
+      "phone": "test48",
+      "state": "waiting_signup_name",
+      "data": {
+        "topic": "actividades",
+        "menu": "signup_name",
+        "currentActivity": "Fútbol",
+        "currentCategory": "⚽ Cuarta, Quinta y Sexta División",
+        "disciplineDetail": {
+          "title": "⚽ Cuarta, Quinta y Sexta División",
+          "activity": "Fútbol",
+          "needles": [
+            "Cuarta",
+            "Quinta",
+            "Sexta"
+          ],
+          "backMenu": "football"
+        },
+        "lastDisciplineAnswer": "schedule",
+        "signupDraft": {
+          "activity": "Fútbol",
+          "category": "⚽ Cuarta, Quinta y Sexta División",
+          "source": "Panchito"
+        }
+      },
+      "updatedAt": "2026-06-26T14:38:42.827Z"
+    }
+  ],
+  "notifications": [],
+  "conversations": [
+    {
+      "id": 1782583743094,
+      "phone": "+5492954218753",
+      "text": "Menu",
+      "reply": "¡Hola! Soy Panchito, el asistente virtual de All Boys.\n\nEstoy para ayudarte con actividades, horarios, inscripciones, cuotas y consultas del club.\n\nA. Actividades, días y horarios 🏀⚽🤸\nB. Precios e inscripción 📝\nC. Cuotas y pagos 💳\nD. Natatorio / pileta 🏊\nE. Hablar con administración 📞\nF. Reclamos o sugerencias 💬\nG. Prensa, CV, proveedores o propuestas 📩\nH. Otra consulta 🔎\n\nPodés responder con la letra o escribir el tema.",
+      "intent": "menu",
+      "confidence": 0.95,
+      "sessionState": "idle",
+      "topic": "",
+      "createdAt": "2026-06-27T18:09:03.094Z"
+    },
+    {
+      "id": 1782583743051,
+      "phone": "+5492954218753",
+      "text": "Inicio",
+      "reply": "¡Hola! Soy Panchito, el asistente virtual de All Boys.\n\nEstoy para ayudarte con actividades, horarios, inscripciones, cuotas y consultas del club.\n\nA. Actividades, días y horarios 🏀⚽🤸\nB. Precios e inscripción 📝\nC. Cuotas y pagos 💳\nD. Natatorio / pileta 🏊\nE. Hablar con administración 📞\nF. Reclamos o sugerencias 💬\nG. Prensa, CV, proveedores o propuestas 📩\nH. Otra consulta 🔎\n\nPodés responder con la letra o escribir el tema.",
+      "intent": "menu",
+      "confidence": 0.95,
+      "sessionState": "idle",
+      "topic": "",
+      "createdAt": "2026-06-27T18:09:03.051Z"
+    },
+    {
+      "id": 1782583743000,
+      "phone": "+5492954218753",
+      "text": "Menu",
+      "reply": "¡Hola! Soy Panchito, el asistente virtual de All Boys.\n\nEstoy para ayudarte con actividades, horarios, inscripciones, cuotas y consultas del club.\n\nA. Actividades, días y horarios 🏀⚽🤸\nB. Precios e inscripción 📝\nC. Cuotas y pagos 💳\nD. Natatorio / pileta 🏊\nE. Hablar con administración 📞\nF. Reclamos o sugerencias 💬\nG. Prensa, CV, proveedores o propuestas 📩\nH. Otra consulta 🔎\n\nPodés responder con la letra o escribir el tema.",
+      "intent": "menu",
+      "confidence": 0.9,
+      "sessionState": "idle",
+      "topic": "reclamo",
+      "createdAt": "2026-06-27T18:09:03.000Z"
+    },
+    {
+      "id": 1782583742959,
+      "phone": "+5492954218753",
+      "text": "F",
+      "reply": "Lamento que hayas tenido un inconveniente.\n\nVoy a registrar el reclamo paso por paso para que administración pueda revisarlo correctamente. ✅\n\n1/4 Escribime el nombre y apellido.\n\nTambién podés escribir “administración” para hablar con una persona o “menú” para volver al inicio.",
+      "intent": "reclamo_sugerencia",
+      "confidence": 0.98,
+      "sessionState": "waiting_claim_name",
+      "topic": "reclamo",
+      "createdAt": "2026-06-27T18:09:02.959Z"
+    },
+    {
+      "id": 1782583742918,
+      "phone": "+5492954218753",
+      "text": "Hola",
+      "reply": "¡Hola! 😊 Soy Panchito.\n\nPodés consultarme por actividades, horarios, inscripción, cuotas o administración.",
+      "intent": "saludo",
+      "confidence": 0.99,
+      "sessionState": "idle",
+      "topic": "actividades",
+      "createdAt": "2026-06-27T18:09:02.918Z"
+    },
+    {
+      "id": 1782583742875,
+      "phone": "+5492954218753",
+      "text": "Hola",
+      "reply": "👋 ¡Buenas! Estoy acá para ayudarte con consultas del club.\n\nContame qué necesitás.",
+      "intent": "saludo",
+      "confidence": 0.99,
+      "sessionState": "idle",
+      "topic": "actividades",
+      "createdAt": "2026-06-27T18:09:02.875Z"
+    },
+    {
+      "id": 1782583742834,
+      "phone": "+5492954218753",
+      "text": "F",
+      "reply": "¡Hola! Soy Panchito, el asistente virtual de All Boys.\n\nEstoy para ayudarte con actividades, horarios, inscripciones, cuotas y consultas del club.\n\nA. Actividades, días y horarios 🏀⚽🤸\nB. Precios e inscripción 📝\nC. Cuotas y pagos 💳\nD. Natatorio / pileta 🏊\nE. Hablar con administración 📞\nF. Reclamos o sugerencias 💬\nG. Prensa, CV, proveedores o propuestas 📩\nH. Otra consulta 🔎\n\nPodés responder con la letra o escribir el tema.",
+      "intent": "submenu_actividades",
+      "confidence": 0.96,
+      "sessionState": "idle",
+      "topic": "actividades",
+      "createdAt": "2026-06-27T18:09:02.834Z"
+    },
+    {
+      "id": 1782583742787,
+      "phone": "+5492954218753",
+      "text": "A",
+      "reply": "Perfecto. Estas son las actividades deportivas del club.\n\n¿Qué actividad querés consultar?\n\nA. Gimnasia artística 🤸\nB. Básquet 🏀\nC. Sóftbol 🥎\nD. Pelota a paleta\nE. Fútbol ⚽\nF. Volver al menú principal\n\nPodés seleccionar una opción o escribir el nombre de la actividad.",
+      "intent": "actividades",
+      "confidence": 0.96,
+      "sessionState": "waiting_activities",
+      "topic": "actividades",
+      "createdAt": "2026-06-27T18:09:02.787Z"
+    },
+    {
+      "id": 1782583733303,
+      "phone": "+5492954218753",
+      "text": "Menu",
+      "reply": "¡Hola! Soy Panchito, el asistente virtual de All Boys.\n\nEstoy para ayudarte con actividades, horarios, inscripciones, cuotas y consultas del club.\n\nA. Actividades, días y horarios 🏀⚽🤸\nB. Precios e inscripción 📝\nC. Cuotas y pagos 💳\nD. Natatorio / pileta 🏊\nE. Hablar con administración 📞\nF. Reclamos o sugerencias 💬\nG. Prensa, CV, proveedores o propuestas 📩\nH. Otra consulta 🔎\n\nPodés responder con la letra o escribir el tema.",
+      "intent": "menu",
+      "confidence": 0.95,
+      "sessionState": "idle",
+      "topic": "",
+      "createdAt": "2026-06-27T18:08:53.303Z"
+    },
+    {
+      "id": 1782484722827,
+      "phone": "test48",
+      "text": "insripcion",
+      "reply": "Perfecto. Vamos a iniciar una solicitud de inscripción 📝\n\nActividad: Fútbol\nCategoría: ⚽ Cuarta, Quinta y Sexta División\n\nPara iniciar la inscripción en ⚽ Cuarta, Quinta y Sexta División, necesito algunos datos.\n\n1/3 ¿Cuál es el nombre y apellido de la persona que desea inscribirse?\n\nPodés escribir MENÚ para cancelar.",
+      "intent": "memoria_categoria_inscription",
+      "confidence": 0.98,
+      "sessionState": "waiting_signup_name",
+      "topic": "actividades",
+      "createdAt": "2026-06-26T14:38:42.827Z"
+    },
+    {
+      "id": 1782484722795,
+      "phone": "test48",
+      "text": "horarios",
+      "reply": "📅 ⚽ Cuarta, Quinta y Sexta División\n\n• Cuarta, Quinta y Sexta División: Lunes a viernes de 16:00\n\n¿Qué más querés consultar de esta categoría?\nA. 👨‍🏫 Profesor/a\nB. 💰 Precio/cuota\nC. 📝 Inscripción\nD. 📲 WhatsApp / Administración\nE. 🔙 Volver a categorías\nF. 🏠 Menú principal",
+      "intent": "memoria_categoria_schedule",
+      "confidence": 0.98,
+      "sessionState": "waiting_after_discipline_answer",
+      "topic": "actividades",
+      "createdAt": "2026-06-26T14:38:42.795Z"
+    },
+    {
+      "id": 1782484722770,
+      "phone": "test48",
+      "text": "a",
+      "reply": "⚽ Cuarta, Quinta y Sexta División\n\n¿Qué querés consultar?\n\nA. Horarios 📅\nB. Profesor/a 👨‍🏫\nC. Precio/cuota 💰\nD. Inscripción 📝\nE. Hablar con administración 📞\nF. Volver\nG. Menú principal",
+      "intent": "submenu_futbol",
+      "confidence": 0.96,
+      "sessionState": "waiting_discipline_detail",
+      "topic": "actividades",
+      "createdAt": "2026-06-26T14:38:42.770Z"
+    },
+    {
+      "id": 1782484722744,
+      "phone": "test48",
+      "text": "futbol",
+      "reply": "¡Buenísimo! Te interesa Fútbol 😊\n\nFútbol ⚽\n\n¿Qué categoría querés consultar?\n\nA. Cuarta, Quinta y Sexta División\nB. Séptima y Octava División\nC. Novena y Décima División\nD. Categorías 2017, 2018, 2019, 2020 y 2021\nE. Femenino Sub 12 y Sub 14\nF. Volver a actividades\nG. Volver al menú principal",
+      "intent": "actividad_football_texto_libre",
+      "confidence": 0.97,
+      "sessionState": "waiting_football",
+      "topic": "actividades",
+      "createdAt": "2026-06-26T14:38:42.744Z"
+    },
+    {
+      "id": 1782170686709,
+      "phone": "test5",
+      "text": "a",
+      "reply": "💰 🤸 Pulguitas (3 y 4 años)\n\nEl valor de esta actividad todavía no fue informado por la administración del club.\n\n¿Qué querés hacer ahora?\nA. 🔙 Volver a categorías\nB. 🏅 Volver a actividades\nC. 🏠 Menú principal\nD. 💬 Realizar otra consulta",
+      "intent": "submenu_gimnasia",
+      "confidence": 0.96,
+      "sessionState": "waiting_after_discipline_answer",
+      "topic": "inscripcion",
+      "createdAt": "2026-06-22T23:24:46.709Z"
+    },
+    {
+      "id": 1782170685545,
+      "phone": "test5",
+      "text": "a",
+      "reply": "🤸 Gimnasia Artística\n\n¿Qué categoría querés consultar?\n\nA. Pulguitas (3 y 4 años)\nB. Escuela (5 a 7 años)\nC. Promocional (8 a 10 años)\nD. Pre federadas (11 años en adelante)\nE. Federadas\nF. Volver a actividades\nG. Volver al menú principal",
+      "intent": "submenu_actividades",
+      "confidence": 0.96,
+      "sessionState": "waiting_gymnastics",
+      "topic": "inscripcion",
+      "createdAt": "2026-06-22T23:24:45.545Z"
+    },
+    {
+      "id": 1782170684350,
+      "phone": "test5",
+      "text": "a",
+      "reply": "Perfecto. Primero elegí el deporte o disciplina para consultar el precio\n\nA. Gimnasia artística 🤸\nB. Básquet 🏀\nC. Sóftbol 🥎\nD. Pelota a paleta\nE. Fútbol ⚽\nF. Volver al menú principal",
+      "intent": "submenu_precios",
+      "confidence": 0.94,
+      "sessionState": "waiting_activities",
+      "topic": "inscripcion",
+      "createdAt": "2026-06-22T23:24:44.350Z"
+    },
+    {
+      "id": 1782170683171,
+      "phone": "test5",
+      "text": "b",
+      "reply": "Te ayudo con precios e inscripción 📝\n\nPara brindarte información correcta, elegí qué tipo de consulta querés realizar.\n\nA. Precio de una actividad\nB. Cómo inscribirme a una actividad\nC. Cómo asociarme al club\nD. Inscripción para un menor\nE. Hablar con administración\nF. Volver al menú principal",
+      "intent": "precios_inscripcion",
+      "confidence": 0.96,
+      "sessionState": "waiting_prices",
+      "topic": "inscripcion",
+      "createdAt": "2026-06-22T23:24:43.171Z"
+    },
+    {
+      "id": 1782170681984,
+      "phone": "test5",
+      "text": "hola",
+      "reply": "¡Hola! Soy Panchito, el asistente virtual de All Boys.\n\nEstoy para ayudarte con actividades, horarios, inscripciones, cuotas y consultas del club.\n\nA. Actividades, días y horarios 🏀⚽🤸\nB. Precios e inscripción 📝\nC. Cuotas y pagos 💳\nD. Natatorio / pileta 🏊\nE. Hablar con administración 📞\nF. Reclamos o sugerencias 💬\nG. Prensa, CV, proveedores o propuestas 📩\nH. Otra consulta 🔎\n\nPodés responder con la letra o escribir el tema.",
+      "intent": "menu",
+      "confidence": 0.95,
+      "sessionState": "idle",
+      "topic": "",
+      "createdAt": "2026-06-22T23:24:41.984Z"
+    },
+    {
+      "id": 1782170674518,
+      "phone": "test4",
+      "text": "a",
+      "reply": "📅 🤸 Pulguitas (3 y 4 años)\n\n• Pulgas (3 y 4 años): Martes y jueves de 18:00 a 19:00\n\n¿Qué querés hacer ahora?\nA. 🔙 Volver a categorías\nB. 🏅 Volver a actividades\nC. 🏠 Menú principal\nD. 💬 Realizar otra consulta",
+      "intent": "detalle_disciplina",
+      "confidence": 0.94,
+      "sessionState": "waiting_after_discipline_answer",
+      "topic": "actividades",
+      "createdAt": "2026-06-22T23:24:34.518Z"
+    },
+    {
+      "id": 1782170673196,
+      "phone": "test4",
+      "text": "a",
+      "reply": "🤸 Pulguitas (3 y 4 años)\n\n¿Qué querés consultar?\n\nA. Horarios 📅\nB. Profesor/a 👨‍🏫\nC. Precio/cuota 💰\nD. Inscripción 📝\nE. Hablar con administración 📞\nF. Volver\nG. Menú principal",
+      "intent": "submenu_gimnasia",
+      "confidence": 0.96,
+      "sessionState": "waiting_discipline_detail",
+      "topic": "actividades",
+      "createdAt": "2026-06-22T23:24:33.196Z"
+    },
+    {
+      "id": 1782170671962,
+      "phone": "test4",
+      "text": "a",
+      "reply": "🤸 Gimnasia Artística\n\n¿Qué categoría querés consultar?\n\nA. Pulguitas (3 y 4 años)\nB. Escuela (5 a 7 años)\nC. Promocional (8 a 10 años)\nD. Pre federadas (11 años en adelante)\nE. Federadas\nF. Volver a actividades\nG. Volver al menú principal",
+      "intent": "submenu_actividades",
+      "confidence": 0.96,
+      "sessionState": "waiting_gymnastics",
+      "topic": "actividades",
+      "createdAt": "2026-06-22T23:24:31.962Z"
+    },
+    {
+      "id": 1782170670812,
+      "phone": "test4",
+      "text": "a",
+      "reply": "Perfecto. Estas son las actividades deportivas del club.\n\n¿Qué actividad querés consultar?\n\nA. Gimnasia artística 🤸\nB. Básquet 🏀\nC. Sóftbol 🥎\nD. Pelota a paleta\nE. Fútbol ⚽\nF. Volver al menú principal\n\nPodés seleccionar una opción o escribir el nombre de la actividad.",
+      "intent": "actividades",
+      "confidence": 0.96,
+      "sessionState": "waiting_activities",
+      "topic": "actividades",
+      "createdAt": "2026-06-22T23:24:30.812Z"
+    },
+    {
+      "id": 1782170669553,
+      "phone": "test4",
+      "text": "hola",
+      "reply": "¡Hola! Soy Panchito, el asistente virtual de All Boys.\n\nEstoy para ayudarte con actividades, horarios, inscripciones, cuotas y consultas del club.\n\nA. Actividades, días y horarios 🏀⚽🤸\nB. Precios e inscripción 📝\nC. Cuotas y pagos 💳\nD. Natatorio / pileta 🏊\nE. Hablar con administración 📞\nF. Reclamos o sugerencias 💬\nG. Prensa, CV, proveedores o propuestas 📩\nH. Otra consulta 🔎\n\nPodés responder con la letra o escribir el tema.",
+      "intent": "menu",
+      "confidence": 0.95,
+      "sessionState": "idle",
+      "topic": "",
+      "createdAt": "2026-06-22T23:24:29.553Z"
+    },
+    {
+      "id": 1782170659202,
+      "phone": "test3",
+      "text": "a",
+      "reply": "Te ayudo con cuotas y pagos 💳\n\nPara ayudarte mejor, elegí una opción.\n\n¿Qué necesitás?\n\nA. Consultar si tengo deuda\nB. Avisar que ya pagué\nC. Consultar medios de pago\nD. Hablar con administración\nE. Volver al menú principal",
+      "intent": "post_pagos",
+      "confidence": 0.94,
+      "sessionState": "waiting_payments",
+      "topic": "cuota",
+      "createdAt": "2026-06-22T23:24:19.202Z"
+    },
+    {
+      "id": 1782170658012,
+      "phone": "test3",
+      "text": "b",
+      "reply": "Perfecto. Si realizaste un pago, podés enviar el comprobante a Administración para que puedan verificarlo.\n\nAdministración All Boys\nCarolina / Mónica\n📲 Abrir WhatsApp Administración\n\nLa administración podrá revisar el comprobante y confirmar el estado del pago.\n\n¿Qué querés hacer ahora?\nA. 🔙 Volver\nB. 🏠 Menú principal\nC. 💬 Otra consulta",
+      "intent": "submenu_pagos",
+      "confidence": 0.94,
+      "sessionState": "waiting_payments_after",
+      "topic": "cuota",
+      "createdAt": "2026-06-22T23:24:18.012Z"
+    },
+    {
+      "id": 1782170656819,
+      "phone": "test3",
+      "text": "c",
+      "reply": "Te ayudo con cuotas y pagos 💳\n\nPara ayudarte mejor, elegí una opción.\n\n¿Qué necesitás?\n\nA. Consultar si tengo deuda\nB. Avisar que ya pagué\nC. Consultar medios de pago\nD. Hablar con administración\nE. Volver al menú principal",
+      "intent": "cuotas_pagos",
+      "confidence": 0.96,
+      "sessionState": "waiting_payments",
+      "topic": "cuota",
+      "createdAt": "2026-06-22T23:24:16.819Z"
+    },
+    {
+      "id": 1782170655651,
+      "phone": "test3",
+      "text": "hola",
+      "reply": "¡Hola! Soy Panchito, el asistente virtual de All Boys.\n\nEstoy para ayudarte con actividades, horarios, inscripciones, cuotas y consultas del club.\n\nA. Actividades, días y horarios 🏀⚽🤸\nB. Precios e inscripción 📝\nC. Cuotas y pagos 💳\nD. Natatorio / pileta 🏊\nE. Hablar con administración 📞\nF. Reclamos o sugerencias 💬\nG. Prensa, CV, proveedores o propuestas 📩\nH. Otra consulta 🔎\n\nPodés responder con la letra o escribir el tema.",
+      "intent": "menu",
+      "confidence": 0.95,
+      "sessionState": "idle",
+      "topic": "",
+      "createdAt": "2026-06-22T23:24:15.651Z"
+    },
+    {
+      "id": 1782169843265,
+      "phone": "testv30b",
+      "text": "a",
+      "reply": "💰 🤸 Pulguitas (3 y 4 años)\n\nEl valor de esta actividad todavía no fue informado por la administración del club.\n\n¿Qué querés hacer ahora?\nA. Volver a categorías\nB. Volver a actividades\nC. Menú principal\nD. Realizar otra consulta",
+      "intent": "submenu_gimnasia",
+      "confidence": 0.96,
+      "sessionState": "waiting_after_discipline_answer",
+      "topic": "inscripcion",
+      "createdAt": "2026-06-22T23:10:43.265Z"
+    },
+    {
+      "id": 1782169842065,
+      "phone": "testv30b",
+      "text": "a",
+      "reply": "🤸 Gimnasia Artística\n\n¿Qué categoría querés consultar?\n\nA. Pulguitas (3 y 4 años)\nB. Escuela (5 a 7 años)\nC. Promocional (8 a 10 años)\nD. Pre federadas (11 años en adelante)\nE. Federadas\nF. Volver a actividades\nG. Volver al menú principal",
+      "intent": "submenu_actividades",
+      "confidence": 0.96,
+      "sessionState": "waiting_gymnastics",
+      "topic": "inscripcion",
+      "createdAt": "2026-06-22T23:10:42.065Z"
+    },
+    {
+      "id": 1782169840874,
+      "phone": "testv30b",
+      "text": "a",
+      "reply": "Perfecto. Primero elegí el deporte o disciplina para consultar el precio\n\nA. Gimnasia artística 🤸\nB. Básquet 🏀\nC. Sóftbol 🥎\nD. Pelota a paleta\nE. Fútbol ⚽\nF. Volver al menú principal",
+      "intent": "submenu_precios",
+      "confidence": 0.94,
+      "sessionState": "waiting_activities",
+      "topic": "inscripcion",
+      "createdAt": "2026-06-22T23:10:40.874Z"
+    },
+    {
+      "id": 1782169839584,
+      "phone": "testv30b",
+      "text": "b",
+      "reply": "Te ayudo con precios e inscripción 📝\n\nPara brindarte información correcta, elegí qué tipo de consulta querés realizar.\n\nA. Precio de una actividad\nB. Cómo inscribirme a una actividad\nC. Cómo asociarme al club\nD. Inscripción para un menor\nE. Hablar con administración\nF. Volver al menú principal",
+      "intent": "precios_inscripcion",
+      "confidence": 0.96,
+      "sessionState": "waiting_prices",
+      "topic": "inscripcion",
+      "createdAt": "2026-06-22T23:10:39.584Z"
+    },
+    {
+      "id": 1782169838434,
+      "phone": "testv30b",
+      "text": "hola",
+      "reply": "¡Hola! Soy Panchito, el asistente virtual de All Boys.\n\nEstoy para ayudarte con actividades, horarios, inscripciones, cuotas y consultas del club.\n\nA. Actividades, días y horarios 🏀⚽🤸\nB. Precios e inscripción 📝\nC. Cuotas y pagos 💳\nD. Natatorio / pileta 🏊\nE. Hablar con administración 📞\nF. Reclamos o sugerencias 💬\nG. Prensa, CV, proveedores o propuestas 📩\nH. Otra consulta 🔎\n\nPodés responder con la letra o escribir el tema.",
+      "intent": "menu",
+      "confidence": 0.95,
+      "sessionState": "idle",
+      "topic": "",
+      "createdAt": "2026-06-22T23:10:38.434Z"
+    },
+    {
+      "id": 1782169830016,
+      "phone": "testv30",
+      "text": "a",
+      "reply": "📅 🤸 Pulguitas (3 y 4 años)\n\n• Pulgas (3 y 4 años): Martes y jueves de 18:00 a 19:00\n\n¿Qué querés hacer ahora?\nA. Volver a categorías\nB. Volver a actividades\nC. Menú principal\nD. Realizar otra consulta",
+      "intent": "detalle_disciplina",
+      "confidence": 0.94,
+      "sessionState": "waiting_after_discipline_answer",
+      "topic": "actividades",
+      "createdAt": "2026-06-22T23:10:30.016Z"
+    },
+    {
+      "id": 1782169828741,
+      "phone": "testv30",
+      "text": "a",
+      "reply": "🤸 Pulguitas (3 y 4 años)\n\n¿Qué querés consultar?\n\nA. Horarios 📅\nB. Profesor/a 👨‍🏫\nC. Precio/cuota 💰\nD. Inscripción 📝\nE. Hablar con administración 📞\nF. Volver\nG. Menú principal",
+      "intent": "submenu_gimnasia",
+      "confidence": 0.96,
+      "sessionState": "waiting_discipline_detail",
+      "topic": "actividades",
+      "createdAt": "2026-06-22T23:10:28.741Z"
+    },
+    {
+      "id": 1782169827622,
+      "phone": "testv30",
+      "text": "a",
+      "reply": "🤸 Gimnasia Artística\n\n¿Qué categoría querés consultar?\n\nA. Pulguitas (3 y 4 años)\nB. Escuela (5 a 7 años)\nC. Promocional (8 a 10 años)\nD. Pre federadas (11 años en adelante)\nE. Federadas\nF. Volver a actividades\nG. Volver al menú principal",
+      "intent": "submenu_actividades",
+      "confidence": 0.96,
+      "sessionState": "waiting_gymnastics",
+      "topic": "actividades",
+      "createdAt": "2026-06-22T23:10:27.622Z"
+    },
+    {
+      "id": 1782169826315,
+      "phone": "testv30",
+      "text": "a",
+      "reply": "Perfecto. Estas son las actividades deportivas del club.\n\n¿Qué actividad querés consultar?\n\nA. Gimnasia artística 🤸\nB. Básquet 🏀\nC. Sóftbol 🥎\nD. Pelota a paleta\nE. Fútbol ⚽\nF. Volver al menú principal\n\nPodés seleccionar una opción o escribir el nombre de la actividad.",
+      "intent": "actividades",
+      "confidence": 0.96,
+      "sessionState": "waiting_activities",
+      "topic": "actividades",
+      "createdAt": "2026-06-22T23:10:26.315Z"
+    },
+    {
+      "id": 1782169825111,
+      "phone": "testv30",
+      "text": "hola",
+      "reply": "¡Hola! Soy Panchito, el asistente virtual de All Boys.\n\nEstoy para ayudarte con actividades, horarios, inscripciones, cuotas y consultas del club.\n\nA. Actividades, días y horarios 🏀⚽🤸\nB. Precios e inscripción 📝\nC. Cuotas y pagos 💳\nD. Natatorio / pileta 🏊\nE. Hablar con administración 📞\nF. Reclamos o sugerencias 💬\nG. Prensa, CV, proveedores o propuestas 📩\nH. Otra consulta 🔎\n\nPodés responder con la letra o escribir el tema.",
+      "intent": "menu",
+      "confidence": 0.95,
+      "sessionState": "idle",
+      "topic": "",
+      "createdAt": "2026-06-22T23:10:25.111Z"
+    },
+    {
+      "id": 1782166963066,
+      "phone": "test1",
+      "text": "a",
+      "reply": "💰 🤸 Pulguitas (3 y 4 años)\n\nEl valor de esta actividad todavía no fue informado por la administración del club.\n\n¿Qué querés hacer ahora?\nA. 🔙 Volver\nB. 🏠 Menú principal\nC. 💬 Otra consulta",
+      "intent": "submenu_gimnasia",
+      "confidence": 0.96,
+      "sessionState": "waiting_price_discipline_detail",
+      "topic": "inscripcion",
+      "createdAt": "2026-06-22T22:22:43.066Z"
+    },
+    {
+      "id": 1782166963036,
+      "phone": "test1",
+      "text": "a",
+      "reply": "🤸 Gimnasia Artística\n\n¿Qué categoría querés consultar?\n\nA. Pulguitas (3 y 4 años)\nB. Escuela (5 a 7 años)\nC. Promocional (8 a 10 años)\nD. Pre federadas (11 años en adelante)\nE. Federadas\nF. Volver a actividades\nG. Volver al menú principal",
+      "intent": "submenu_actividades",
+      "confidence": 0.96,
+      "sessionState": "waiting_gymnastics",
+      "topic": "inscripcion",
+      "createdAt": "2026-06-22T22:22:43.036Z"
+    },
+    {
+      "id": 1782166963009,
+      "phone": "test1",
+      "text": "a",
+      "reply": "Perfecto. Primero elegí el deporte o disciplina para consultar el precio.\n\nA. Gimnasia artística 🤸\nB. Básquet 🏀\nC. Sóftbol 🥎\nD. Pelota a paleta\nE. Fútbol ⚽\nF. Volver al menú principal",
+      "intent": "submenu_precios",
+      "confidence": 0.94,
+      "sessionState": "waiting_activities",
+      "topic": "inscripcion",
+      "createdAt": "2026-06-22T22:22:43.009Z"
+    },
+    {
+      "id": 1782166962974,
+      "phone": "test1",
+      "text": "b",
+      "reply": "Te ayudo con precios e inscripción 📝\n\nPara brindarte información correcta, elegí qué tipo de consulta querés realizar.\n\nA. Precio de una actividad\nB. Cómo inscribirme a una actividad\nC. Cómo asociarme al club\nD. Inscripción para un menor\nE. Hablar con administración\nF. Volver al menú principal",
+      "intent": "precios_inscripcion",
+      "confidence": 0.96,
+      "sessionState": "waiting_prices",
+      "topic": "inscripcion",
+      "createdAt": "2026-06-22T22:22:42.974Z"
+    },
+    {
+      "id": 1782139601494,
+      "phone": "test1",
+      "text": "A",
+      "reply": "Perfecto. Escribime ahora: Nombre y apellido.\n\nTambién podés escribir “menú” para volver al inicio.",
+      "intent": "submenu_reclamo",
+      "confidence": 0.96,
+      "sessionState": "waiting_claim_waiting_value",
+      "topic": "reclamo",
+      "createdAt": "2026-06-22T14:46:41.494Z"
+    },
+    {
+      "id": 1782139600289,
+      "phone": "test1",
+      "text": "F",
+      "reply": "Lamento que hayas tenido un inconveniente.\n\nPara que el club pueda revisarlo, elegí qué dato vas a cargar:\nA. Nombre y apellido\nB. Teléfono de contacto\nC. Área o actividad relacionada\nD. Qué ocurrió\nE. Hablar con administración\nF. Volver al menú principal\n\nVoy a dejar tu mensaje derivado a administración.\n\nLa consulta queda derivada a administración para su revisión.",
+      "intent": "reclamo_sugerencia",
+      "confidence": 0.98,
+      "sessionState": "waiting_claim",
+      "topic": "reclamo",
+      "createdAt": "2026-06-22T14:46:40.289Z"
+    },
+    {
+      "id": 1782139599065,
+      "phone": "test1",
+      "text": "C",
+      "reply": "Te ayudo con cuotas y pagos 💳\n\nPiiip. Acá Panchito se pone serio, porque son datos importantes.\n\n¿Qué necesitás?\n\nA. Consultar si tengo deuda\nB. Avisar que ya pagué\nC. Consultar medios de pago\nD. Hablar con administración\nE. Volver al menú principal",
+      "intent": "cuotas_pagos",
+      "confidence": 0.96,
+      "sessionState": "waiting_payments",
+      "topic": "cuota",
+      "createdAt": "2026-06-22T14:46:39.065Z"
+    },
+    {
+      "id": 1781877911322,
+      "phone": "5492954000000",
+      "text": "b",
+      "reply": "Te ayudo con precios e inscripción 📝\n\nPara brindarte información correcta, elegí qué tipo de consulta querés realizar.\n\nA. Precio de una actividad\nB. Cómo inscribirme a una actividad\nC. Cómo asociarme al club\nD. Inscripción para un menor\nE. Hablar con administración\nF. Volver al menú principal",
+      "intent": "precios_inscripcion",
+      "confidence": 0.9,
+      "sessionState": "waiting_dni_fee",
+      "topic": "inscripcion",
+      "createdAt": "2026-06-19T14:05:11.322Z"
+    },
+    {
+      "id": 1781877906534,
+      "phone": "5492954000000",
+      "text": "c",
+      "reply": "Te ayudo con cuotas y pagos 💳\n\nPiiip. Acá Panchito se pone serio, porque son datos importantes.\n\n¿Qué necesitás?\n\nA. Consultar si tengo deuda\nB. Avisar que ya pagué\nC. Consultar medios de pago\nD. Hablar con administración\nE. Volver al menú principal\n\nPara consultar deuda, indicame tu DNI o número de socio.",
+      "intent": "cuotas_pagos",
+      "confidence": 0.93,
+      "sessionState": "waiting_dni_fee",
+      "topic": "cuota",
+      "createdAt": "2026-06-19T14:05:06.534Z"
+    },
+    {
+      "id": 1781877899136,
+      "phone": "5492954000000",
+      "text": "noooo",
+      "reply": "Perdón, no terminé de entender la consulta. Mis circuitos hicieron “piiip” \n\nPodés elegir una opción:\n\nA. Actividades, días y horarios 🏀⚽🤸\nB. Precios e inscripción 📝\nC. Cuotas y pagos 💳\nD. Natatorio / pileta 🏊\nE. Hablar con administración 📞\nF. Reclamos o sugerencias 💬\nG. Prensa, CV, proveedores o propuestas 📩\nH. Otra consulta 🔎\n\nTambién podés escribir ADMIN para hablar con una persona.",
+      "intent": "no_entendido",
+      "confidence": 0.42,
+      "sessionState": "waiting_dni_fee",
+      "topic": "actividades",
+      "createdAt": "2026-06-19T14:04:59.136Z"
+    },
+    {
+      "id": 1781877893968,
+      "phone": "5492954000000",
+      "text": "a",
+      "reply": "Perfecto. Estas son las actividades deportivas del club.\n\n¿Qué actividad querés consultar?\n\nA. Gimnasia artística 🤸\nB. Básquet 🏀\nC. Sóftbol 🥎\nD. Pelota a paleta\nE. Fútbol ⚽\nF. Volver al menú principal\n\nPodés seleccionar una opción o escribir el nombre de la actividad.",
+      "intent": "actividades",
+      "confidence": 0.92,
+      "sessionState": "waiting_dni_fee",
+      "topic": "actividades",
+      "createdAt": "2026-06-19T14:04:53.968Z"
+    },
+    {
+      "id": 1781877882281,
+      "phone": "5492954000000",
+      "text": "pero queria consultar si tego deudas",
+      "reply": "Te ayudo con cuotas y pagos 💳\n\nPiiip. Acá Panchito se pone serio, porque son datos importantes.\n\n¿Qué necesitás?\n\nA. Consultar si tengo deuda\nB. Avisar que ya pagué\nC. Consultar medios de pago\nD. Hablar con administración\nE. Volver al menú principal\n\nPara consultar deuda, indicame tu DNI o número de socio.",
+      "intent": "cuotas_pagos",
+      "confidence": 0.93,
+      "sessionState": "waiting_dni_fee",
+      "topic": "cuota",
+      "createdAt": "2026-06-19T14:04:42.281Z"
+    },
+    {
+      "id": 1781877858915,
+      "phone": "5492954000000",
+      "text": "a",
+      "reply": "Perfecto. Estas son las actividades deportivas del club.\n\n¿Qué actividad querés consultar?\n\nA. Gimnasia artística 🤸\nB. Básquet 🏀\nC. Sóftbol 🥎\nD. Pelota a paleta\nE. Fútbol ⚽\nF. Volver al menú principal\n\nPodés seleccionar una opción o escribir el nombre de la actividad.",
+      "intent": "actividades",
+      "confidence": 0.92,
+      "sessionState": "waiting_dni_fee",
+      "topic": "actividades",
+      "createdAt": "2026-06-19T14:04:18.915Z"
+    },
+    {
+      "id": 1781877850629,
+      "phone": "5492954000000",
+      "text": "c",
+      "reply": "Te ayudo con cuotas y pagos 💳\n\nPiiip. Acá Panchito se pone serio, porque son datos importantes.\n\n¿Qué necesitás?\n\nA. Consultar si tengo deuda\nB. Avisar que ya pagué\nC. Consultar medios de pago\nD. Hablar con administración\nE. Volver al menú principal\n\nPara consultar deuda, indicame tu DNI o número de socio.",
+      "intent": "cuotas_pagos",
+      "confidence": 0.93,
+      "sessionState": "waiting_dni_fee",
+      "topic": "cuota",
+      "createdAt": "2026-06-19T14:04:10.629Z"
+    },
+    {
+      "id": 1781877838492,
+      "phone": "5492954000000",
+      "text": "hola buen dia",
+      "reply": "¡Hola! Soy Panchito, el asistente virtual de All Boys.\n\nEstoy para ayudarte con actividades, horarios, inscripciones, cuotas y consultas del club.\n\nA. Actividades, días y horarios 🏀⚽🤸\nB. Precios e inscripción 📝\nC. Cuotas y pagos 💳\nD. Natatorio / pileta 🏊\nE. Hablar con administración 📞\nF. Reclamos o sugerencias 💬\nG. Prensa, CV, proveedores o propuestas 📩\nH. Otra consulta 🔎\n\nPodés responder con la letra o escribir el tema.",
+      "intent": "menu",
+      "confidence": 0.95,
+      "sessionState": "idle",
+      "topic": "",
+      "createdAt": "2026-06-19T14:03:58.492Z"
+    },
+    {
+      "id": 1781877442410,
+      "phone": "5492954000000",
+      "text": "e",
+      "reply": "Claro 😊\n\nTe derivo con administración.\n\nPara ayudar a que te respondan más rápido, escribí en un solo mensaje:\n• Tu nombre\n• Motivo de la consulta\n• Si sos socio/a, tu DNI o número de socio\n\nAdministración:\nCarolina / Mónica\nWhatsApp: 2954592313\n\nPanchito deja el mensaje ordenadito. Casi con moñito 🎀",
+      "intent": "administracion",
+      "confidence": 0.92,
+      "sessionState": "idle",
+      "topic": "administracion",
+      "createdAt": "2026-06-19T13:57:22.410Z"
+    },
+    {
+      "id": 1781877423927,
+      "phone": "5492954000000",
+      "text": "a",
+      "reply": "Perfecto. Estas son las actividades deportivas del club.\n\n¿Qué actividad querés consultar?\n\nA. Gimnasia artística 🤸\nB. Básquet 🏀\nC. Sóftbol 🥎\nD. Pelota a paleta\nE. Fútbol ⚽\nF. Volver al menú principal\n\nPodés seleccionar una opción o escribir el nombre de la actividad.",
+      "intent": "actividades",
+      "confidence": 0.92,
+      "sessionState": "idle",
+      "topic": "actividades",
+      "createdAt": "2026-06-19T13:57:03.927Z"
+    },
+    {
+      "id": 1781877382019,
+      "phone": "5492954000000",
+      "text": "b",
+      "reply": "Te ayudo con precios e inscripción 📝\n\nPara brindarte información correcta, elegí qué tipo de consulta querés realizar.\n\nA. Precio de una actividad\nB. Cómo inscribirme a una actividad\nC. Cómo asociarme al club\nD. Inscripción para un menor\nE. Hablar con administración\nF. Volver al menú principal",
+      "intent": "precios_inscripcion",
+      "confidence": 0.9,
+      "sessionState": "idle",
+      "topic": "inscripcion",
+      "createdAt": "2026-06-19T13:56:22.019Z"
+    },
+    {
+      "id": 1781877368496,
+      "phone": "5492954000000",
+      "text": "g",
+      "reply": "Gracias por escribirle al club 📩\n\nPanchito abre la bandeja institucional. Clac, clac, todo ordenadito \n\n¿Qué querés enviar?\n\nA. Consulta de prensa o medios\nB. Dejar CV\nC. Proponer un proyecto\nD. Ofrecer productos o servicios\nE. Sponsoreo, publicidad o auspicio\nF. Consulta de estudiante o institución\nG. Volver al menú principal",
+      "intent": "institucional",
+      "confidence": 0.9,
+      "sessionState": "idle",
+      "topic": "",
+      "createdAt": "2026-06-19T13:56:08.496Z"
+    }
+  ],
+  "pendingQueries": [],
+  "queryTypes": [
+    "cuota",
+    "actividad",
+    "natatorio",
+    "administracion",
+    "reclamo",
+    "sugerencia",
+    "sponsor",
+    "proveedor",
+    "prensa",
+    "cv",
+    "estudiante",
+    "otra"
+  ],
+  "registrations": [],
+  "surveys": []
+}

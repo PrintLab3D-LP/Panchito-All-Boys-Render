@@ -1,0 +1,105 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Panchito Enterprise</title><link rel="stylesheet" href="/style.css"></head><body>
+<header class="topClubHeader">
+  <div class="topLeft">
+    <div class="hamb">☰</div>
+    <img id="topSectionIcon" class="topLogo" src="/allboys-escudo.jfif" alt="Escudo All Boys">
+    <div class="topTitle"><b id="topSectionTitle">Panchito 🤖</b><span id="topSectionSub">All Boys · Asistente oficial · <i></i> En línea</span></div>
+  </div>
+  <div class="topOfficial"><img src="/allboys-escudo.jfif" alt="Escudo All Boys"><span>Oficial All Boys</span></div>
+</header>
+<div class="app">
+  <aside class="side">
+    <div class="brand"><img class="logoImg" src="/allboys-escudo.jfif" alt="Escudo All Boys"><div><b>Panchito</b><span>All Boys · Asistente oficial</span></div></div>
+    <button class="nav active" data-tab="bot">💬 Panchito</button>
+    <button class="nav" data-tab="activities">⚽ Actividades</button>
+    <button class="nav" data-tab="members">👥 Socios</button>
+    <button class="nav" data-tab="payments">💳 Cuotas / Pagos</button>
+    <button class="nav" data-tab="registrations">📝 Inscripciones</button>
+    <button class="nav" data-tab="pending">📋 Consultas / Reclamos</button>
+    <button class="nav" data-tab="surveys">⭐ Encuestas</button>
+    <button class="nav" data-tab="whatsapp">🟢 Conexión WhatsApp</button>
+  </aside>
+  <main class="main">
+    <!-- Título de pestaña eliminado: ahora se muestra arriba en el encabezado principal -->
+
+    <section id="dashboard" class="tab unusedPanel">
+      <div class="cards" id="cards"></div>
+      <div class="grid2"><div class="panel"><h2>Morosidad</h2><div class="bar"><span id="debtBar"></span></div><p id="debtText"></p></div><div class="panel"><h2>Consultas IA frecuentes</h2><div id="intentList"></div></div></div>
+      <div class="grid2"><div class="panel"><h2>Últimos pagos</h2><div id="lastPayments"></div></div><div class="panel"><h2>Documentos IA</h2><p id="docSummary"></p></div></div>
+    </section>
+
+    <section id="bot" class="tab show">
+      <div class="botwrap"><div class="phone"><div class="phoneTop"><img class="chatAvatar" src="/allboys-escudo.jfif" alt="Escudo All Boys"><div><b>Panchito</b><small>Asistente virtual oficial · 🟢 En línea</small></div></div><div id="chat" class="chat"></div><form id="chatForm" class="send"><input id="chatInput" placeholder="Escribí una consulta o elegí una opción..."><button>Enviar</button></form></div><div class="panel heroPanel"><h2>Accesos rápidos</h2><p>Probá las consultas principales que recibiría un socio por WhatsApp.</p><div class="quickCards premiumQuick"><button onclick="quickSend('Consultar cuota')">💳 Consultar cuota</button><button onclick="quickSend('Ver actividades y horarios')">⚽ Actividades</button><button onclick="quickSend('Hay pileta para niños')">🏊 Natatorio</button><button onclick="quickSend('Quiero inscribirme a una actividad')">📝 Inscripción</button><button onclick="quickSend('Medios de pago')">🏦 Medios de pago</button><button onclick="quickSend('Hablar con administración')">📞 Administración</button></div><div class="hint cleanHint"><b>Demo preparada:</b> chat, actividades, socios, cuotas, inscripciones, consultas derivadas y futura conexión con WhatsApp.</div></div></div>
+    </section>
+
+    <section id="members" class="tab"><div class="panel"><div class="row"><h2>Socios</h2><div class="importActions"><button class="secondary" onclick="downloadTemplate('members')">📄 Plantilla</button><button class="secondary" onclick="pickImport('members')">📥 Importar</button><button class="secondary" onclick="exportData('members')">📤 Exportar</button><button onclick="openMemberForm()">+ Nuevo socio</button></div></div><input id="memberImportFile" type="file" accept=".csv,.txt" style="display:none" onchange="handleImportFile(event,'members')"><input id="memberSearch" class="search" placeholder="Buscar socio por DNI, nombre, teléfono o número..."><p id="memberImportMsg" class="importMsg"></p><div class="table" id="membersTable"></div></div></section>
+
+    <section id="payments" class="tab"><div class="grid2"><div class="panel"><h2>Registrar pago</h2><select id="payMember"></select><input id="payAmount" type="number" placeholder="Importe"><select id="payMethod"><option>Efectivo</option><option>Transferencia</option><option>Mercado Pago</option><option>Débito</option><option>Crédito</option></select><input id="payPeriod" placeholder="Período, ej: Junio 2026"><button onclick="savePayment()">Registrar pago</button></div><div class="panel"><h2>Historial de pagos</h2><div class="table" id="paymentsTable"></div></div></div></section>
+
+    <section id="activities" class="tab">
+      <div class="grid2">
+        <div class="panel">
+          <div class="row"><h2>Gestionar actividades</h2><div class="importActions"><button class="secondary" onclick="downloadTemplate('activities')">📄 Plantilla</button><button class="secondary" onclick="pickImport('activities')">📥 Importar</button><button class="secondary" onclick="exportData('activities')">📤 Exportar</button></div></div><input id="activityImportFile" type="file" accept=".csv,.txt" style="display:none" onchange="handleImportFile(event,'activities')"><p id="activityImportMsg" class="importMsg"></p>
+          <input id="actId" type="hidden">
+          <input id="actName" placeholder="Actividad, ej: Básquet">
+          <input id="actCategory" placeholder="Categoría, ej: Sub 13 Masculino">
+          <input id="actDays" placeholder="Días, ej: Lunes y miércoles">
+          <input id="actTime" placeholder="Horario, ej: 16:30 a 18:00">
+          <input id="actCost" type="number" placeholder="Precio/cuota mensual, ej: 12000">
+          <input id="actTeacher" placeholder="Profesor/a o responsable">
+          <input id="actContact" placeholder="Contacto, ej: Administración">
+          <textarea id="actNotes" placeholder="Notas/requisitos de inscripción"></textarea>
+          <label class="check"><input id="actActive" type="checkbox" checked> Activa / visible para Panchito</label>
+          <div class="row"><button onclick="saveActivity()">Guardar actividad</button><button class="secondary" onclick="clearActivityForm()">Limpiar</button></div>
+          <p class="hint">Acá podés cargar nuevas actividades o editar horarios/precios sin tocar código.</p>
+        </div>
+        <div class="panel">
+          <h2>Actividades cargadas</h2>
+          <input id="activitySearch" class="search" placeholder="Buscar actividad, categoría o día...">
+          <div class="activityGrid" id="activityGrid"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="knowledge" class="tab unusedPanel"><div class="grid2"><div class="panel"><h2>Entrenar IA</h2><input id="kq" placeholder="Pregunta, tema o palabras clave"><textarea id="ka" placeholder="Respuesta oficial del club"></textarea><button onclick="addKnowledge()">Agregar conocimiento</button></div><div class="panel"><h2>Base cargada</h2><div id="knowledgeList"></div></div></div></section>
+
+    <section id="documents" class="tab unusedPanel"><div class="grid2"><div class="panel"><h2>Documentos IA</h2><input id="docTitle" placeholder="Título del documento"><textarea id="docContent" placeholder="Pegá acá reglamento, horarios, requisitos, estatuto, etc."></textarea><button onclick="addDocument()">Agregar documento</button></div><div class="panel"><h2>Biblioteca</h2><div id="documentList"></div></div></div></section>
+
+    <section id="conversations" class="tab unusedPanel"><div class="panel"><h2>Historial de conversaciones</h2><div class="table" id="conversationTable"></div></div></section>
+
+
+    <section id="registrations" class="tab">
+      <div class="panel">
+        <div class="row">
+          <h2>Inscripciones</h2>
+          <span id="registrationCount" class="counterPill">Pendientes: 0</span>
+        </div>
+        <p class="hint">Acá quedan guardadas las solicitudes que Panchito toma desde el chat. Administración puede cambiar el estado y abrir WhatsApp para confirmar cupo, documentación, valor y forma de pago.</p>
+        <div class="pendingToolbar">
+          <button class="regFilterBtn active" data-reg-filter="Todas">Todas</button>
+          <button class="regFilterBtn" data-reg-filter="Pendiente">Pendientes</button>
+          <button class="regFilterBtn" data-reg-filter="Confirmada">Confirmadas</button>
+          <button class="regFilterBtn" data-reg-filter="Sin cupo">Sin cupo</button>
+          <button class="regFilterBtn" data-reg-filter="Finalizada">Finalizadas</button>
+        </div>
+        <input id="registrationSearch" class="search" placeholder="Buscar por nombre, teléfono, actividad o categoría...">
+        <div class="activityGrid" id="registrationsGrid"></div>
+      </div>
+    </section>
+
+    <section id="pending" class="tab"><div class="panel"><div class="row"><h2>Consultas y reclamos</h2><span class="pill">Pendientes / Respondidas</span></div><p class="hint">Acá quedan guardadas las consultas y reclamos que Panchito toma desde el chat. Desde cada tarjeta podés responder por WhatsApp al teléfono que dejó la persona, marcar como respondida o eliminar.</p><div class="pendingToolbar"><span id="pendingCount" class="counterPill">Pendientes: 0</span><button class="filterBtn active" data-pending-filter="Todas">Todas</button><button class="filterBtn" data-pending-filter="Pendiente">Pendientes</button><button class="filterBtn" data-pending-filter="Respondida">Respondidas</button><button class="filterBtn" data-pending-filter="Consulta">Consultas</button><button class="filterBtn" data-pending-filter="Reclamo">Reclamos</button></div><div class="activityGrid" id="pendingGrid"></div></div></section>
+
+    <section id="surveys" class="tab"><div class="panel"><div class="row"><h2>Encuestas de satisfacción</h2><span id="surveyAvg" class="counterPill">Promedio: 0</span></div><p class="hint">Cada vez que Panchito pide una valoración del 1 al 5, queda guardada acá para medir la calidad de atención.</p><div class="activityGrid" id="surveyGrid"></div></div></section>
+
+    <section id="portal" class="tab unusedPanel"><div class="grid2"><div class="panel"><h2>Portal del socio</h2><input id="loginDni" placeholder="DNI" value="87654321"><input id="loginPass" placeholder="Contraseña demo" value="1234"><button onclick="memberLogin()">Ingresar</button></div><div class="panel"><h2>Ficha del socio</h2><div id="portalResult">Ingresá con DNI y contraseña demo.</div></div></div></section>
+
+    <section id="whatsapp" class="tab"><div class="panel whatsappPanel"><h2>Conexión con WhatsApp</h2><p>Panchito ya está preparado para integrarse con WhatsApp Business cuando el club defina número, token de Meta y servidor HTTPS.</p><div class="stepGrid"><div><b>1</b><span>El socio escribe por WhatsApp.</span></div><div><b>2</b><span>Panchito interpreta la consulta.</span></div><div><b>3</b><span>Responde o deriva a Administración.</span></div></div><p class="hint cleanHint">Mientras tanto, esta demo permite probar todo el flujo desde la web.</p></div></section>
+
+    <section id="importer" class="tab unusedPanel"><div class="panel"><h2>Importar socios por CSV</h2><p>Formato: dni,nroSocio,nombre,telefono,email,estadoCuota,deuda</p><textarea id="csvBox">dni,nroSocio,nombre,telefono,email,estadoCuota,deuda
+22333444,1004,Ana Torres,5492954000004,ana@mail.com,Al día,0</textarea><button onclick="importCSV()">Importar</button><p id="importMsg"></p></div></section>
+
+    <section id="settings" class="tab unusedPanel"><div class="panel"><h2>Configuración comercial</h2><p><b>Producto:</b> Panchito Enterprise — sistema para clubes + asistente inteligente por WhatsApp.</p><p><b>Multi-club futuro:</b> cambiar logo, nombre, colores y datos para venderlo a otros clubes.</p></div></section>
+  </main>
+</div>
+<div id="modal" class="modal"><div class="modalCard"><h2>Nuevo socio</h2><input id="mName" placeholder="Nombre"><input id="mDni" placeholder="DNI"><input id="mNo" placeholder="Nro socio"><input id="mPhone" placeholder="Teléfono"><select id="mFee"><option>Al día</option><option>Pendiente</option></select><input id="mDebt" placeholder="Deuda" type="number"><div class="row"><button onclick="saveMember()">Guardar</button><button class="secondary" onclick="closeMemberForm()">Cancelar</button></div></div></div>
+<footer class="clubFooter"><img src="/allboys-escudo.jfif" alt="Escudo"><span>Club All Boys</span> · Santa Rosa, La Pampa · Asistente virtual oficial</footer><script src="/app.js?v=fix-final-29"></script></body></html>
