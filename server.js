@@ -160,8 +160,8 @@ function directActivityReply(data, activity, rawText='', session=null){
   const askingWhatsapp = containsAny(t,['whatsapp','wasap','wsp','telefono','teléfono','administracion','administración','hablar']);
   const isOnlyFollowUp = (askingSchedule || askingSignup || askingPrice || askingWhatsapp) && !detectActivityFreeText(rawText || '');
   const intro = isOnlyFollowUp
-    ? `Dale 😊`
-    : `¡Buenísimo! Te interesa ${activity.label} 😊${hint ? `
+    ? panchitoMicroPhrase()
+    : `${pickRandom(['¡Buenísimo!', 'Qué buena elección', 'Perfecto', 'Dale, vamos con eso'])} Te interesa ${activity.label} 😊${hint ? `
 
 ${hint}` : ''}`;
   let body = '';
@@ -251,27 +251,65 @@ function isSoftSocialText(t){
   if(!v) return false;
   return /^(ok|okay|dale|genial|perfecto|bueno|listo|joya|barbaro|bárbaro|excelente)$/.test(v);
 }
+function pickRandom(arr=[]){
+  if(!arr.length) return '';
+  return arr[Math.floor(Math.random()*arr.length)];
+}
+function timeGreeting(){
+  const h = new Date().getHours();
+  if(h >= 6 && h < 13) return '¡Buen día!';
+  if(h >= 13 && h < 20) return '¡Buenas tardes!';
+  return '¡Buenas noches!';
+}
+function panchitoMicroPhrase(){
+  return pickRandom([
+    'Dale, te ayudo 😊',
+    'Perfecto, vamos por partes.',
+    'Buenísimo, lo vemos.',
+    'Listo, te oriento.',
+    'De una, Panchito al rescate 😄',
+    'Vamos con eso 💙',
+    'Te sigo el hilo, como marca personal 😄',
+    'Joya, sigo atento.'
+  ]);
+}
 function panchitoIntroFunny(){
   const frases = [
     'Prometo ayudarte más rápido que un contraataque ⚽😄',
     'No soy Messi, pero con las consultas me defiendo bastante bien 😄',
     'Vos preguntá tranquilo, yo hago el precalentamiento de respuestas 🏃‍♂️',
-    'En All Boys no prometo goles, pero sí buena información 💙'
+    'En All Boys no prometo goles, pero sí buena información 💙',
+    'Estoy más atento que arquero en penal 🥅',
+    'Acá no cobramos offside por preguntar ⚽',
+    'Preguntá sin miedo, que yo juego de asistidor 😄',
+    'Mientras vos escribís, yo ya estoy buscando la respuesta 🔎',
+    'Hoy vengo con botines nuevos para responder mejor 😄',
+    'Si la consulta viene complicada, la bajamos al piso y salimos jugando ⚽',
+    'No tengo camiseta transpirada, pero sí muchas ganas de ayudar 💙',
+    'Estoy listo para darte una mano, como buen 10 armador 🏟️',
+    'No prometo gambetas, pero sí orientarte lo mejor posible 😄',
+    'Preguntame tranquilo: acá el VAR no anula consultas 😂',
+    'Vamos paso a paso, sin pelotazos largos ⚽',
+    'Yo te acompaño; los goles los hacen ustedes 💙',
+    'Estoy en modo club: información, buena onda y respuesta rápida 😄',
+    'Arrancamos cuando quieras, yo ya hice entrada en calor 🏃‍♂️',
+    'Si querés horarios, cuotas o inscripción, te tiro un pase filtrado 😄',
+    'Consultame lo que necesites, que para eso entré a la cancha ⚽'
   ];
-  return frases[Math.floor(Math.random()*frases.length)];
+  return pickRandom(frases);
 }
-
 function greetingMessage(){
   return panchitoMenu();
 }
 function softSocialMessage(s){
   const topic = (currentTopic(s) || s.data?.currentActivity || '').trim();
   if(topic){
-    return `Dale 😊 Seguimos con ${topic}. Yo estoy atento, como arquero en penal 😄\n\nPodés pedirme horarios, inscripción, costos, profesor o WhatsApp.`;
+    return `${panchitoMicroPhrase()}
+
+Seguimos con ${topic}. Podés pedirme horarios, inscripción, costos, profesor o WhatsApp.`;
   }
   return panchitoMenu();
 }
-
 function isThanksText(t){
   const v = clean(t || '');
   if(!v) return false;
@@ -298,21 +336,28 @@ Respondé con A, B o C.
 También podés escribir OMITIR.`;
 }
 function panchitoMenu(){
-  return `👋 ¡Hola! Soy Panchito, el bot de All Boys.
+  const saludo = pickRandom([
+    `👋 ${timeGreeting()} Soy Panchito, el bot de All Boys.`,
+    `👋 ¡Hola! Soy Panchito, el asistente virtual de All Boys.`,
+    `💙 ¡Buenas! Soy Panchito y estoy para darte una mano.`,
+    `🏟️ ¡Hola! Panchito presente en la cancha de consultas.`
+  ]);
+  return `${saludo}
 ${panchitoIntroFunny()}
 
-Elegí una opción:
+¿Qué andás buscando hoy? 😄
 
-A. Actividades, días y horarios 🏀⚽🤸
-B. Precios e inscripción 📝
-C. Cuotas y pagos 💳
-D. Natatorio / pileta 🏊
-E. Hablar con administración 📞
-F. Reclamos o sugerencias 💬
-G. Prensa, CV, proveedores o propuestas 📩
-H. Otra consulta 🔎
+A. ⚽ Actividades, días y horarios
+B. 📝 Precios e inscripción
+C. 💳 Cuotas y pagos
+D. 🏊 Natatorio / pileta
+E. 👨‍💼 Hablar con administración
+F. 💬 Reclamos o sugerencias
+G. 📩 Prensa, CV, proveedores o propuestas
+H. 🤔 Otra consulta
 
-Podés responder con la letra o escribir el tema.`;
+Podés responder con la letra o escribir como hablás por WhatsApp.
+Ejemplos: “mi hijo tiene 9 años y quiere fútbol”, “cuánto sale natación”, “horarios de básquet”.`;
 }
 function adminContact(data){
   return `Administración All Boys
@@ -839,7 +884,13 @@ function phase6SmartConversation(data, s, rawText='', phone='demo'){
         s.data.userBirthYear = ageInfo.birthYear;
         s.data.userBranch = branch || rec.branch || '';
         const dataLabel = ageInfo.source === 'year' ? `año ${ageInfo.birthYear}` : `${ageInfo.age} años`;
-        let next = '¿Querés que te pase los horarios, el costo o iniciamos la inscripción?';
+        let next = `¿Qué te paso ahora?
+
+A. 📅 Horarios
+B. 💰 Costo / cuota
+C. 📝 Iniciar inscripción
+D. 👨‍🏫 Profesor/a
+E. 📲 WhatsApp / administración`;
         if(intent === 'schedule') return disciplineAnswer(data, s, 'schedule');
         if(intent === 'price') return disciplineAnswer(data, s, 'price');
         if(intent === 'teacher') return disciplineAnswer(data, s, 'teacher');
@@ -943,14 +994,16 @@ function naturalHelpMenu(){
   return `Podés escribirme como hablarías por WhatsApp 😊
 
 Ejemplos:
-• Quiero natación para mi hijo de 8 años
-• ¿Cuánto sale básquet?
+• Mi hijo tiene 9 años y quiere jugar al fútbol
+• ¿Cuánto sale natación?
 • Horarios de gimnasia artística
-• Quiero inscribirme
+• Quiero inscribirme a básquet
 • ¿Dónde queda el club?
-• Quiero hablar con administración
+• Necesito hablar con administración
+• ¿Quién es el profesor?
+• ¿Hay cupo?
 
-También podés usar el menú principal cuando quieras.`;
+Yo trato de entender el tema y seguir el contexto, sin hacerte pasar por mil menús.`;
 }
 function setTopic(s, topic, extra={}){
   s.data = { ...(s.data||{}), topic, ...extra };
@@ -3496,7 +3549,7 @@ function twilioXml(text=''){
   return `<?xml version="1.0" encoding="UTF-8"?><Response>${messages.map(m=>`<Message>${escapeXml(m)}</Message>`).join('')}</Response>`;
 }
 function quickTwilioReply(rawText=''){
-  // V40: respuesta rápida Twilio corregida.
+  // V41 Panchito Pro: respuesta rápida Twilio con saludo humano y menú natural.
   // Limpia signos y variantes para que "hola", "buen día", "menu" o "inicio" muestren siempre el menú completo.
   const t = clean(rawText).replace(/[!¡?¿.,;:]+/g,' ').replace(/\s+/g,' ').trim();
   if(!t) return panchitoMenu();
