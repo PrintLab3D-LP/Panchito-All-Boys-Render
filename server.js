@@ -251,20 +251,25 @@ function isSoftSocialText(t){
   if(!v) return false;
   return /^(ok|okay|dale|genial|perfecto|bueno|listo|joya|barbaro|bárbaro|excelente)$/.test(v);
 }
-function greetingMessage(){
-  const opts = [
-    '👋 ¡Buen día! Soy Panchito, el asistente oficial de All Boys.\n\n¿En qué puedo ayudarte hoy?',
-    '¡Hola! 😊 Soy Panchito.\n\nPodés consultarme por actividades, horarios, inscripción, cuotas o administración.',
-    '👋 ¡Buenas! Estoy acá para ayudarte con consultas del club.\n\nContame qué necesitás.'
+function panchitoIntroFunny(){
+  const frases = [
+    'Prometo ayudarte más rápido que un contraataque ⚽😄',
+    'No soy Messi, pero con las consultas me defiendo bastante bien 😄',
+    'Vos preguntá tranquilo, yo hago el precalentamiento de respuestas 🏃‍♂️',
+    'En All Boys no prometo goles, pero sí buena información 💙'
   ];
-  return opts[Math.floor(Math.random()*opts.length)];
+  return frases[Math.floor(Math.random()*frases.length)];
+}
+
+function greetingMessage(){
+  return panchitoMenu();
 }
 function softSocialMessage(s){
   const topic = (currentTopic(s) || s.data?.currentActivity || '').trim();
   if(topic){
-    return `Dale 😊 Seguimos con ${topic}.\n\nPodés pedirme horarios, inscripción, costos, profesor o WhatsApp.`;
+    return `Dale 😊 Seguimos con ${topic}. Yo estoy atento, como arquero en penal 😄\n\nPodés pedirme horarios, inscripción, costos, profesor o WhatsApp.`;
   }
-  return 'Dale 😊 Contame qué necesitás y te ayudo.';
+  return panchitoMenu();
 }
 
 function isThanksText(t){
@@ -293,9 +298,10 @@ Respondé con A, B o C.
 También podés escribir OMITIR.`;
 }
 function panchitoMenu(){
-  return `¡Hola! Soy Panchito, el asistente virtual de All Boys.
+  return `👋 ¡Hola! Soy Panchito, el bot de All Boys.
+${panchitoIntroFunny()}
 
-Estoy para ayudarte con actividades, horarios, inscripciones, cuotas y consultas del club.
+Elegí una opción:
 
 A. Actividades, días y horarios 🏀⚽🤸
 B. Precios e inscripción 📝
@@ -3490,12 +3496,14 @@ function twilioXml(text=''){
   return `<?xml version="1.0" encoding="UTF-8"?><Response>${messages.map(m=>`<Message>${escapeXml(m)}</Message>`).join('')}</Response>`;
 }
 function quickTwilioReply(rawText=''){
-  const t = clean(rawText);
-  if(!t) return `Hola, soy Panchito 😊
-
-Escribí MENÚ para ver las opciones del club.`;
-  if(['menu','menú','inicio','0'].includes(t)) return panchitoMenu();
-  if(['hola','buenas','buen dia','buen día','buenas tardes','buenas noches'].includes(t)) return greetingMessage();
+  // V40: respuesta rápida Twilio corregida.
+  // Limpia signos y variantes para que "hola", "buen día", "menu" o "inicio" muestren siempre el menú completo.
+  const t = clean(rawText).replace(/[!¡?¿.,;:]+/g,' ').replace(/\s+/g,' ').trim();
+  if(!t) return panchitoMenu();
+  const menuWords = ['menu','menú','inicio','empezar','arrancar','opciones','opcion','opción','0'];
+  if(menuWords.includes(t)) return panchitoMenu();
+  if(isGreetingText(t)) return panchitoMenu();
+  if(['hola','holaa','buenas','buen dia','buen día','buenos dias','buenos días','buenas tardes','buenas noches'].includes(t)) return panchitoMenu();
   return '';
 }
 async function smartReplySafe(rawText, from){
@@ -3571,4 +3579,7 @@ app.get('/api/train/website/preview', (req,res)=>{
 });
 
 app.get('/health',(req,res)=>res.send('ClubBot IA Enterprise activo ✅'));
-app.listen(PORT,()=>console.log(`ClubBot IA Enterprise en http://localhost:${PORT}`));
+app.listen(PORT,()=>{
+  console.log(`ClubBot IA Enterprise en http://localhost:${PORT}`);
+  console.log('Panchito V40 menú gracioso activo - hola/menu muestran opciones completas');
+});
