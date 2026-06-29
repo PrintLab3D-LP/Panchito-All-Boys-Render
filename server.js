@@ -1404,6 +1404,67 @@ function sportVibe(kind='general'){
   return pickRandom(bank[kind] || bank.activities);
 }
 
+
+function minorActivityPrompt(age=''){
+  const edad = age ? ` de ${age} años` : '';
+  return `😊 ¡Qué lindo! Para orientarte bien con tu hijo/a${edad}, primero decime qué actividad le interesa.
+
+Podés escribirlo como te salga: “natación”, “fútbol”, “básquet” o “gimnasia”.
+
+También te dejo atajos:
+A. 🏊 Natatorio / pileta
+B. ⚽ Fútbol
+C. 🏀 Básquet
+D. 🤸 Gimnasia artística
+E. 📞 Hablar con administración`;
+}
+
+function minorActivityConversationalReply(data, s, activity){
+  const age = Number(s?.data?.userAge || 0);
+  const edadTxt = age ? ` de ${age} años` : '';
+  const key = activity.key;
+  const label = activity.label;
+  let intro = '';
+  let next = '';
+
+  if(key === 'natatorio'){
+    intro = `🏊 ¡Excelente! Para un/a peque${edadTxt}, natatorio se confirma según edad, nivel, temporada y cupos.\n\n${age ? ageSmartHint(age,'natatorio') : 'Para ubicarlo bien conviene confirmar grupo y cupo con natatorio.'}`;
+    next = `¿Querés que veamos horarios, edades/niveles, inscripción o que te derive a administración?`;
+    setTopic(s,'natatorio',{}); setMenuContext(s,'natatorio'); s.data.currentActivity='Natatorio / pileta';
+    return `${intro}\n\n${next}\n\nA. 🕒 Horarios\nB. 📝 Inscripción\nC. 👧 Edades y niveles\nD. 📲 Administración`;
+  }
+
+  if(key === 'football'){
+    const info = age ? {age, birthYear: s.data?.userBirthYear || (new Date().getFullYear()-age), source:'age'} : null;
+    const rec = info ? phase6RecommendRule(data, 'Fútbol', info, phase6BranchFromText('hijo varon','Fútbol')) : null;
+    intro = `⚽ ¡Qué lindo! En All Boys la pelota arranca desde chicos. ${age ? `Con ${age} años, lo más probable es mirar **${rec?.label || fallbackRecommendedCategory('Fútbol', info) || 'categoría infantil'}**.` : 'Decime la edad o año de nacimiento y te ubico la categoría.'}`;
+    setTopic(s,'actividades',{}); setMenuContext(s,'football'); s.data.currentActivity='Fútbol';
+    if(rec){ setDiscipline(s,'discipline_detail', `Fútbol - ${rec.label}`, 'Fútbol', [rec.rawCategory, rec.label].filter(Boolean), 'football'); }
+    return `${intro}\n\n¿Qué necesitás ahora?\nA. 🕒 Horarios\nB. 💰 Cuotas / precio\nC. 📝 Inscripción\nD. 📲 Administración\n\nTambién podés escribir: “horarios”, “cuánto sale” o “quiero inscribirlo”.`;
+  }
+
+  if(key === 'basket'){
+    const branch = s.data?.userBranch || '';
+    const info = age ? {age, birthYear: s.data?.userBirthYear || (new Date().getFullYear()-age), source:'age'} : null;
+    const rec = info ? phase6RecommendRule(data, 'Básquet', info, branch) : null;
+    intro = `🏀 ¡Buenísima elección! Vamos a encestar esta consulta. ${age ? `Con ${age} años, puede corresponder **${rec?.label || fallbackRecommendedCategory('Básquet', info) || 'una categoría inicial'}**${branch ? ` (${branch})` : ''}.` : 'Decime si es para chica o chico y la edad, y te ubico mejor.'}`;
+    setTopic(s,'actividades',{}); setMenuContext(s,'basket'); s.data.currentActivity='Básquet';
+    if(rec){ setDiscipline(s,'discipline_detail', `Básquet - ${rec.label}`, 'Básquet', [rec.rawCategory, rec.label].filter(Boolean), rec.branch === 'femenino' ? 'basket_fem' : 'basket_masc'); }
+    return `${intro}\n\n¿Qué querés saber?\nA. 🕒 Horarios\nB. 💰 Cuotas / precio\nC. 📝 Inscripción\nD. 👨‍🏫 Profesor/a\nE. 📲 Administración\n\nSi preferís, escribí directo “horarios”, “precio” o “inscripción”.`;
+  }
+
+  if(key === 'gymnastics'){
+    const info = age ? {age, birthYear: s.data?.userBirthYear || (new Date().getFullYear()-age), source:'age'} : null;
+    const rec = info ? phase6RecommendRule(data, 'Gimnasia Artística', info, '') : null;
+    intro = `🤸 ¡Hermosa disciplina! Vamos paso a paso, sin perder el equilibrio 😄 ${age ? `Con ${age} años, probablemente corresponda **${rec?.label || fallbackRecommendedCategory('Gimnasia Artística', info) || 'un grupo por edad'}**.` : 'Decime la edad y te ubico el grupo.'}`;
+    setTopic(s,'actividades',{}); setMenuContext(s,'gymnastics'); s.data.currentActivity='Gimnasia Artística';
+    if(rec){ setDiscipline(s,'discipline_detail', `Gimnasia Artística - ${rec.label}`, 'Gimnasia Artística', [rec.rawCategory, rec.label].filter(Boolean), 'gymnastics'); }
+    return `${intro}\n\n¿Qué necesitás?\nA. 🕒 Horarios\nB. 💰 Cuotas / precio\nC. 📝 Inscripción\nD. 👩‍🏫 Profesor/a\nE. 📲 Administración`;
+  }
+
+  return directActivityReply(data, activity, '', s);
+}
+
 function responseActivityMenu(){
   return `😄 Dale, vamos con deportes.
 ${sportVibe('activities')}
@@ -2227,7 +2288,30 @@ B. 💬 Nueva consulta`;
       }
       return finish();
     }
-    if(isMainMenuLetter()) {
+    if(menu === 'human_minor_activity'){
+    const age = extractAge(rawText);
+    if(age && !detectActivityFreeText(rawText) && !isLetter(rawText,['A','B','C','D','E'])){
+      s.data.userAge = age;
+      intent='menor_edad_recibida'; confidence=.91;
+      reply = `Perfecto, ${age} años 😊
+
+Ahora decime qué actividad está buscando:
+
+A. Natatorio / pileta 🏊
+B. Fútbol ⚽
+C. Básquet 🏀
+D. Gimnasia artística 🤸
+E. Hablar con administración 📞`;
+      return finish();
+    }
+    if(isLetter(rawText,['A']) || containsAny(text,['natatorio','pileta','natacion','natación'])){ setTopic(s,'natatorio',{}); setMenuContext(s,'natatorio'); reply=(s.data.userAge? ageSmartHint(s.data.userAge,'natatorio')+'\n\n':'')+responseNatatorioMenu(true); return finish(); }
+    if(isLetter(rawText,['B']) || containsAny(text,['futbol','fútbol'])){ setTopic(s,'actividades',{}); setMenuContext(s,'football'); s.data.currentActivity='Fútbol'; reply=(s.data.userAge? ageSmartHint(s.data.userAge,'futbol')+'\n\n':'')+responseFootballMenu(); return finish(); }
+    if(isLetter(rawText,['C']) || containsAny(text,['basquet','básquet','basket'])){ setTopic(s,'actividades',{}); setMenuContext(s,'basket'); s.data.currentActivity='Básquet'; reply=(s.data.userAge? ageSmartHint(s.data.userAge,'basquet')+'\n\n':'')+responseBasketMenu(); return finish(); }
+    if(isLetter(rawText,['D']) || containsAny(text,['gimnasia'])){ setTopic(s,'actividades',{}); setMenuContext(s,'gymnastics'); s.data.currentActivity='Gimnasia Artística'; reply=(s.data.userAge? ageSmartHint(s.data.userAge,'gimnasia')+'\n\n':'')+responseGymnastics(); return finish(); }
+    if(isLetter(rawText,['E']) || containsAny(text,['admin','administracion','persona'])){ reply=goAdmin(data,s,phone,rawText,'Consulta de menor derivada a administración'); return finish(); }
+  }
+
+  if(isMainMenuLetter()) {
       return routeMainMenuLetter();
     }
   }
@@ -3101,7 +3185,7 @@ ${adminContact(data)}${afterGeneralMenu()}`;
   }
 
 
-  if(menu === 'human_minor_activity'){
+  if(false && menu === 'human_minor_activity'){
     const age = extractAge(rawText);
     if(age && !detectActivityFreeText(rawText) && !isLetter(rawText,['A','B','C','D','E'])){
       s.data.userAge = age;
