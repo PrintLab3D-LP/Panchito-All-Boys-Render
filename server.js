@@ -347,7 +347,7 @@ ${panchitoIntroFunny()}
 
 ¿Qué andás buscando hoy? 😄
 
-A. ⚽ Actividades, días y horarios
+A. 🏟️ Actividades, días y horarios
 B. 📝 Precios e inscripción
 C. 💳 Cuotas y pagos
 D. 🏊 Natatorio / pileta
@@ -1365,121 +1365,177 @@ function handleAfterActivityAction(data, s, phone, rawText, letter, backMenu){
 }
 
 
+function sportVibe(kind='general'){
+  const bank = {
+    activities: [
+      'Vamos a elegir la jugada correcta 😄',
+      'Decime el deporte y yo te acompaño en la asistencia ⚽',
+      'Arrancamos tranqui, sin silbato ni VAR 😄'
+    ],
+    basket: [
+      '¡Buenísima elección! Vamos a encestar esta consulta 🏀',
+      'Dale, te doy una mano sin hacer dobles 😄',
+      'Básquet en All Boys: picamos la consulta y vamos al aro 🏀'
+    ],
+    football: [
+      '¡Linda elección! Prometo no cobrar offside por preguntar 😄',
+      'Vamos a buscar la categoría sin mandar la pelota a la tribuna ⚽',
+      'La pelota al pie y la info clara ⚽'
+    ],
+    gymnastics: [
+      'Vamos paso a paso, sin perder el equilibrio 🤸',
+      'Acá hacemos piruetas con la info, pero clara 😄',
+      'Buena elección, mucha disciplina y mucha onda 🤸'
+    ],
+    natatorio: [
+      'Al agua, pero el celular dejalo afuera de la pileta 😄',
+      'Vamos a nadar esta consulta con calma 🏊',
+      'Que lo único profundo sea la pileta, la respuesta va clarita 🏊'
+    ],
+    softbol: [
+      'Prometo que esta respuesta no se va de foul 🥎',
+      'Vamos con sóftbol, buena pegada y buena info 🥎'
+    ],
+    paleta: [
+      'Te devuelvo la consulta con buen revés 😄',
+      'Vamos con paleta, respuesta firme contra el frontón 🏓'
+    ]
+  };
+  return pickRandom(bank[kind] || bank.activities);
+}
+
 function responseActivityMenu(){
-  return `Perfecto. Estas son las actividades deportivas del club.
+  return `😄 Dale, vamos con deportes.
+${sportVibe('activities')}
 
-¿Qué actividad querés consultar?
+Contame cuál querés consultar:
 
-A. Gimnasia artística 🤸
-B. Básquet 🏀
-C. Sóftbol 🥎
-D. Pelota a paleta
-E. Fútbol ⚽
-F. Volver al menú principal
+A. 🤸 Gimnasia artística
+B. 🏀 Básquet
+C. 🥎 Sóftbol
+D. 🏓 Pelota a paleta
+E. ⚽ Fútbol
+F. 🏠 Volver al menú principal
 
-Podés seleccionar una opción o escribir el nombre de la actividad.`;
+También podés escribir directo algo como: “básquet para mi hija de 12”, “horarios de fútbol” o “natación”.`;
 }
 
 function responseBasketMenu(){
-  return `Básquet 🏀
+  return `🏀 ¡Excelente! Básquet es una gran elección.
+${sportVibe('basket')}
 
-¿Qué rama querés consultar?
+Para orientarte bien, decime una cosa:
 
-A. Básquet femenino
-B. Básquet masculino
-C. Escuelita y categorías iniciales
-D. Volver a actividades
-E. Volver al menú principal`;
+A. 👧 Es para básquet femenino
+B. 👦 Es para básquet masculino
+C. 🐣 Escuelita / categorías iniciales
+D. 🔙 Ver otras actividades
+E. 🏠 Menú principal
+
+También podés escribir: “mi hija tiene 13”, “mi hijo tiene 10” o “quiero horarios”.`;
 }
 
 function responseFootballMenu(){
-  return `Fútbol ⚽
+  return `⚽ ¡Vamos con fútbol!
+${sportVibe('football')}
 
-¿Qué categoría querés consultar?
+Para ubicarte mejor, elegí la categoría o escribime la edad/año de nacimiento:
 
 A. Cuarta, Quinta y Sexta División
 B. Séptima y Octava División
 C. Novena y Décima División
 D. Categorías 2017, 2018, 2019, 2020 y 2021
 E. Femenino Sub 12 y Sub 14
-F. Volver a actividades
-G. Volver al menú principal`;
+F. 🔙 Ver otras actividades
+G. 🏠 Menú principal
+
+Ejemplo: “tiene 9 años”, “nació en 2018”, “femenino sub 12”.`;
 }
 
 function responseGymnastics(){
-  return `🤸 Gimnasia Artística
+  return `🤸 ¡Qué buena disciplina!
+${sportVibe('gymnastics')}
 
-¿Qué categoría querés consultar?
+Decime la edad o elegí una categoría:
 
 A. Pulguitas (3 y 4 años)
 B. Escuela (5 a 7 años)
 C. Promocional (8 a 10 años)
 D. Pre federadas (11 años en adelante)
 E. Federadas
-F. Volver a actividades
-G. Volver al menú principal`;
+F. 🔙 Ver otras actividades
+G. 🏠 Menú principal`;
 }
 
 function responseSoftbol(){
-  return `🥎 Sóftbol
+  return `🥎 ¡Vamos con sóftbol!
+${sportVibe('softbol')}
 
-¿Qué categoría querés consultar?
+¿Qué grupo querés consultar?
 
 A. Pre infantil mixto
 B. Infantil cadete mixto
 C. Femenino
-D. Volver a actividades
-E. Volver al menú principal`;
+D. 🔙 Ver otras actividades
+E. 🏠 Menú principal`;
 }
 
 function responsePaleta(){
-  return `🏓 Pelota a Paleta
+  return `🏓 ¡Linda elección! Pelota a paleta tiene mucha magia.
+${sportVibe('paleta')}
 
-¿Qué categoría querés consultar?
+¿Qué grupo querés consultar?
 
 A. Niños y niñas de 6 a 12 años
 B. Adultos
-C. Volver a actividades
-D. Volver al menú principal`;
+C. 🔙 Ver otras actividades
+D. 🏠 Menú principal`;
 }
 
 function responseBasketFemenino(){
-  return `🏀 Básquet Femenino
+  return `🏀 Básquet femenino, ¡excelente!
+${sportVibe('basket')}
 
-¿Qué categoría querés consultar?
+Para no mandarte a cualquier categoría, decime la edad de la jugadora o elegí una opción:
 
 A. Sub 17 y Primera
 B. Sub 13 y Sub 15
 C. Sub 11
-D. Volver a básquet
-E. Volver al menú principal`;
+D. 🔙 Volver a básquet
+E. 🏠 Menú principal
+
+Ejemplo: “tiene 14 años” y te oriento mejor.`;
 }
 
 function responseBasketMasculino(){
-  return `🏀 Básquet Masculino
+  return `🏀 Básquet masculino, vamos ahí.
+${sportVibe('basket')}
 
-¿Qué categoría querés consultar?
+Decime la edad del jugador o elegí una categoría:
 
 A. Sub 17
 B. Sub 13
 C. Sub 15
 D. Primera división
 E. Asociativo
-F. Volver a básquet
-G. Volver al menú principal`;
+F. 🔙 Volver a básquet
+G. 🏠 Menú principal
+
+Ejemplo: “tiene 12 años” y Panchito te ubica la categoría.`;
 }
 
 function responseBasketInicial(){
-  return `🏀 Básquet - Escuelita e iniciales
+  return `🏀 Escuelita e iniciales.
+Acá arrancan las primeras bandejas y los primeros pases 😄
 
-¿Qué categoría querés consultar?
+¿Qué querés consultar?
 
 A. Sub 9
 B. Sub 11
 C. Escuelita
 D. Mosquitos
-E. Volver a básquet
-F. Volver al menú principal`;
+E. 🔙 Volver a básquet
+F. 🏠 Menú principal`;
 }
 
 function responseFootballA(data){
@@ -1680,8 +1736,10 @@ async function smartReply(rawText, phone='demo'){
   // Ejemplo: "buen día" no puede convertirse en "horarios" por el normalizador.
   if(isGreetingText(rawText)){
     intent='saludo'; confidence=.99;
-    setSession(s,'idle',{});
-    // No borramos todo el contexto si ya había una actividad cargada; solo respondemos amable.
+    // Al saludar volvemos al menú principal real. Esto evita que una letra A/B/C
+    // quede atrapada en un submenú viejo como básquet femenino.
+    s.data = { ...(s.data||{}), menu:'main', topic:'', currentActivity:'', currentCategory:'', disciplineDetail:null };
+    setSession(s,'idle', s.data);
     reply = greetingMessage();
     return finish();
   }
@@ -1778,6 +1836,12 @@ B. Hablar con administración
 Quedo atento a tu consulta.`;
       return finish();
     }
+  }
+
+  // Si el último mensaje mostrado fue el menú principal, las letras A-H
+  // SIEMPRE pertenecen al menú principal, no al submenú anterior.
+  if(menu === 'main' && isMainMenuLetter()){
+    return routeMainMenuLetter();
   }
 
   // Opciones después de cerrar una conversación.
@@ -3012,7 +3076,7 @@ ${adminContact(data)}${afterGeneralMenu()}`;
   }
 
   if(containsAny(text,['menu','menú','inicio','ayuda'])){
-    intent='menu'; confidence=.95; setSession(s,'idle',{}); setTopic(s,'',{}); setMenuContext(s,'');
+    intent='menu'; confidence=.95; setSession(s,'idle',{}); setTopic(s,'',{}); setMenuContext(s,'main');
     reply = panchitoMenu();
     return finish();
   }
@@ -3561,7 +3625,20 @@ function quickTwilioReply(rawText=''){
 }
 async function smartReplySafe(rawText, from){
   const quick = quickTwilioReply(rawText);
-  if(quick) return { reply: quick, intent: 'twilio_rapido', confidence: .99 };
+  if(quick){
+    // Guardamos que el usuario está en menú principal aunque haya entrado por la respuesta rápida.
+    // Así, si después responde A, B, C, etc., no se mezcla con un submenú anterior.
+    try{
+      const data = db();
+      data.sessions = data.sessions || [];
+      const s = getSession(data, normalizeTwilioPhone(from));
+      s.state = 'idle';
+      s.data = { ...(s.data||{}), menu:'main', topic:'', currentActivity:'', currentCategory:'', disciplineDetail:null };
+      s.updatedAt = new Date().toISOString();
+      save(data);
+    }catch(e){ console.error('No se pudo guardar contexto de menú principal:', e); }
+    return { reply: quick, intent: 'twilio_rapido', confidence: .99 };
+  }
   const timeout = new Promise(resolve => setTimeout(() => resolve({
     reply: 'Perdón, Panchito tardó más de lo esperado. Escribí MENÚ para empezar de nuevo o probá otra vez en unos segundos.',
     intent: 'timeout_seguro', confidence: .1
