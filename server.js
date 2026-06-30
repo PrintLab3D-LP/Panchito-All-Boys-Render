@@ -2275,6 +2275,119 @@ Quedo atento a tu consulta.`;
     return routeMainMenuLetter();
   }
 
+  // V62 FIX CONTEXTO FUERTE DE MENÚS
+  // Si hay un menú activo y el usuario responde con una letra, esa letra se interpreta
+  // SIEMPRE según el último menú mostrado. Esto evita que, por ejemplo, E en
+  // Actividades se tome como Administración del menú principal.
+  function routeActiveMenuLetter(){
+    if(!isLetter(rawText, ['A','B','C','D','E','F','G','H'])) return false;
+    if(protectedMenus.includes(menu) || String(menu||'').startsWith('signup_') || String(menu||'').startsWith('admin_') || String(menu||'').startsWith('claim_')) return false;
+
+    if(menu === 'activities'){
+      intent='submenu_actividades_contexto_fuerte'; confidence=.99;
+      if(letter==='A'){ setMenuContext(s,'gymnastics'); s.data.currentActivity='Gimnasia Artística'; reply=responseGymnastics(); return true; }
+      if(letter==='B'){ setMenuContext(s,'basket'); s.data.currentActivity='Básquet'; reply=responseBasketMenu(); return true; }
+      if(letter==='C'){ setMenuContext(s,'softbol'); s.data.currentActivity='Softbol'; reply=responseSoftbol(); return true; }
+      if(letter==='D'){ setMenuContext(s,'paleta'); s.data.currentActivity='Pelota a Paleta'; reply=responsePaleta(); return true; }
+      if(letter==='E'){ setMenuContext(s,'football'); s.data.currentActivity='Fútbol'; reply=responseFootballMenu(); return true; }
+      if(letter==='F'){ clearMenuContext(s); reply=panchitoMenu(); return true; }
+    }
+
+    if(menu === 'football'){
+      intent='submenu_futbol_contexto_fuerte'; confidence=.99;
+      if(letter==='A'){ setDiscipline(s,'discipline_detail','⚽ Cuarta, Quinta y Sexta División','Fútbol',['Cuarta','Quinta','Sexta'],'football'); reply=disciplineAnswer(data,s,'all'); return true; }
+      if(letter==='B'){ setDiscipline(s,'discipline_detail','⚽ Séptima y Octava División','Fútbol',['Séptima','Septima','Octava'],'football'); reply=disciplineAnswer(data,s,'all'); return true; }
+      if(letter==='C'){ setDiscipline(s,'discipline_detail','⚽ Novena y Décima División','Fútbol',['Novena','Décima','Decima'],'football'); reply=disciplineAnswer(data,s,'all'); return true; }
+      if(letter==='D'){ setMenuContext(s,'football_years'); reply=responseFootballD(); return true; }
+      if(letter==='E'){ setDiscipline(s,'discipline_detail','⚽ Femenino Sub 12 y Sub 14','Fútbol',['Femenino'],'football'); reply=disciplineAnswer(data,s,'all'); return true; }
+      if(letter==='F'){ setMenuContext(s,'activities'); reply=responseActivityMenu(); return true; }
+      if(letter==='G'){ clearMenuContext(s); reply=panchitoMenu(); return true; }
+    }
+
+    if(menu === 'football_years'){
+      intent='submenu_futbol_anios_contexto_fuerte'; confidence=.99;
+      if(letter==='A'){ setDiscipline(s,'discipline_detail','⚽ Categoría 2017','Fútbol',['2017'],'football_years'); reply=disciplineAnswer(data,s,'all'); return true; }
+      if(letter==='B'){ setDiscipline(s,'discipline_detail','⚽ Categoría 2018','Fútbol',['2018'],'football_years'); reply=disciplineAnswer(data,s,'all'); return true; }
+      if(letter==='C'){ setDiscipline(s,'discipline_detail','⚽ Categoría 2019','Fútbol',['2019'],'football_years'); reply=disciplineAnswer(data,s,'all'); return true; }
+      if(letter==='D'){ setDiscipline(s,'discipline_detail','⚽ Categoría 2020','Fútbol',['2020'],'football_years'); reply=disciplineAnswer(data,s,'all'); return true; }
+      if(letter==='E'){ setMenuContext(s,'football'); reply=responseFootballMenu(); return true; }
+      if(letter==='F'){ setMenuContext(s,'activities'); reply=responseActivityMenu(); return true; }
+    }
+
+    if(menu === 'basket'){
+      intent='submenu_basquet_contexto_fuerte'; confidence=.99;
+      if(letter==='A'){ setMenuContext(s,'basket_fem'); s.data.currentActivity='Básquet'; reply=responseBasketFemenino(); return true; }
+      if(letter==='B'){ setMenuContext(s,'basket_masc'); s.data.currentActivity='Básquet'; reply=responseBasketMasculino(); return true; }
+      if(letter==='C'){ setMenuContext(s,'basket_init'); s.data.currentActivity='Básquet'; reply=responseBasketInicial(); return true; }
+      if(letter==='D'){ setMenuContext(s,'activities'); reply=responseActivityMenu(); return true; }
+      if(letter==='E'){ clearMenuContext(s); reply=panchitoMenu(); return true; }
+    }
+
+    if(menu === 'basket_fem'){
+      intent='submenu_basquet_fem_contexto_fuerte'; confidence=.99;
+      if(letter==='A'){ setDiscipline(s,'discipline_detail','🏀 Básquet Femenino Sub 17 y Primera','Básquet',['Femenino Sub 17','Femenino Primera'],'basket_fem'); reply=disciplineAnswer(data,s,'all'); return true; }
+      if(letter==='B'){ setDiscipline(s,'discipline_detail','🏀 Básquet Femenino Sub 13 y Sub 15','Básquet',['Femenino Sub 13','Femenino Sub 15'],'basket_fem'); reply=disciplineAnswer(data,s,'all'); return true; }
+      if(letter==='C'){ setDiscipline(s,'discipline_detail','🏀 Básquet Femenino Sub 11','Básquet',['Femenino Sub 11'],'basket_fem'); reply=disciplineAnswer(data,s,'all'); return true; }
+      if(letter==='D'){ setMenuContext(s,'basket'); reply=responseBasketMenu(); return true; }
+      if(letter==='E'){ clearMenuContext(s); reply=panchitoMenu(); return true; }
+    }
+
+    if(menu === 'basket_masc'){
+      intent='submenu_basquet_masc_contexto_fuerte'; confidence=.99;
+      if(letter==='A'){ setDiscipline(s,'discipline_detail','🏀 Básquet Masculino Sub 17','Básquet',['Masculino Sub 17'],'basket_masc'); reply=disciplineAnswer(data,s,'all'); return true; }
+      if(letter==='B'){ setDiscipline(s,'discipline_detail','🏀 Básquet Masculino Sub 13','Básquet',['Masculino Sub 13'],'basket_masc'); reply=disciplineAnswer(data,s,'all'); return true; }
+      if(letter==='C'){ setDiscipline(s,'discipline_detail','🏀 Básquet Masculino Sub 15','Básquet',['Masculino Sub 15'],'basket_masc'); reply=disciplineAnswer(data,s,'all'); return true; }
+      if(letter==='D'){ setDiscipline(s,'discipline_detail','🏀 Básquet Masculino Primera división','Básquet',['Masculino Primera división','Primera división'],'basket_masc'); reply=disciplineAnswer(data,s,'all'); return true; }
+      if(letter==='E'){ setDiscipline(s,'discipline_detail','🏀 Básquet Asociativo','Básquet',['Asociativo'],'basket_masc'); reply=disciplineAnswer(data,s,'all'); return true; }
+      if(letter==='F'){ setMenuContext(s,'basket'); reply=responseBasketMenu(); return true; }
+      if(letter==='G'){ clearMenuContext(s); reply=panchitoMenu(); return true; }
+    }
+
+    if(menu === 'basket_init'){
+      intent='submenu_basquet_init_contexto_fuerte'; confidence=.99;
+      if(letter==='A'){ setDiscipline(s,'discipline_detail','🏀 Básquet Sub 9','Básquet',['Sub 9'],'basket_init'); reply=disciplineAnswer(data,s,'all'); return true; }
+      if(letter==='B'){ setDiscipline(s,'discipline_detail','🏀 Básquet Sub 11','Básquet',['Sub 11'],'basket_init'); reply=disciplineAnswer(data,s,'all'); return true; }
+      if(letter==='C'){ setDiscipline(s,'discipline_detail','🏀 Básquet Escuelita','Básquet',['Escuelita'],'basket_init'); reply=disciplineAnswer(data,s,'all'); return true; }
+      if(letter==='D'){ setDiscipline(s,'discipline_detail','🏀 Básquet Mosquitos','Básquet',['Mosquitos'],'basket_init'); reply=disciplineAnswer(data,s,'all'); return true; }
+      if(letter==='E'){ setMenuContext(s,'basket'); reply=responseBasketMenu(); return true; }
+      if(letter==='F'){ clearMenuContext(s); reply=panchitoMenu(); return true; }
+    }
+
+    if(menu === 'gymnastics'){
+      intent='submenu_gimnasia_contexto_fuerte'; confidence=.99;
+      if(letter==='A'){ setDiscipline(s,'discipline_detail','🤸 Pulguitas (3 y 4 años)','Gimnasia Artística',['Pulgas','Pulguitas'],'gymnastics'); reply=disciplineAnswer(data,s,'all'); return true; }
+      if(letter==='B'){ setDiscipline(s,'discipline_detail','🤸 Escuela (5 a 7 años)','Gimnasia Artística',['Escuela'],'gymnastics'); reply=disciplineAnswer(data,s,'all'); return true; }
+      if(letter==='C'){ setDiscipline(s,'discipline_detail','🤸 Promocional (8 a 10 años)','Gimnasia Artística',['Promocional'],'gymnastics'); reply=disciplineAnswer(data,s,'all'); return true; }
+      if(letter==='D'){ setDiscipline(s,'discipline_detail','🤸 Pre federadas','Gimnasia Artística',['Pre federadas'],'gymnastics'); reply=disciplineAnswer(data,s,'all'); return true; }
+      if(letter==='E'){ setDiscipline(s,'discipline_detail','🤸 Federadas','Gimnasia Artística',['Federadas'],'gymnastics'); reply=disciplineAnswer(data,s,'all'); return true; }
+      if(letter==='F'){ setMenuContext(s,'activities'); reply=responseActivityMenu(); return true; }
+      if(letter==='G'){ clearMenuContext(s); reply=panchitoMenu(); return true; }
+    }
+
+    if(menu === 'softbol'){
+      intent='submenu_softbol_contexto_fuerte'; confidence=.99;
+      if(letter==='A'){ setDiscipline(s,'discipline_detail','🥎 Pre infantil mixto','Softbol',['Pre infantil'],'softbol'); reply=disciplineAnswer(data,s,'all'); return true; }
+      if(letter==='B'){ setDiscipline(s,'discipline_detail','🥎 Infantil cadete mixto','Softbol',['Infantil cadete'],'softbol'); reply=disciplineAnswer(data,s,'all'); return true; }
+      if(letter==='C'){ setDiscipline(s,'discipline_detail','🥎 Femenino','Softbol',['Femenino'],'softbol'); reply=disciplineAnswer(data,s,'all'); return true; }
+      if(letter==='D'){ setMenuContext(s,'activities'); reply=responseActivityMenu(); return true; }
+      if(letter==='E'){ clearMenuContext(s); reply=panchitoMenu(); return true; }
+    }
+
+    if(menu === 'paleta'){
+      intent='submenu_paleta_contexto_fuerte'; confidence=.99;
+      if(letter==='A'){ setDiscipline(s,'discipline_detail','🏓 Niños y niñas de 6 a 12 años','Pelota a Paleta',['Niños','niñas'],'paleta'); reply=disciplineAnswer(data,s,'all'); return true; }
+      if(letter==='B'){ setDiscipline(s,'discipline_detail','🏓 Adultos','Pelota a Paleta',['Adultos'],'paleta'); reply=disciplineAnswer(data,s,'all'); return true; }
+      if(letter==='C'){ setMenuContext(s,'activities'); reply=responseActivityMenu(); return true; }
+      if(letter==='D'){ clearMenuContext(s); reply=panchitoMenu(); return true; }
+    }
+
+    return false;
+  }
+
+  if(routeActiveMenuLetter()){
+    return finish();
+  }
+
   // V44 FIX: si el bot acaba de preguntar actividad para un menor,
   // las letras A-E pertenecen a ese menú, no al menú principal ni a un submenú viejo.
   if(menu === 'human_minor_activity'){
