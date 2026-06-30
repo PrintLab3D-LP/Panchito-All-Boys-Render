@@ -4203,6 +4203,38 @@ function twilioXml(text=''){
   const messages = chunkWhatsApp(text);
   return `<?xml version="1.0" encoding="UTF-8"?><Response>${messages.map(m=>`<Message>${escapeXml(m)}</Message>`).join('')}</Response>`;
 }
+
+function logTwilioDiagnostic(route, incomingText, from, result, replyText, xml){
+  console.log('=================================');
+  console.log(`📍 Ruta: ${route}`);
+  console.log('📩 Mensaje recibido:');
+  console.log(incomingText || '(vacío)');
+  console.log('📱 Desde:');
+  console.log(from || '(sin número)');
+  console.log('🤖 Respuesta generada:');
+  console.log(replyText || '(respuesta vacía)');
+  console.log('🧠 Intent:');
+  console.log(result?.intent || '(sin intent)');
+  console.log('📏 Caracteres:');
+  console.log(String(replyText || '').length);
+  console.log('📦 XML Twilio generado:');
+  console.log(xml);
+  console.log('=================================');
+}
+function logFullTwilioError(route, e){
+  console.error('=================================');
+  console.error(`❌ ERROR COMPLETO EN ${route}`);
+  console.error(e?.stack || e);
+  if(e?.response?.data){
+    console.error('Respuesta del servicio externo:');
+    console.error(e.response.data);
+  }
+  if(e?.message){
+    console.error('Mensaje de error:');
+    console.error(e.message);
+  }
+  console.error('=================================');
+}
 function quickTwilioReply(rawText=''){
   // V41 Panchito Pro: respuesta rápida Twilio con saludo humano y menú natural.
   // Limpia signos y variantes para que "hola", "buen día", "menu" o "inicio" muestren siempre el menú completo.
@@ -4247,10 +4279,12 @@ app.post('/whatsapp', async (req,res)=>{
     const result = await smartReplySafe(incomingText, from);
     const replyText = result?.reply || result?.text || String(result || '');
     const xml = twilioXml(replyText);
+    logTwilioDiagnostic('/whatsapp', incomingText, from, result, replyText, xml);
+    logTwilioDiagnostic('/webhook', incomingText, from, result, replyText, xml);
     console.log('Respuesta Twilio enviada:', { from, intent: result?.intent, chars: replyText.length });
     res.type('text/xml').send(xml);
   }catch(e){
-    console.error('Error en /whatsapp Twilio:', e);
+    logFullTwilioError('/whatsapp', e);
     const fallback = 'Perdón, Panchito tuvo un inconveniente para responder. Escribí MENÚ o probá de nuevo en unos segundos.';
     res.type('text/xml').send(twilioXml(fallback));
   }
@@ -4276,7 +4310,7 @@ app.post('/webhook', async (req,res)=>{
     console.log('Respuesta Twilio enviada:', { from, intent: result?.intent, chars: replyText.length });
     res.type('text/xml').send(xml);
   }catch(e){
-    console.error('Error en /webhook Twilio:', e);
+    logFullTwilioError('/webhook', e);
     const fallback = 'Perdón, Panchito tuvo un inconveniente para responder. Escribí MENÚ o probá de nuevo en unos segundos.';
     res.type('text/xml').send(twilioXml(fallback));
   }
