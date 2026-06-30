@@ -270,7 +270,11 @@ function panchitoMicroPhrase(){
     'De una, Panchito al rescate 😄',
     'Vamos con eso 💙',
     'Te sigo el hilo, como marca personal 😄',
-    'Joya, sigo atento.'
+    'Joya, sigo atento.',
+    'Tranqui, bajamos la consulta al piso y salimos jugando ⚽',
+    'Ahí voy, con la camiseta bien puesta 💙',
+    'Dale que esta consulta la sacamos jugando 😄',
+    'Estoy para darte una mano, como buen asistidor 🏟️'
   ]);
 }
 function panchitoIntroFunny(){
@@ -294,7 +298,13 @@ function panchitoIntroFunny(){
     'Estoy en modo club: información, buena onda y respuesta rápida 😄',
     'Arrancamos cuando quieras, yo ya hice entrada en calor 🏃‍♂️',
     'Si querés horarios, cuotas o inscripción, te tiro un pase filtrado 😄',
-    'Consultame lo que necesites, que para eso entré a la cancha ⚽'
+    'Consultame lo que necesites, que para eso entré a la cancha ⚽',
+    'Hoy Panchito está titular: preguntá nomás 😄',
+    'Te atiendo con más ganas que tribuna en clásico 💙',
+    'La consulta que venga, la paramos de pecho y respondemos claro ⚽',
+    'Acá la buena onda juega de local 🏟️',
+    'Si hace falta, te hago el pase a administración como un 10 😄',
+    'No vendo humo: te oriento y, si hace falta, te derivo al club 💙'
   ];
   return pickRandom(frases);
 }
@@ -337,10 +347,16 @@ También podés escribir OMITIR.`;
 }
 function panchitoMenu(){
   const saludo = pickRandom([
-    `👋 ${timeGreeting()} Soy Panchito, el bot de All Boys.`,
-    `👋 ¡Hola! Soy Panchito, el asistente virtual de All Boys.`,
-    `💙 ¡Buenas! Soy Panchito y estoy para darte una mano.`,
-    `🏟️ ¡Hola! Panchito presente en la cancha de consultas.`
+    `👋 ${timeGreeting()} Soy Panchito, el bot de All Boys 😄`,
+    `💙 ¡Buenas! Soy Panchito, el asistente copado de All Boys.`,
+    `🏟️ ¡Hola! Panchito presente en la cancha de consultas.`,
+    `🤖 ¡Hola! Soy Panchito. Hoy juego de asistidor del club.`,
+    `⚽ ¡Buenas! Soy Panchito. Vos tirá la consulta que yo la bajo al piso.`,
+    `😄 ¡Hola! Panchito al habla, listo para darte una mano.`,
+    `💙 ¡Qué bueno verte por acá! Soy Panchito, asistente de All Boys.`,
+    `🥅 ¡Hola! Soy Panchito. Estoy más atento que arquero en penal.`,
+    `🏆 ¡Bienvenido a All Boys! Soy Panchito y entro de titular para ayudarte.`,
+    `🙌 ¡Buenas! Soy Panchito. Acá la buena onda juega de local.`
   ]);
   return `${saludo}
 ${panchitoIntroFunny()}
@@ -354,10 +370,7 @@ D. 🏊 Natatorio / pileta
 E. 👨‍💼 Hablar con administración
 F. 💬 Reclamos o sugerencias
 G. 📩 Prensa, CV, proveedores o propuestas
-H. 🤔 Otra consulta
-
-Podés responder con la letra o escribir como hablás por WhatsApp.
-Ejemplos: “mi hijo tiene 9 años y quiere fútbol”, “cuánto sale natación”, “horarios de básquet”.`;
+H. 🤔 Otra consulta`;
 }
 function adminContact(data){
   return `Administración All Boys
@@ -525,14 +538,14 @@ C. 💬 Otra consulta`;
 }
 
 function backMenuReply(back){
-  return back === 'gymnastics' ? responseGymnastics()
-    : back === 'softbol' ? responseSoftbol()
-    : back === 'paleta' ? responsePaleta()
-    : back === 'basket_fem' ? responseBasketFemenino()
-    : back === 'basket_masc' ? responseBasketMasculino()
-    : back === 'basket_init' ? responseBasketInicial()
+  return back === 'gymnastics' ? responseGymnastics('back')
+    : back === 'softbol' ? responseSoftbol('back')
+    : back === 'paleta' ? responsePaleta('back')
+    : back === 'basket_fem' ? responseBasketFemenino('back')
+    : back === 'basket_masc' ? responseBasketMasculino('back')
+    : back === 'basket_init' ? responseBasketInicial('back')
     : back === 'football_years' ? responseFootballD()
-    : back === 'football' ? responseFootballMenu()
+    : back === 'football' ? responseFootballMenu('back')
     : responseActivityMenu();
 }
 
@@ -1024,7 +1037,9 @@ function knowledgeSearch(data, text){
 function memberReply(member){
   const firstName = String(member.name || '').split(' ')[0] || 'Socio';
   if(Number(member.debt||0) > 0){
-    return `${firstName}, encontré tu ficha de socio Nº ${member.memberNo}.
+    return `${topicVibe('members')}
+
+${firstName}, encontré tu ficha de socio Nº ${member.memberNo}.
 
 ⚠️ Registrás una deuda pendiente de ${money(member.debt)}.
 Vencimiento registrado: ${member.nextDue}.
@@ -1035,7 +1050,9 @@ Podés abonarla por administración, transferencia o Mercado Pago.
 
 También podés escribir “mi carnet” para ver el carnet digital demo.`;
   }
-  return `${firstName}, encontré tu ficha de socio Nº ${member.memberNo} ✅
+  return `${topicVibe('members')}
+
+${firstName}, encontré tu ficha de socio Nº ${member.memberNo} ✅
 
 Tu cuota figura al día.
 Próximo vencimiento: ${member.nextDue}.
@@ -1091,6 +1108,28 @@ function isLetter(text, letters){
 }
 function clearMenuContext(s){
   s.data = { ...(s.data||{}), menu:'' };
+  s.state = 'idle';
+  s.updatedAt = new Date().toISOString();
+}
+
+// V59 - Reset fuerte cuando el bot abandona un flujo.
+// Si vuelve al menú principal por no entender una consulta, no debe quedar
+// enganchado a la categoría/deporte anterior. Evita que luego una letra
+// del menú principal se interprete como una opción vieja.
+function resetToMainContext(s){
+  const keep = { ...(s.data || {}) };
+  delete keep.menu;
+  delete keep.topic;
+  delete keep.currentActivity;
+  delete keep.currentCategory;
+  delete keep.disciplineDetail;
+  delete keep.lastNaturalIntent;
+  delete keep.priceFlow;
+  delete keep.priceMode;
+  delete keep.userBranch;
+  // No borramos signupDraft/adminDraft/claimDraft acá porque algunos flujos
+  // pueden usar sus propios pasos; esta función solo se usa al volver al menú.
+  s.data = { ...keep, menu:'', topic:'' };
   s.state = 'idle';
   s.updatedAt = new Date().toISOString();
 }
@@ -1152,11 +1191,12 @@ Mensaje: ${draft.message || '-'}`;
 function goAdmin(data, s, phone, rawText, note='Usuario pidió hablar con administración'){
   s.data = { ...(s.data||{}), adminDraft:{ originalText: rawText || '', note } };
   setMenuContext(s,'admin_name');
-  return `Claro 😊 Te derivo con administración. Antes necesito algunos datos para que el club pueda responderte correctamente.
+  return `📞 Te llevo con administración.
+${topicVibe('admin')}
+
+Antes necesito algunos datos para que el club pueda responderte correctamente.
 
 ${adminStepPrompt('name')}
-
-También podés escribir MENÚ para cancelar.
 
 ${adminContact(data)}`;
 }
@@ -1273,6 +1313,7 @@ function disciplineDetail(data, title, activityName, categoryNeedles, backMenu){
   const hasTeacher = items.some(a => String(a.teacher || '').trim());
 
   return `${title}
+${categoryVibe(title)}
 
 ¿Qué querés consultar?
 
@@ -1291,6 +1332,7 @@ function priceDisciplineDetail(data, s){
   const title = detail.title || 'Esta categoría';
   const hasPrice = items.some(a => Number(a.cost || 0) > 0);
   return `${title}
+${categoryVibe(title)}
 
 ¿Qué querés consultar?
 
@@ -1370,48 +1412,237 @@ function sportVibe(kind='general'){
     activities: [
       'Vamos a elegir la jugada correcta 😄',
       'Decime el deporte y yo te acompaño en la asistencia ⚽',
-      'Arrancamos tranqui, sin silbato ni VAR 😄'
+      'Arrancamos tranqui, sin silbato ni VAR 😄',
+      'Dale, vemos qué disciplina encaja mejor y salimos jugando 💙',
+      'Elegimos deporte sin presión: acá nadie queda en offside por preguntar 😂',
+      'Te ayudo a encontrar la actividad ideal, como pase al pie ⚽',
+      'Vamos por partes: deporte, edad y después Panchito acomoda la jugada 😄',
+      'La idea es simple: vos me contás y yo te oriento 💙',
+      'Acá no hay banco de suplentes: todas las consultas entran de titular 🏟️',
+      'Vamos con buena onda, que para eso juega Panchito 😄',
+      'Elegimos actividad con calma, como técnico armando el equipo 😄',
+      'Vos elegís la disciplina y Panchito te da el pase justo 💙',
+      'Vamos a ordenar la jugada para que sea fácil elegir 🏟️',
+      'Acá la consulta entra jugando de titular 😄',
+      'Actividad, edad y categoría: Panchito acomoda todo sin drama ⚽'
     ],
     basket: [
       '¡Buenísima elección! Vamos a encestar esta consulta 🏀',
       'Dale, te doy una mano sin hacer dobles 😄',
-      'Básquet en All Boys: picamos la consulta y vamos al aro 🏀'
+      'Básquet en All Boys: picamos la consulta y vamos al aro 🏀',
+      'Prometo pasar la info limpia, sin caminarla 😄',
+      'Vamos a buscar categoría como asistencia perfecta al aro 🏀',
+      'Si hay que elegir rama o edad, lo hacemos fácil y sin tablero complicado 😄',
+      'Acá Panchito tira la asistencia; la bandeja la metés vos 🏀',
+      'La consulta viene picando, la agarramos y la resolvemos 😄',
+      'Vamos con básquet, buena mano y mejor onda 🏀',
+      'No hago triples, pero intento responder de tres puntos 😄',
+      'Básquet con onda: pase, pique y respuesta clara 🏀',
+      'Si la categoría rebota, Panchito toma el rebote y sigue 😄',
+      'Vamos al aro de la información sin complicarla 🏀',
+      'Con una letra me alcanza para tirar la asistencia 😄',
+      'Básquet All Boys: respuesta rápida y al pecho 💙'
     ],
     football: [
       '¡Linda elección! Prometo no cobrar offside por preguntar 😄',
       'Vamos a buscar la categoría sin mandar la pelota a la tribuna ⚽',
-      'La pelota al pie y la info clara ⚽'
+      'La pelota al pie y la info clara ⚽',
+      'Acá la pelota no se mancha, y la consulta tampoco 😄',
+      'Decime edad o año y te tiro un pase a la categoría correcta ⚽',
+      'Vamos con fútbol: ordenamos la jugada y salimos por abajo 😄',
+      'Si la categoría está difícil, Panchito mete pausa y la acomoda ⚽',
+      'Nada de pelotazo largo: respuesta clara y al pie 😄',
+      'Vamos con la gambeta de la información 💙',
+      'Prometo revisar la jugada antes de responder, sin VAR eterno 😂',
+      'Fútbol y buena onda: Panchito juega de enganche ⚽',
+      'Vamos a buscar la categoría como pase filtrado 😄',
+      'Si hay dudas, levantamos la cabeza y tocamos al compañero 💙',
+      'Acá la consulta no se va al lateral 😄',
+      'Panchito marca la cancha y te orienta fácil ⚽'
     ],
     gymnastics: [
       'Vamos paso a paso, sin perder el equilibrio 🤸',
       'Acá hacemos piruetas con la info, pero clara 😄',
-      'Buena elección, mucha disciplina y mucha onda 🤸'
+      'Buena elección, mucha disciplina y mucha onda 🤸',
+      'Te oriento con cuidado, sin hacer mortal atrás con la respuesta 😄',
+      'Gimnasia artística: elegancia, constancia y Panchito ayudando 💙',
+      'Buscamos grupo por edad sin perder la postura 🤸',
+      'La consulta sale prolija, como rutina bien entrenada 😄',
+      'Vamos a estirar la info hasta que quede clara 🤸',
+      'Te acompaño paso a paso, sin resbalones 😄',
+      'Acá la única vuelta complicada es la de la rutina; la respuesta va simple 💙',
+      'Gimnasia con energía: equilibrio, sonrisa y respuesta clara 🤸',
+      'Panchito prepara la colchoneta y ordena la consulta 😄',
+      'Vamos a caer bien parados con la información 💙',
+      'Elegimos categoría sin perder la línea 🤸',
+      'Si la consulta da vueltas, Panchito la aterriza suave 😄'
     ],
     natatorio: [
       'Al agua, pero el celular dejalo afuera de la pileta 😄',
       'Vamos a nadar esta consulta con calma 🏊',
-      'Que lo único profundo sea la pileta, la respuesta va clarita 🏊'
+      'Que lo único profundo sea la pileta, la respuesta va clarita 🏊',
+      'Nos tiramos al agua con la info, pero sin salpicar confusión 😄',
+      'Natatorio modo activo: buscamos grupo, horario o inscripción 🏊',
+      'Tranquilo, esta consulta no se hunde: la sacamos a flote 😄',
+      'Panchito se pone antiparras y te orienta 🏊',
+      'Vamos brazada por brazada hasta llegar a la respuesta 😄',
+      'Si hay cupo o grupo, administración confirma; yo te dejo encaminado 💙',
+      'Pileta, horarios, inscripción: tirame la consulta y nadamos juntos 🏊',
+      'Natatorio con calma: respiramos y vamos por la info 🏊',
+      'Panchito flota, orienta y no se hunde con las dudas 😄',
+      'Vamos a buscar grupo sin salpicar respuestas raras 💙',
+      'La consulta entra al agua y sale clarita 🏊',
+      'Si hay cupos, horarios o edades, vamos brazada a brazada 😄'
     ],
     softbol: [
       'Prometo que esta respuesta no se va de foul 🥎',
-      'Vamos con sóftbol, buena pegada y buena info 🥎'
+      'Vamos con sóftbol, buena pegada y buena info 🥎',
+      'Te tiro una respuesta al guante, clarita 😄',
+      'Buscamos categoría sin mandar la pelota afuera 🥎',
+      'Acá hay swing de consulta y respuesta firme 😄',
+      'Sóftbol con buena onda: vamos a resolverlo 🥎',
+      'La consulta viene rápida, pero Panchito la atrapa 😄',
+      'Respondemos con precisión, directo al guante 🥎',
+      'Dale que esta jugada sale limpia 😄',
+      'Si hace falta administración, te hago el pase 💙',
+      'Sóftbol con swing y respuesta al guante 🥎',
+      'Panchito batea la duda y corre a primera 😄',
+      'Vamos a elegir grupo sin tirar bola mala 🥎',
+      'La consulta viene fuerte, pero acá se agarra 💙',
+      'Respuesta limpia, sin foul y con buena onda 😄'
     ],
     paleta: [
       'Te devuelvo la consulta con buen revés 😄',
-      'Vamos con paleta, respuesta firme contra el frontón 🏓'
+      'Vamos con paleta, respuesta firme contra el frontón 🏓',
+      'La consulta viene, Panchito la devuelve clarita 😄',
+      'Buen deporte: reflejos, precisión y buena onda 🏓',
+      'Vamos a pegarle bien a la info 😄',
+      'Sin rebotes raros: te respondo simple 🏓',
+      'Panchito al frontón de consultas 😄',
+      'Te oriento con derecha, revés y paciencia 💙',
+      'La respuesta vuelve bien colocada 🏓',
+      'Si hay dudas, seguimos peloteando hasta aclararlo 😄',
+      'Paleta con reflejos: pregunta y Panchito responde rápido 🏓',
+      'Vamos al frontón de la info sin rebotes confusos 😄',
+      'La consulta pega, vuelve y queda clara 💙',
+      'Derecha, revés y datos prolijos 🏓',
+      'Si querés otra categoría, seguimos jugando 😄'
+    ],
+    admin: [
+      'Si hace falta hablar con una persona, yo hago el pase como un 10 😄',
+      'Te derivo con administración sin vueltas 💙',
+      'Panchito hace la asistencia y administración define 🏟️',
+      'Vamos a dejar tu consulta bien armada para que te respondan mejor 😄',
+      'Administración recibe la pelota y define la jugada 💙',
+      'Te llevo con una persona sin hacerte dar vueltas 😄',
+      'Panchito prepara el pase y el club te responde 🏟️'
     ]
   };
   return pickRandom(bank[kind] || bank.activities);
 }
 
 
+function topicVibe(kind='general'){
+  const bank = {
+    payments: [
+      'Panchito abre la billetera, pero sin asustarse 😄',
+      'Vamos a ordenar la cuota como planilla prolija 💳',
+      'Tranqui, vemos pagos sin hacer cuentas raras 😄',
+      'Te ayudo con la parte de pagos, sin vueltas y con buena onda 💙',
+      'Acá la consulta entra por caja, pero sale clarita 😄',
+      'Vamos con cuotas: Panchito revisa y te orienta 💳',
+      'Si hay deuda, pago o comprobante, lo bajamos al piso y seguimos ⚽',
+      'Vamos a dejar esta consulta de pagos más ordenada que vestuario antes del partido 😄',
+      'Panchito no es contador, pero te da una mano con la cuota 💙',
+      'Cuotas y pagos: lo vemos tranqui, sin tarjeta amarilla 😄'
+    ],
+    signup: [
+      'Vamos a anotar futuro talento, con prolijidad y buena onda 📝',
+      'Arrancamos la inscripción como entrada en calor: paso a paso 😄',
+      'Panchito prepara la planilla y vos me pasás los datos 💙',
+      'Inscripción en marcha: sin pelotazos, todo claro 📝',
+      'Vamos a dejar la solicitud lista para que el club la revise bien 😄',
+      'Anotar a alguien al club siempre suma: Panchito te acompaña 💙',
+      'Dale, armamos la inscripción como jugada preparada ⚽',
+      'Panchito agarra el lápiz virtual y arrancamos 📝',
+      'Sumarse al club es una linda jugada; vamos paso a paso 😄',
+      'Te llevo por la inscripción sin hacerte correr de más 💙'
+    ],
+    admin: [
+      'Panchito hace el pase y administración define la jugada 📞',
+      'Te llevo con una persona del club, sin hacerte dar vueltas 😄',
+      'Armo bien la consulta para que administración la reciba clara 💙',
+      'Si esto necesita humano, Panchito toca de primera para administración ⚽',
+      'Vamos a derivarlo prolijo, como pase al pie 📞',
+      'Administración recibe la pelota; yo te ayudo a acomodar el mensaje 😄',
+      'Te acompaño hasta administración como buen asistidor 🏟️',
+      'Panchito no abandona la jugada: te derivo bien 💙',
+      'Vamos directo con administración, sin gambetas raras 😄',
+      'Te hago el puente con el club, corto y claro 📞'
+    ],
+    claims: [
+      'Contame tranquilo qué pasó; acá escuchamos sin sacar tarjeta amarilla 😄',
+      'Vamos a ordenar el reclamo para que llegue claro al club 💬',
+      'Panchito toma nota, sin silbato y sin reto 😄',
+      'Si hubo un problema, lo dejamos registrado como corresponde 💙',
+      'Dale, lo vemos con calma y lo cargamos prolijo 💬',
+      'Acá la queja no se va a la tribuna: la dejamos bien presentada 😄',
+      'Panchito escucha, anota y deriva donde corresponde 💙',
+      'Vamos paso a paso, sin VAR eterno ni vueltas raras 😄',
+      'Tu comentario importa; lo armamos bien para que lo revisen 💬',
+      'Si algo no salió bien, lo ponemos en orden y seguimos 💙'
+    ],
+    members: [
+      'Panchito busca el carnet en el bolsillo virtual 🎫',
+      'Vamos a revisar la ficha de socio como corresponde 💙',
+      'Busco el dato de socio sin hacerte correr la cancha 😄',
+      'Carnet, cuota o ficha: Panchito se pone en modo archivo 🎫',
+      'Vamos con socios: orden, buena onda y respuesta clara 💙',
+      'Panchito revisa la ficha con lupa de club 🔎',
+      'Si el socio está cargado, lo encontramos y seguimos 😄',
+      'Vamos a mirar tu situación de socio sin vueltas 🎫',
+      'Socios es cosa seria, pero Panchito le pone onda 💙',
+      'Revisamos la ficha y salimos jugando ⚽'
+    ],
+    institutional: [
+      'Panchito abre la casilla institucional y ordena el pase 📩',
+      'Prensa, CV o propuesta: lo derivamos prolijo 💙',
+      'Vamos a poner esa propuesta en el carril correcto 😄',
+      'Si es para el club, lo dejamos bien presentado 📩',
+      'Panchito recibe la idea y la acomoda para que llegue bien 💙'
+    ],
+    other: [
+      'Contame nomás, Panchito intenta ubicar la jugada 😄',
+      'Si no entra en el menú, igual lo vemos 💙',
+      'Tirame la consulta y la bajamos al piso ⚽',
+      'Vamos con esa duda, sin miedo al offside 😄',
+      'Panchito escucha y trata de orientarte lo mejor posible 💙'
+    ]
+  };
+  return pickRandom(bank[kind] || bank.other);
+}
+
+function categoryVibe(title=''){
+  const t = clean(title);
+  if(t.includes('sub 17')) return pickRandom(['Categoría fuerte, ya con ritmo de competencia 💪', 'Sub 17 viene con intensidad: Panchito ordena la jugada 😄', 'Acá ya se juega en serio, pero la consulta va simple 🏀']);
+  if(t.includes('sub 15')) return pickRandom(['Sub 15: etapa linda para crecer y sumar minutos 💙', 'Vamos con Sub 15, respuesta al pie y sin vueltas 😄', 'Buena categoría para seguir aprendiendo y competir 🏀']);
+  if(t.includes('sub 13')) return pickRandom(['Sub 13: seguimos formando juego y equipo 💙', 'Linda edad para aprender, divertirse y competir 😄', 'Panchito te ubica la info sin hacer dobles 🏀']);
+  if(t.includes('sub 11') || t.includes('sub 9') || t.includes('escuelita') || t.includes('mosquitos')) return pickRandom(['Ideal para arrancar con confianza y buena onda 😄', 'Acá se aprende jugando, que es lo más lindo 💙', 'Primeros pasos, primeras jugadas y Panchito ayudando 🏀']);
+  if(t.includes('pulguitas')) return pickRandom(['Pulguitas: mucha energía, aprendizaje y ternura 🤸', 'Para los más peques, vamos suave y con mucha onda 😄']);
+  if(t.includes('escuela')) return pickRandom(['Escuela: aprender, moverse y disfrutar 💙', 'Linda etapa para sumar coordinación y confianza 😄']);
+  if(t.includes('promocional')) return pickRandom(['Promocional: ya con más técnica y muchas ganas 🤸', 'Vamos subiendo la dificultad sin perder la sonrisa 😄']);
+  if(t.includes('pre feder') || t.includes('federad')) return pickRandom(['Categoría con compromiso y mucha disciplina 💪', 'Acá hay entrenamiento firme y Panchito ordena la info 🤸']);
+  if(t.includes('pre infantil')) return pickRandom(['Pre infantil: primeros swings y mucha diversión 🥎', 'Arranque ideal para aprender sóftbol con buena onda 😄']);
+  if(t.includes('infantil cadete')) return pickRandom(['Infantil cadete: más juego, más equipo y más ritmo 🥎', 'Panchito busca la info directo al guante 😄']);
+  if(t.includes('adultos')) return pickRandom(['Para adultos también hay juego y buena onda 💙', 'Nunca es tarde para sumarse y disfrutar 😄']);
+  return pickRandom(['Buena categoría, vamos a ver la info clara 😄', 'Panchito acomoda la consulta y seguimos 💙', 'Dale, vemos esta opción sin vueltas.']);
+}
+
 function minorActivityPrompt(age=''){
   const edad = age ? ` de ${age} años` : '';
   return `😊 ¡Qué lindo! Para orientarte bien con tu hijo/a${edad}, primero decime qué actividad le interesa.
 
-Podés escribirlo como te salga: “natación”, “fútbol”, “básquet” o “gimnasia”.
-
-También te dejo atajos:
+Elegí una opción:
 A. 🏊 Natatorio / pileta
 B. ⚽ Fútbol
 C. 🏀 Básquet
@@ -1465,11 +1696,139 @@ function minorActivityConversationalReply(data, s, activity){
   return directActivityReply(data, activity, '', s);
 }
 
+
+
+// V57 - Memoria conversacional real + emoción por contexto.
+// Guarda datos útiles aunque el usuario los diga sueltos: edad, rama, deporte y última intención.
+function rememberConversationFacts(s, rawText='', activity=null){
+  s.data = s.data || {};
+  const t = normalizeUserText(rawText);
+  const ageInfo = extractAgeOrBirthYear(rawText);
+  if(ageInfo){
+    s.data.userAge = ageInfo.age;
+    s.data.userBirthYear = ageInfo.birthYear;
+  }
+  const branch = phase6BranchFromText(rawText, activity?.label || s.data.currentActivity || '');
+  if(branch) s.data.userBranch = branch;
+  if(activity){
+    s.data.currentActivity = activity.label;
+    s.data.lastActivityKey = activity.key;
+  }
+  const intent = phase6Intent(rawText);
+  if(intent) s.data.lastNaturalIntent = intent;
+  s.updatedAt = new Date().toISOString();
+}
+
+function memoryLabel(s){
+  const bits=[];
+  if(s?.data?.userAge) bits.push(`${s.data.userAge} años`);
+  if(s?.data?.userBranch) bits.push(s.data.userBranch === 'femenino' ? 'femenino' : s.data.userBranch === 'masculino' ? 'masculino' : s.data.userBranch);
+  if(s?.data?.currentActivity) bits.push(s.data.currentActivity);
+  return bits.length ? bits.join(' · ') : '';
+}
+
+function contextEmotionForActivity(activity){
+  const key = activity?.key || clean(activity?.label || '');
+  if(key === 'football' || key.includes('futbol')) return sportVibe('football');
+  if(key === 'basket' || key.includes('basquet')) return sportVibe('basket');
+  if(key === 'natatorio' || key.includes('natatorio') || key.includes('pileta')) return sportVibe('natatorio');
+  if(key === 'gymnastics' || key.includes('gimnasia')) return sportVibe('gymnastics');
+  if(key === 'softbol' || key.includes('softbol')) return sportVibe('softbol');
+  if(key === 'paleta' || key.includes('paleta')) return sportVibe('paleta');
+  return sportVibe('activities');
+}
+
+function replyOnlyAgeRemembered(data, s, rawText=''){
+  const ageInfo = extractAgeOrBirthYear(rawText);
+  if(!ageInfo) return '';
+  // Si solo dijo una edad/año, la guardamos y preguntamos actividad.
+  if(detectActivityFreeText(rawText)) return '';
+  if(phase6Intent(rawText)) return '';
+  s.data = { ...(s.data||{}), userAge: ageInfo.age, userBirthYear: ageInfo.birthYear };
+  setMenuContext(s,'human_minor_activity');
+  const dataLabel = ageInfo.source === 'year' ? `año ${ageInfo.birthYear}` : `${ageInfo.age} años`;
+  return `😊 Perfecto, ya me guardé el dato: **${dataLabel}**.
+
+Ahora decime qué actividad le interesa y lo ubicamos mejor.
+
+A. 🏊 Natatorio / pileta
+B. ⚽ Fútbol
+C. 🏀 Básquet
+D. 🤸 Gimnasia artística
+E. 📞 Hablar con administración`;
+}
+
+function replyActivityWithMemory(data, s, rawText='', phone='demo'){
+  const activity = detectActivityFreeText(rawText);
+  if(!activity) return '';
+  rememberConversationFacts(s, rawText, activity);
+  const ageInfo = s.data?.userAge ? { age:Number(s.data.userAge), birthYear:s.data.userBirthYear || (new Date().getFullYear()-Number(s.data.userAge)), source:'memory' } : extractAgeOrBirthYear(rawText);
+  const branch = s.data?.userBranch || phase6BranchFromText(rawText, activity.label);
+  const intent = phase6Intent(rawText);
+
+  setTopic(s,'actividades',{});
+  setMenuContext(s, activity.key === 'natatorio' ? 'natatorio' : activity.key);
+
+  // Natatorio no usa categoría deportiva por edad: responde directo con memoria.
+  if(activity.key === 'natatorio'){
+    const intro = `🏊 ¡Vamos con natatorio! ${contextEmotionForActivity(activity)}`;
+    const mem = memoryLabel(s);
+    return `${intro}${mem ? `\n\nTengo anotado: ${mem}.` : ''}\n\n${directActivityReply(data, activity, rawText, s)}`;
+  }
+
+  if(ageInfo){
+    const tooYoung = tooYoungMessage(activity.label, ageInfo);
+    if(tooYoung){
+      return `⚠️ ${tooYoung}\n\n${contextEmotionForActivity(activity)}\n\nSi querés, te muestro otras actividades para esa edad o te derivo con administración.`;
+    }
+    const rec = phase6RecommendRule(data, activity.label, ageInfo, branch);
+    if(rec){
+      const title = `${activity.label}${rec.label ? ' - ' + rec.label : ''}`;
+      setDiscipline(s,'discipline_detail', title, activity.label, [rec.rawCategory, rec.label].filter(Boolean), activity.key);
+      s.data.userAge = ageInfo.age;
+      s.data.userBirthYear = ageInfo.birthYear;
+      s.data.userBranch = branch || rec.branch || '';
+      const dataLabel = ageInfo.source === 'year' ? `año ${ageInfo.birthYear}` : `${ageInfo.age} años`;
+      if(intent === 'schedule') return disciplineAnswer(data, s, 'schedule');
+      if(intent === 'price') return disciplineAnswer(data, s, 'price');
+      if(intent === 'teacher') return disciplineAnswer(data, s, 'teacher');
+      if(intent === 'admin') return goAdmin(data, s, phone, rawText, `Contacto por ${title}`);
+      if(intent === 'inscription') return startSignupFlow(data, s, activity.label, title);
+      return `${contextEmotionForActivity(activity)}\n\nTengo anotado: **${dataLabel}**${branch ? ` · **${branch}**` : ''}.\n\nPor esos datos, te recomiendo **${rec.label}**.\n\n¿Qué querés que te pase ahora?\n\nA. 📅 Horarios\nB. 💰 Costo / cuota\nC. 📝 Iniciar inscripción\nD. 👨‍🏫 Profesor/a\nE. 📲 WhatsApp / administración`;
+    }
+  }
+
+  return directActivityReply(data, activity, rawText, s);
+}
+
+function replyContextualMemory(data, s, rawText='', phone='demo'){
+  // 1) Edad suelta: "9", "9 años", "2017".
+  const onlyAge = replyOnlyAgeRemembered(data, s, rawText);
+  if(onlyAge) return onlyAge;
+
+  // 2) Deporte suelto después de haber dicho edad/rama.
+  const activityMemory = replyActivityWithMemory(data, s, rawText, phone);
+  if(activityMemory) return activityMemory;
+
+  // 3) Intención suelta con contexto: "horarios", "cuánto sale", "inscripción".
+  const kind = phase6Intent(rawText) || disciplineFollowUpKind(rawText);
+  if(kind && s.data?.disciplineDetail && ['schedule','teacher','price','inscription','admin'].includes(kind)){
+    if(kind === 'admin') return goAdmin(data, s, phone, rawText, `Usuario pidió contacto desde ${s.data.disciplineDetail.title || 'disciplina'}`);
+    return disciplineAnswer(data, s, kind);
+  }
+  if(kind && activityFromMemory(s) && ['schedule','price','inscription','admin'].includes(kind)){
+    const remembered = activityFromMemory(s);
+    if(kind === 'admin') return goAdmin(data, s, phone, rawText, `Usuario pidió contacto por ${remembered.label}`);
+    return directActivityReply(data, remembered, rawText, s);
+  }
+  return '';
+}
+
 function responseActivityMenu(){
-  return `😄 Dale, vamos con deportes.
+  return `😄 ¡Perfecto! Vamos a encontrar la actividad ideal.
 ${sportVibe('activities')}
 
-Contame cuál querés consultar:
+¿Cuál te interesa consultar?
 
 A. 🤸 Gimnasia artística
 B. 🏀 Básquet
@@ -1478,7 +1837,7 @@ D. 🏓 Pelota a paleta
 E. ⚽ Fútbol
 F. 🏠 Volver al menú principal
 
-También podés escribir directo algo como: “básquet para mi hija de 12”, “horarios de fútbol” o “natación”.`;
+`;
 }
 
 function responseBasketMenu(){
@@ -1491,14 +1850,15 @@ A. 👧 Es para básquet femenino
 B. 👦 Es para básquet masculino
 C. 🐣 Escuelita / categorías iniciales
 D. 🔙 Ver otras actividades
-E. 🏠 Menú principal
-
-También podés escribir: “mi hija tiene 13”, “mi hijo tiene 10” o “quiero horarios”.`;
+E. 🏠 Menú principal`;
 }
 
-function responseFootballMenu(){
-  return `⚽ ¡Vamos con fútbol!
-${sportVibe('football')}
+function responseFootballMenu(mode='normal'){
+  const intro = mode === 'back'
+    ? `🔙 Volvemos a las categorías de fútbol. Panchito acomoda la pelota y seguimos 😄`
+    : `⚽ ¡Vamos con fútbol!
+${sportVibe('football')}`;
+  return `${intro}
 
 Para ubicarte mejor, elegí la categoría o escribime la edad/año de nacimiento:
 
@@ -1508,14 +1868,15 @@ C. Novena y Décima División
 D. Categorías 2017, 2018, 2019, 2020 y 2021
 E. Femenino Sub 12 y Sub 14
 F. 🔙 Ver otras actividades
-G. 🏠 Menú principal
-
-Ejemplo: “tiene 9 años”, “nació en 2018”, “femenino sub 12”.`;
+G. 🏠 Menú principal`;
 }
 
-function responseGymnastics(){
-  return `🤸 ¡Qué buena disciplina!
-${sportVibe('gymnastics')}
+function responseGymnastics(mode='normal'){
+  const intro = mode === 'back'
+    ? `🔙 Volvemos a las categorías de gimnasia. Panchito acomoda la colchoneta y seguimos 😄`
+    : `🤸 ¡Qué buena disciplina!
+${sportVibe('gymnastics')}`;
+  return `${intro}
 
 Decime la edad o elegí una categoría:
 
@@ -1528,9 +1889,12 @@ F. 🔙 Ver otras actividades
 G. 🏠 Menú principal`;
 }
 
-function responseSoftbol(){
-  return `🥎 ¡Vamos con sóftbol!
-${sportVibe('softbol')}
+function responseSoftbol(mode='normal'){
+  const intro = mode === 'back'
+    ? `🔙 Volvemos a los grupos de sóftbol. Panchito prepara el guante y seguimos 😄`
+    : `🥎 ¡Vamos con sóftbol!
+${sportVibe('softbol')}`;
+  return `${intro}
 
 ¿Qué grupo querés consultar?
 
@@ -1541,9 +1905,12 @@ D. 🔙 Ver otras actividades
 E. 🏠 Menú principal`;
 }
 
-function responsePaleta(){
-  return `🏓 ¡Linda elección! Pelota a paleta tiene mucha magia.
-${sportVibe('paleta')}
+function responsePaleta(mode='normal'){
+  const intro = mode === 'back'
+    ? `🔙 Volvemos a los grupos de pelota a paleta. Panchito devuelve la consulta con buen revés 😄`
+    : `🏓 ¡Linda elección! Pelota a paleta tiene mucha magia.
+${sportVibe('paleta')}`;
+  return `${intro}
 
 ¿Qué grupo querés consultar?
 
@@ -1553,9 +1920,12 @@ C. 🔙 Ver otras actividades
 D. 🏠 Menú principal`;
 }
 
-function responseBasketFemenino(){
-  return `🏀 Básquet femenino, ¡excelente!
-${sportVibe('basket')}
+function responseBasketFemenino(mode='normal'){
+  const intro = mode === 'back'
+    ? `🔙 Volvemos a las categorías de básquet femenino. Panchito pica la pelota y seguimos 😄`
+    : `🏀 Básquet femenino, ¡excelente!
+${sportVibe('basket')}`;
+  return `${intro}
 
 Para no mandarte a cualquier categoría, decime la edad de la jugadora o elegí una opción:
 
@@ -1563,14 +1933,15 @@ A. Sub 17 y Primera
 B. Sub 13 y Sub 15
 C. Sub 11
 D. 🔙 Volver a básquet
-E. 🏠 Menú principal
-
-Ejemplo: “tiene 14 años” y te oriento mejor.`;
+E. 🏠 Menú principal`;
 }
 
-function responseBasketMasculino(){
-  return `🏀 Básquet masculino, vamos ahí.
-${sportVibe('basket')}
+function responseBasketMasculino(mode='normal'){
+  const intro = mode === 'back'
+    ? `🔙 Volvemos a las categorías de básquet masculino. Panchito tira una asistencia y seguimos 😄`
+    : `🏀 Básquet masculino, vamos ahí.
+${sportVibe('basket')}`;
+  return `${intro}
 
 Decime la edad del jugador o elegí una categoría:
 
@@ -1580,14 +1951,15 @@ C. Sub 15
 D. Primera división
 E. Asociativo
 F. 🔙 Volver a básquet
-G. 🏠 Menú principal
-
-Ejemplo: “tiene 12 años” y Panchito te ubica la categoría.`;
+G. 🏠 Menú principal`;
 }
 
-function responseBasketInicial(){
-  return `🏀 Escuelita e iniciales.
-Acá arrancan las primeras bandejas y los primeros pases 😄
+function responseBasketInicial(mode='normal'){
+  const intro = mode === 'back'
+    ? `🔙 Volvemos a escuelita e iniciales. Panchito acomoda el tablero y seguimos 😄`
+    : `🏀 Escuelita e iniciales.
+Acá arrancan las primeras bandejas y los primeros pases 😄`;
+  return `${intro}
 
 ¿Qué querés consultar?
 
@@ -1629,16 +2001,17 @@ function responseFootballE(data){
 }
 
 function responsePricesMenu(){
-  return `Te ayudo con precios e inscripción 📝
+  return `📝 Vamos con precios e inscripción.
+${topicVibe('signup')}
 
-Para brindarte información correcta, elegí qué tipo de consulta querés realizar.
+¿Qué necesitás?
 
-A. Precio de una actividad
-B. Cómo inscribirme a una actividad
-C. Cómo asociarme al club
-D. Inscripción para un menor
-E. Hablar con administración
-F. Volver al menú principal`;
+A. 💰 Precio de una actividad
+B. 📝 Cómo inscribirme a una actividad
+C. 🎫 Cómo asociarme al club
+D. 👧 Inscripción para un menor
+E. 📞 Hablar con administración
+F. 🏠 Volver al menú principal`;
 }
 
 
@@ -1726,28 +2099,26 @@ ${adminContact(data)}`;
 }
 
 function responsePaymentsMenu(){
-  return `Te ayudo con cuotas y pagos 💳
-
-Para ayudarte mejor, elegí una opción.
+  return `💳 Vamos con cuotas y pagos.
+${topicVibe('payments')}
 
 ¿Qué necesitás?
 
-A. Consultar si tengo deuda
-B. Avisar que ya pagué
-C. Consultar medios de pago
-D. Hablar con administración
-E. Volver al menú principal`;
+A. 🔎 Consultar si tengo deuda
+B. ✅ Avisar que ya pagué
+C. 🏦 Consultar medios de pago
+D. 📞 Hablar con administración
+E. 🏠 Volver al menú principal`;
 }
 
 
 function responseClaimMenu(){
-  return `Lamento que hayas tenido un inconveniente.
+  return `💬 Dale, contame qué pasó.
+${topicVibe('claims')}
 
 Voy a registrar el reclamo paso por paso para que administración pueda revisarlo correctamente. ✅
 
-1/4 Escribime el nombre y apellido.
-
-También podés escribir “administración” para hablar con una persona o “menú” para volver al inicio.`;
+1/4 Escribime el nombre y apellido.`;
 }
 
 function claimStepPrompt(step){
@@ -1867,9 +2238,8 @@ async function smartReply(rawText, phone='demo'){
     if(main === 'G'){
       intent='institucional'; confidence=.96;
       setSession(s,'idle',{}); setTopic(s,'institucional',{}); setMenuContext(s,'institutional');
-      reply = `Gracias por escribirle al club 📩
-
-Seleccioná el tipo de consulta para que podamos derivarla correctamente.
+      reply = `📩 Gracias por escribirle al club.
+${topicVibe('institutional')}
 
 ¿Qué querés enviar?
 
@@ -1887,10 +2257,10 @@ G. Volver al menú principal`;
       intent='otra_consulta'; confidence=.96;
       setSession(s,'idle',{}); setTopic(s,'otra',{}); setMenuContext(s,'other');
       reply = `No hay problema 😊
+${topicVibe('other')}
 
 Contame brevemente qué necesitás y trato de orientarte.
 
-También podés escribir:
 A. Volver al menú principal
 B. Hablar con administración
 
@@ -1903,6 +2273,87 @@ Quedo atento a tu consulta.`;
   // SIEMPRE pertenecen al menú principal, no al submenú anterior.
   if(menu === 'main' && isMainMenuLetter()){
     return routeMainMenuLetter();
+  }
+
+  // V44 FIX: si el bot acaba de preguntar actividad para un menor,
+  // las letras A-E pertenecen a ese menú, no al menú principal ni a un submenú viejo.
+  if(menu === 'human_minor_activity'){
+    const age = extractAge(rawText);
+    if(age && !detectActivityFreeText(rawText) && !isLetter(rawText,['A','B','C','D','E'])){
+      s.data.userAge = age;
+      intent='menor_edad_recibida'; confidence=.94;
+      reply = `😊 ¡Perfecto! ${age} años, ya puedo orientarte mejor.
+
+¿Qué actividad le interesa?
+
+A. 🏊 Natatorio / pileta
+B. ⚽ Fútbol
+C. 🏀 Básquet
+D. 🤸 Gimnasia artística
+E. 📞 Hablar con administración`;
+      return finish();
+    }
+    if(isLetter(rawText,['A']) || containsAny(text,['natatorio','pileta','natacion','natación'])){
+      intent='menor_natatorio'; confidence=.98;
+      setTopic(s,'natatorio',{}); setMenuContext(s,'natatorio'); s.data.currentActivity='Natatorio / pileta';
+      reply=(s.data.userAge? `🏊 ¡Al agua! Para ${s.data.userAge} años conviene confirmar grupo, nivel y cupo disponible.
+
+`:'')+responseNatatorioMenu(true);
+      return finish();
+    }
+    if(isLetter(rawText,['B']) || containsAny(text,['futbol','fútbol'])){
+      intent='menor_futbol'; confidence=.98;
+      const ageInfo = s.data.userAge ? {age:s.data.userAge, birthYear:new Date().getFullYear()-s.data.userAge, source:'age'} : null;
+      const rec = ageInfo ? phase6RecommendRule(data, 'Fútbol', ageInfo, 'masculino') : null;
+      setTopic(s,'actividades',{}); setMenuContext(s,'football'); s.data.currentActivity='Fútbol';
+      if(rec){ setDiscipline(s,'discipline_detail', `Fútbol - ${rec.label}`, 'Fútbol', [rec.rawCategory, rec.label].filter(Boolean), 'football'); }
+      reply = `⚽ ¡Qué lindo! En All Boys la pelota arranca desde chicos.
+
+${s.data.userAge ? `Con ${s.data.userAge} años, lo más probable es **${rec?.label || fallbackRecommendedCategory('Fútbol', ageInfo) || 'categoría infantil'}**.
+
+` : ''}¿Qué necesitás ahora?
+A. 🕒 Horarios
+B. 💰 Cuotas / precio
+C. 📝 Inscripción
+D. 📲 Administración`;
+      return finish();
+    }
+    if(isLetter(rawText,['C']) || containsAny(text,['basquet','básquet','basket'])){
+      intent='menor_basquet'; confidence=.98;
+      setTopic(s,'actividades',{}); setMenuContext(s,'basket'); s.data.currentActivity='Básquet';
+      reply = `🏀 ¡Buenísima elección! Vamos a encestar esta consulta.
+
+${s.data.userAge ? `Me dijiste que tiene ${s.data.userAge} años. ` : ''}Para ubicar la categoría, decime si es para chica o chico.
+
+A. 👧 Básquet femenino
+B. 👦 Básquet masculino
+C. 🐣 Escuelita / inicial
+D. 🔙 Ver otras actividades`;
+      return finish();
+    }
+    if(isLetter(rawText,['D']) || containsAny(text,['gimnasia'])){
+      intent='menor_gimnasia'; confidence=.98;
+      const ageInfo = s.data.userAge ? {age:s.data.userAge, birthYear:new Date().getFullYear()-s.data.userAge, source:'age'} : null;
+      const rec = ageInfo ? phase6RecommendRule(data, 'Gimnasia Artística', ageInfo, '') : null;
+      setTopic(s,'actividades',{}); setMenuContext(s,'gymnastics'); s.data.currentActivity='Gimnasia Artística';
+      if(rec){ setDiscipline(s,'discipline_detail', `Gimnasia Artística - ${rec.label}`, 'Gimnasia Artística', [rec.rawCategory, rec.label].filter(Boolean), 'gymnastics'); }
+      reply = `🤸 ¡Hermosa disciplina! Vamos paso a paso, sin perder el equilibrio 😄
+
+${s.data.userAge ? `Con ${s.data.userAge} años, probablemente corresponda **${rec?.label || fallbackRecommendedCategory('Gimnasia Artística', ageInfo) || 'un grupo por edad'}**.
+
+` : ''}¿Qué necesitás?
+A. 🕒 Horarios
+B. 💰 Cuotas / precio
+C. 📝 Inscripción
+D. 👩‍🏫 Profesor/a
+E. 📲 Administración`;
+      return finish();
+    }
+    if(isLetter(rawText,['E']) || containsAny(text,['admin','administracion','persona'])){
+      intent='menor_admin'; confidence=.98;
+      reply=goAdmin(data,s,phone,rawText,'Consulta de menor derivada a administración');
+      return finish();
+    }
   }
 
   // Opciones después de cerrar una conversación.
@@ -2064,6 +2515,17 @@ B. 💬 Realizar otra consulta`;
     return finish();
   }
 
+
+  // V57: memoria conversacional antes de menús rígidos.
+  // Guarda edad/sexo/deporte y responde usando contexto cuando el usuario escribe algo suelto.
+  if(!protectedMenus.includes(menu) && !['waiting_satisfaction','waiting_survey_comment','waiting_survey_comment_input'].includes(s.state) && s.state !== 'waiting_dni_fee' && s.state !== 'waiting_carnet_lookup' && !isMemberFeeDebtQuery(rawText)){
+    const memorySmart = replyContextualMemory(data, s, rawText, phone);
+    if(memorySmart){
+      intent='memoria_conversacional_v57'; confidence=.99;
+      reply = memorySmart;
+      return finish();
+    }
+  }
 
   // FASE 6: conversación inteligente antes de caer en menús rígidos.
   // Detecta frases completas, recuerda contexto y responde solo lo que el usuario pidió.
@@ -2311,7 +2773,7 @@ E. Hablar con administración 📞`;
     if(isLetter(rawText,['E']) || containsAny(text,['admin','administracion','persona'])){ reply=goAdmin(data,s,phone,rawText,'Consulta de menor derivada a administración'); return finish(); }
   }
 
-  if(isMainMenuLetter()) {
+  if((menu === 'main' || !menu) && isMainMenuLetter()) {
       return routeMainMenuLetter();
     }
   }
@@ -2349,7 +2811,7 @@ E. Hablar con administración 📞`;
   }
 
 
-  if(['signup_name','signup_age','signup_dni','signup_socio','signup_phone','signup_email','signup_notes','signup_confirm','signup_done'].includes(menu)){
+  if(['signup_name','signup_age','signup_dni','signup_socio','signup_phone','signup_email','signup_notes','signup_confirm','signup_edit_name','signup_edit_age','signup_edit_phone','signup_done'].includes(menu)){
     if(containsAny(text,['menu','menú','inicio','salir','cancelar','volver'])){
       intent='inscripcion_cancelada'; confidence=.92;
       clearMenuContext(s);
@@ -2467,6 +2929,48 @@ ${signupStepPrompt('confirm', s.data.signupDraft)}`;
       return finish();
     }
 
+    if(menu === 'signup_edit_name'){
+      intent='inscripcion_editar_nombre'; confidence=.96;
+      s.data.signupDraft.name = rawText;
+      setMenuContext(s,'signup_confirm');
+      reply = `✅ Listo, actualicé el nombre.
+
+${signupStepPrompt('confirm', s.data.signupDraft)}`;
+      return finish();
+    }
+
+    if(menu === 'signup_edit_age'){
+      intent='inscripcion_editar_edad'; confidence=.96;
+      s.data.signupDraft.age = rawText;
+      const info = extractAgeOrBirthYear(rawText);
+      if(info){
+        s.data.signupDraft.birthYear = info.birthYear || '';
+        s.data.userAge = info.age;
+        if(info.birthYear) s.data.userBirthYear = info.birthYear;
+        const rec = phase6RecommendRule(data, s.data.signupDraft.activity || '', info, s.data.signupDraft.branch || s.data.userBranch || '');
+        if(rec){
+          s.data.signupDraft.category = rec.label || s.data.signupDraft.category;
+          s.data.signupDraft.branch = rec.branch || s.data.signupDraft.branch || '';
+          s.data.currentCategory = rec.label || s.data.currentCategory;
+        }
+      }
+      setMenuContext(s,'signup_confirm');
+      reply = `✅ Listo, actualicé la edad.
+
+${signupStepPrompt('confirm', s.data.signupDraft)}`;
+      return finish();
+    }
+
+    if(menu === 'signup_edit_phone'){
+      intent='inscripcion_editar_telefono'; confidence=.96;
+      s.data.signupDraft.phone = rawText;
+      setMenuContext(s,'signup_confirm');
+      reply = `✅ Listo, actualicé el teléfono.
+
+${signupStepPrompt('confirm', s.data.signupDraft)}`;
+      return finish();
+    }
+
     if(menu === 'signup_confirm'){
       if(isLetter(rawText,['A']) || containsAny(text,['confirmar','confirmo','si','sí','dale','ok'])){
         intent='inscripcion_registrada'; confidence=.98;
@@ -2516,24 +3020,24 @@ C. 🏠 Menú principal`;
       }
 
       if(isLetter(rawText,['B'])){
-        setMenuContext(s,'signup_name');
-        reply = `Dale, modificamos el nombre.
+        setMenuContext(s,'signup_edit_name');
+        reply = `Dale, modificamos solo el nombre 😊
 
-${signupStepPrompt('name', s.data.signupDraft)}`;
+Escribime únicamente el nuevo nombre y apellido.`;
         return finish();
       }
       if(isLetter(rawText,['C'])){
-        setMenuContext(s,'signup_age');
-        reply = `Dale, modificamos la edad o fecha de nacimiento.
+        setMenuContext(s,'signup_edit_age');
+        reply = `Dale, modificamos solo la edad 😊
 
-${signupStepPrompt('age', s.data.signupDraft)}`;
+Escribime la nueva edad o fecha de nacimiento.`;
         return finish();
       }
       if(isLetter(rawText,['D'])){
-        setMenuContext(s,'signup_phone');
-        reply = `Dale, modificamos el teléfono.
+        setMenuContext(s,'signup_edit_phone');
+        reply = `Dale, modificamos solo el teléfono 😊
 
-${signupStepPrompt('phone', s.data.signupDraft)}`;
+Escribime el nuevo teléfono de contacto.`;
         return finish();
       }
       if(isLetter(rawText,['E'])){
@@ -3180,7 +3684,7 @@ ${adminContact(data)}${afterGeneralMenu()}`;
     return finish();
   }
 
-  if(isMainMenuLetter()) {
+  if((menu === 'main' || !menu) && isMainMenuLetter()) {
     return routeMainMenuLetter();
   }
 
@@ -3454,9 +3958,8 @@ Las urgencias necesitan atención inmediata de una persona responsable.`;
     intent='institucional'; confidence=.9;
     addPending(data, phone, rawText, 'institucional', 'Prensa/CV/proveedor/propuesta');
     setMenuContext(s,'institutional');
-    reply = `Gracias por escribirle al club 📩
-
-Seleccioná el tipo de consulta para que podamos derivarla correctamente.
+    reply = `📩 Gracias por escribirle al club.
+${topicVibe('institutional')}
 
 ¿Qué querés enviar?
 
@@ -3475,10 +3978,10 @@ G. Volver al menú principal`;
     addPending(data, phone, rawText, 'otra', 'Otra consulta');
     setMenuContext(s,'other');
     reply = `No hay problema 😊
+${topicVibe('other')}
 
 Contame brevemente qué necesitás y trato de orientarte.
 
-También podés escribir:
 A. Volver al menú principal
 B. Hablar con administración
 
@@ -3489,6 +3992,12 @@ Quedo atento a tu consulta.`;
   // Fallback inteligente
   intent='no_entendido'; confidence=.42;
   addPending(data, phone, rawText, 'no_entendido', 'No se entendió la consulta');
+
+  // Si no entendió y va a mostrar el menú principal, limpiamos el flujo anterior.
+  // Ejemplo: estaba esperando "Categoría 2017", el usuario escribe un nombre,
+  // Panchito muestra menú principal; la próxima "A" debe ser Actividades, no Categoría 2017.
+  resetToMainContext(s);
+
   const fixedText = correctionHint(rawText);
   if(fixedText && fixedText !== rawClean){
     reply = `Creo que quisiste decir: "${fixedText}" 😊
@@ -3512,9 +4021,7 @@ D. Natatorio / pileta 🏊
 E. Hablar con administración 📞
 F. Reclamos o sugerencias 💬
 G. Prensa, CV, proveedores o propuestas 📩
-H. Otra consulta 🔎
-
-También podés escribir ADMIN para hablar con una persona.`;
+H. Otra consulta 🔎`;
   }
   return finish();
 }
