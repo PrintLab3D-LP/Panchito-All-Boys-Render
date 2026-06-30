@@ -21,6 +21,73 @@ function clean(t=''){ return String(t).toLowerCase().normalize('NFD').replace(/[
 function money(n){ return new Intl.NumberFormat('es-AR',{style:'currency',currency:'ARS',maximumFractionDigits:0}).format(Number(n)||0); }
 function containsAny(text, words){ return words.some(w => text.includes(clean(w))); }
 
+
+// V63 - IA controlada: solo se usa cuando los menús/reglas no entienden la consulta.
+// Importante: ChatGPT Plus no habilita la API. Render necesita OPENAI_API_KEY con facturación/crédito API.
+function buildClubContext(data){
+  const acts = (data.activities||[])
+    .filter(a => a && a.active !== false)
+    .slice(0, 40)
+    .map(a => `- ${a.name||'Actividad'} ${a.category?`(${a.category})`:''}: ${a.days||'días a confirmar'} ${a.time||''}. Profesor: ${a.teacher||'a confirmar'}. Costo: ${a.cost ? money(a.cost) : 'consultar'}`)
+    .join('\n');
+  const knowledge = (data.knowledge||[])
+    .slice(0, 20)
+    .map(k => `- ${k.title||k.question||'Info'}: ${String(k.content||k.answer||k.text||'').slice(0,350)}`)
+    .join('\n');
+  return [acts ? `Actividades cargadas:\n${acts}` : '', knowledge ? `Conocimiento cargado:\n${knowledge}` : ''].filter(Boolean).join('\n\n');
+}
+
+async function responderConIAControlada(rawText, data, session){
+  const apiKey = process.env.OPENAI_API_KEY;
+  if(!apiKey || !String(apiKey).startsWith('sk-')) return null;
+  const clubContext = buildClubContext(data);
+  const system = `Sos Panchito, asistente de WhatsApp del Club All Boys de Santa Rosa, La Pampa.
+Respondé en español argentino, breve, humano y claro.
+Reglas obligatorias:
+- No inventes horarios, precios, profesores, teléfonos ni requisitos.
+- Si no estás seguro, ofrecé derivar a administración.
+- Si el usuario quiere inscribirse, pedí actividad, nombre, edad y teléfono, o sugerí escribir MENÚ > Precios e inscripción.
+- Si pregunta por algo sensible, urgente o reclamo importante, derivá a administración.
+- No digas que sos ChatGPT ni menciones OpenAI.
+- Máximo 6 líneas.
+
+${clubContext || 'No hay datos adicionales confiables cargados.'}`;
+
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 6500);
+  try{
+    const r = await fetch('https://api.openai.com/v1/responses', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        model: process.env.OPENAI_MODEL || 'gpt-4.1-mini',
+        input: [
+          { role: 'system', content: system },
+          { role: 'user', content: String(rawText||'') }
+        ],
+        max_output_tokens: 220
+      }),
+      signal: controller.signal
+    });
+    const json = await r.json().catch(()=>({}));
+    if(!r.ok){
+      console.error('OPENAI_ERROR_STATUS:', r.status);
+      console.error('OPENAI_ERROR_BODY:', JSON.stringify(json).slice(0,1200));
+      return null;
+    }
+    const out = json.output_text || (json.output||[]).flatMap(o=>o.content||[]).map(c=>c.text||'').join('\n').trim();
+    return out ? out.trim() : null;
+  }catch(e){
+    console.error('OPENAI_ERROR_EXCEPTION:', e?.message || e);
+    return null;
+  }finally{
+    clearTimeout(timer);
+  }
+}
+
 // V43 - Motor simple de interpretación humana.
 // Corrige errores comunes de escritura antes de pasar por menús y estados.
 // Ejemplos: natacoin -> natacion, bascket -> basquet, volei -> voley.
@@ -4099,6 +4166,15 @@ A. Volver al menú principal
 B. Hablar con administración
 
 Quedo atento a tu consulta.`;
+    return finish();
+  }
+
+  // V63 - IA controlada: si ninguna regla/menú entendió, probamos IA antes del fallback común.
+  // Esto NO reemplaza los menús: solo entra cuando el flujo llegó hasta acá.
+  const aiReply = await responderConIAControlada(rawText, data, s);
+  if(aiReply){
+    intent='ia_controlada'; confidence=.70;
+    reply = aiReply;
     return finish();
   }
 
