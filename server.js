@@ -4280,8 +4280,6 @@ app.post('/whatsapp', async (req,res)=>{
     const replyText = result?.reply || result?.text || String(result || '');
     const xml = twilioXml(replyText);
     logTwilioDiagnostic('/whatsapp', incomingText, from, result, replyText, xml);
-    logTwilioDiagnostic('/webhook', incomingText, from, result, replyText, xml);
-    console.log('Respuesta Twilio enviada:', { from, intent: result?.intent, chars: replyText.length });
     res.type('text/xml').send(xml);
   }catch(e){
     logFullTwilioError('/whatsapp', e);
@@ -4307,7 +4305,7 @@ app.post('/webhook', async (req,res)=>{
     const result = await smartReplySafe(incomingText, from);
     const replyText = result?.reply || result?.text || String(result || '');
     const xml = twilioXml(replyText);
-    console.log('Respuesta Twilio enviada:', { from, intent: result?.intent, chars: replyText.length });
+    logTwilioDiagnostic('/webhook', incomingText, from, result, replyText, xml);
     res.type('text/xml').send(xml);
   }catch(e){
     logFullTwilioError('/webhook', e);
