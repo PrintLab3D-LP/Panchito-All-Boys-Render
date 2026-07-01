@@ -100,6 +100,7 @@ const TYPO_ALIASES = {
   paleta: ['paleta','pelota paleta','pelota a paleta','pelotapaleta','pelota-paleta'],
   inscripcion: ['inscripcion','inscripción','inscribirme','inscribirte','inscribir','incripcion','inscripsion','inscricion','inscrivir','icribrte','icribirte','incribirte','inscribrte','insripcion','insripciones','incripcion','incripciones','incripsion','inscripion','anotarme','anotarte','anotarlo','anotarla','anotar','alta','sumarme'],
   cuota: ['cuota','cuotas','cutoa','cuotaa','deuda','pago','pagos','pagar','vencimiento','saldo'],
+  precio: ['precio','precios','costo','costos','valor','valores','cuanto','cuánto','sale','cuanto sale','cuánto sale'],
   administracion: ['administracion','administración','admin','administrador','persona','humano','telefono','teléfono','whatsapp','wasap','wsp'],
   horarios: ['horario','horarios','orario','orarios','hario','harios','haris','horis','horaro','horaios','horarioss','dias','días','cuando','clases'],
   ubicacion: ['direccion','dirección','ubicacion','ubicación','domicilio','donde queda','dónde queda','como llego','cómo llego']
@@ -345,55 +346,77 @@ function timeGreeting(){
   if(h >= 12 && h < 20) return '¡Buenas tardes!';
   return '¡Buenas noches!';
 }
-function panchitoMicroPhrase(){
-  return pickRandom([
-    'Dale, te ayudo 😊',
-    'Perfecto, vamos por partes.',
-    'Buenísimo, lo vemos.',
-    'Listo, te oriento.',
-    'De una, Panchito al rescate 😄',
-    'Vamos con eso 💙',
-    'Te sigo el hilo, como marca personal 😄',
-    'Joya, sigo atento.',
-    'Tranqui, bajamos la consulta al piso y salimos jugando ⚽',
-    'Ahí voy, con la camiseta bien puesta 💙',
-    'Dale que esta consulta la sacamos jugando 😄',
-    'Estoy para darte una mano, como buen asistidor 🏟️'
-  ]);
+function panchitoMicroPhrase(kind='general'){
+  const banks = {
+    general: [
+      'Dale, te ayudo 😊','Perfecto, vamos por partes.','Buenísimo, lo vemos.','Listo, te oriento.','De una, Panchito al rescate 😄','Vamos con eso 💙','Joya, sigo atento.',
+      'Tranqui, bajamos la consulta al piso y salimos jugando ⚽','Ahí voy, con la camiseta bien puesta 💙','Dale que esta consulta la sacamos jugando 😄','Estoy para darte una mano, como buen asistidor 🏟️',
+      'Recibido, la paro de pecho y te respondo ⚽','Dale, hacemos dos pases y lo ordenamos 😄','Vamos con calma, sin pelotazos largos.','Te sigo la jugada 💙','Estoy en modo asistidor, mandame la consulta.',
+      'Vamos a resolverlo como equipo 🏟️','Dale, buena consulta.','Joya, lo encaramos.','Perfecto, vamos al grano.','De una, te acompaño.','Listo, sale pase corto y claro ⚽'
+    ],
+    actividades: [
+      'Vamos a mirar las actividades, como fixture de fin de semana 🏟️','Dale, abrimos la lista de disciplinas.','Te muestro las opciones cargadas del club 💙','Vamos con el menú deportivo ⚽🏀🏊',
+      'Elegí la disciplina y te tiro el pase con horarios o inscripción.','Acá Panchito juega de coordinador de actividades 😄','Acomodamos las actividades en cancha y seguimos.'
+    ],
+    inscripcion: [
+      'Dale, arrancamos la inscripción sin vueltas 📝','Vamos con los datos, pase a pase 😄','Perfecto, armamos la solicitud prolija.','Empezamos tranqui: te voy pidiendo solo lo necesario.',
+      'Golazo, vamos a cargar la inscripción.','No te preocupes, si algo sale mal lo corregimos sin empezar de cero.','Panchito de mesa de entrada: cargamos los datos y seguimos 💙'
+    ],
+    cuotas: [
+      'Vamos con cuotas y pagos 💳','Revisamos esa parte sin hacer fulbito financiero 😄','Dale, vemos el tema pagos.','Te oriento con cuotas, deuda o medios de pago.',
+      'Abrimos la planilla mental de Panchito 💳','Vamos a dejar claro el tema plata, sin marearte.'
+    ],
+    natatorio: [
+      'Nos tiramos al agua 🏊','Vamos con Natatorio / pileta.','Dale, modo antiparras activado 😄','Te cuento lo que haya cargado de pileta.',
+      'Vamos a nadar entre horarios, cupos e inscripción 🏊','Panchito se pone la malla y te ayuda 😄'
+    ],
+    administracion: [
+      'Dale, te acerco con administración 👨‍💼','Esto lo puede confirmar mejor una persona del club.','Te hago el pase a administración como un 10 😄','Vamos directo con el contacto correcto.',
+      'Cuando hace falta humano, Panchito no gambetea: deriva 💙'
+    ],
+    reclamos: [
+      'Te escucho, lo cargamos con respeto 💬','Dale, contame qué pasó y lo dejamos registrado.','Vamos a tomar el reclamo sin vueltas.','Lo importante es que quede claro para que el club pueda revisarlo.',
+      'Panchito toma nota, sin silbato pero atento 😄'
+    ],
+    prensa: [
+      'Dale, vamos con prensa, CV, proveedores o propuestas 📩','Te ayudo a dejar esa propuesta bien encaminada.','Mandame la idea y la ordenamos.','Vamos con esa consulta especial.'
+    ],
+    gracias: [
+      'De nada, crack 😄','Para eso estoy 💙','Un gusto ayudarte.','Golazo que sirvió ⚽','Cuando necesites, Panchito vuelve a la cancha.','Joya, abrazo de club 💙'
+    ]
+  };
+  const arr = banks[kind] || banks.general;
+  return pickRandom(arr);
 }
+
 function panchitoIntroFunny(){
   const frases = [
-    'Prometo ayudarte más rápido que un contraataque ⚽😄',
-    'No soy Messi, pero con las consultas me defiendo bastante bien 😄',
-    'Vos preguntá tranquilo, yo hago el precalentamiento de respuestas 🏃‍♂️',
-    'En All Boys no prometo goles, pero sí buena información 💙',
-    'Estoy más atento que arquero en penal 🥅',
-    'Acá no cobramos offside por preguntar ⚽',
-    'Preguntá sin miedo, que yo juego de asistidor 😄',
-    'Mientras vos escribís, yo ya estoy buscando la respuesta 🔎',
-    'Hoy vengo con botines nuevos para responder mejor 😄',
-    'Si la consulta viene complicada, la bajamos al piso y salimos jugando ⚽',
-    'No tengo camiseta transpirada, pero sí muchas ganas de ayudar 💙',
-    'Estoy listo para darte una mano, como buen 10 armador 🏟️',
-    'No prometo gambetas, pero sí orientarte lo mejor posible 😄',
-    'Preguntame tranquilo: acá el VAR no anula consultas 😂',
-    'Vamos paso a paso, sin pelotazos largos ⚽',
-    'Yo te acompaño; los goles los hacen ustedes 💙',
-    'Estoy en modo club: información, buena onda y respuesta rápida 😄',
-    'Arrancamos cuando quieras, yo ya hice entrada en calor 🏃‍♂️',
-    'Si querés horarios, cuotas o inscripción, te tiro un pase filtrado 😄',
-    'Consultame lo que necesites, que para eso entré a la cancha ⚽',
-    'Hoy Panchito está titular: preguntá nomás 😄',
-    'Te atiendo con más ganas que tribuna en clásico 💙',
-    'La consulta que venga, la paramos de pecho y respondemos claro ⚽',
-    'Acá la buena onda juega de local 🏟️',
-    'Si hace falta, te hago el pase a administración como un 10 😄',
-    'No vendo humo: te oriento y, si hace falta, te derivo al club 💙'
+    'Prometo ayudarte más rápido que un contraataque ⚽😄','No soy Messi, pero con las consultas me defiendo bastante bien 😄','Vos preguntá tranquilo, yo hago el precalentamiento de respuestas 🏃‍♂️',
+    'En All Boys no prometo goles, pero sí buena información 💙','Estoy más atento que arquero en penal 🥅','Acá no cobramos offside por preguntar ⚽','Preguntá sin miedo, que yo juego de asistidor 😄',
+    'Mientras vos escribís, yo ya estoy buscando la respuesta 🔎','Hoy vengo con botines nuevos para responder mejor 😄','Si la consulta viene complicada, la bajamos al piso y salimos jugando ⚽',
+    'No tengo camiseta transpirada, pero sí muchas ganas de ayudar 💙','Estoy listo para darte una mano, como buen 10 armador 🏟️','No prometo gambetas, pero sí orientarte lo mejor posible 😄',
+    'Preguntame tranquilo: acá el VAR no anula consultas 😂','Vamos paso a paso, sin pelotazos largos ⚽','Yo te acompaño; los goles los hacen ustedes 💙','Estoy en modo club: información, buena onda y respuesta rápida 😄',
+    'Arrancamos cuando quieras, yo ya hice entrada en calor 🏃‍♂️','Si querés horarios, cuotas o inscripción, te tiro un pase filtrado 😄','Consultame lo que necesites, que para eso entré a la cancha ⚽',
+    'Hoy Panchito está titular: preguntá nomás 😄','Te atiendo con más ganas que tribuna en clásico 💙','La consulta que venga, la paramos de pecho y respondemos claro ⚽',
+    'Acá la buena onda juega de local 🏟️','Si hace falta, te hago el pase a administración como un 10 😄','No vendo humo: te oriento y, si hace falta, te derivo al club 💙',
+    'Soy suplente de lujo para las dudas del club 😄','Vengo sin silbato, pero con respuestas claras.','No prometo campeonato, prometo orientarte bien 🏆','La consulta entra por derecha y sale respondida por izquierda ⚽',
+    'Panchito no se lesiona: responde todo el día 😄','Si no sé algo, no invento: te paso con administración.','Acá jugamos simple: preguntás y te oriento.','Buena onda, información y cero vueltas 💙'
   ];
   return pickRandom(frases);
 }
+
+function panchitoMenuBackFunny(){
+  return pickRandom([
+    'Volvimos al menú principal, sin hacer conferencia de prensa 😄','De nuevo al banco de suplentes del menú. ¿Qué jugada hacemos ahora? ⚽','Menú principal otra vez, pero sin presentación repetida: ya somos conocidos 💙',
+    'Volvemos al inicio de la cancha. Elegí la próxima jugada 🏟️','Listo, reseteamos la jugada y salimos jugando.','Otra vez en el menú, como saque del medio 😄','Dale, volvemos al menú. Panchito sigue atento.',
+    'Menú principal listo. No me presento de nuevo porque ya entré en calor 😄','Volvemos al tablero táctico. ¿Qué opción querés?','Joya, volvimos al menú. Elegí y seguimos.',
+    'Pausa técnica y menú principal. ¿Para dónde encaramos?','Volvimos a foja cero, pero sin perder la buena onda 💙','Menú principal en cancha. Tirame una letra o consulta.',
+    'Rearmamos la jugada desde el menú principal ⚽','Dale, otra jugada. ¿Qué necesitás ahora?','Volvimos al menú como buen pase atrás para ordenar 😄'
+  ]);
+}
+
 function greetingMessage(){
-  return panchitoMenu();
+  return panchitoMenu('inicio');
 }
 function softSocialMessage(s){
   const topic = (currentTopic(s) || s.data?.currentActivity || '').trim();
@@ -402,7 +425,7 @@ function softSocialMessage(s){
 
 Seguimos con ${topic}. Podés pedirme horarios, inscripción, costos, profesor o WhatsApp.`;
   }
-  return panchitoMenu();
+  return panchitoMenu('volver');
 }
 function isThanksText(t){
   const v = clean(t || '');
@@ -418,7 +441,7 @@ function isByeText(t){
   return BYE_WORDS.map(clean).includes(v) || /(^|\b)(chau|hasta luego|nos vemos|adios|hasta pronto)(\b|$)/.test(v);
 }
 function thanksCloseMessage(){
-  return `⭐ Gracias por comunicarte con All Boys 😊
+  return `⭐ ${panchitoMicroPhrase('gracias')}
 
 ¿Te sirvió la información?
 
@@ -429,8 +452,8 @@ C. ❌ No me sirvió
 Respondé con A, B o C.
 También podés escribir OMITIR.`;
 }
-function panchitoMenu(){
-  const saludo = pickRandom([
+function panchitoMenu(mode='volver'){
+  const saludoInicio = pickRandom([
     `👋 ${timeGreeting()} Soy Panchito, el bot de All Boys 😄`,
     `💙 ¡Buenas! Soy Panchito, el asistente copado de All Boys.`,
     `🏟️ ¡Hola! Panchito presente en la cancha de consultas.`,
@@ -442,8 +465,10 @@ function panchitoMenu(){
     `🏆 ¡Bienvenido a All Boys! Soy Panchito y entro de titular para ayudarte.`,
     `🙌 ¡Buenas! Soy Panchito. Acá la buena onda juega de local.`
   ]);
-  return `${saludo}
-${panchitoIntroFunny()}
+  const encabezado = mode === 'inicio'
+    ? `${saludoInicio}\n${panchitoIntroFunny()}`
+    : `${panchitoMenuBackFunny()}`;
+  return `${encabezado}
 
 ¿Qué andás buscando hoy? 😄
 
@@ -802,6 +827,96 @@ function extractAgeOrBirthYear(text=''){
   return null;
 }
 
+
+// V67 - Detecta edición natural dentro de una inscripción.
+function detectSignupEditIntent(rawText=''){
+  const t = normalizeUserText(rawText);
+  const out = { field:'', value:'' };
+  if(containsAny(t,['edad','años','anos','año','ano','nacio','nació','nacimiento'])) out.field = 'age';
+  else if(containsAny(t,['telefono','teléfono','celular','wsp','whatsapp','wasap'])) out.field = 'phone';
+  else if(containsAny(t,['dni','documento'])) out.field = 'dni';
+  else if(containsAny(t,['mail','email','correo'])) out.field = 'email';
+  else if(containsAny(t,['deporte','actividad','disciplina'])) out.field = 'activity';
+  else if(containsAny(t,['observacion','observación','nota','comentario'])) out.field = 'notes';
+  else if(containsAny(t,['nombre','apellido','se llama'])) out.field = 'name';
+  const wantsEdit = containsAny(t,['me equivoque','me equivoqué','equivocado','equivocada','corregi','corregí','corregime','cambia','cambiá','cambiar','modifica','modificá','editar','edita','editá','actualiza','actualizá','esta mal','está mal','no era','quise poner','puse mal','es ']);
+  if(!out.field || !wantsEdit) return null;
+  let value = String(rawText || '').trim()
+    .replace(/^(me\s+)?(equivoque|equivoqué|equivocado|equivocada|corregi|corregí|corregime|cambia|cambiá|cambiar|modifica|modificá|editar|edita|editá|actualiza|actualizá)\s*(el|la|los|las)?\s*/i,'')
+    .replace(/^(nombre|apellido|edad|telefono|teléfono|celular|dni|documento|mail|email|correo|deporte|actividad|disciplina|observacion|observación|nota|comentario)\s*(es|era|:|-)?\s*/i,'')
+    .replace(/^(no\s+era|quise\s+poner|puse\s+mal)\s*/i,'')
+    .trim();
+  if(out.field === 'age'){
+    const info = extractAgeOrBirthYear(rawText);
+    if(info) value = String(info.source === 'year' ? info.birthYear : info.age);
+  }
+  if(out.field === 'phone' || out.field === 'dni'){
+    const nums = String(rawText).match(/\d{4,15}/g);
+    if(nums && nums.length) value = nums[nums.length-1];
+  }
+  if(!value || value.length > 120) value = String(rawText || '').trim();
+  out.value = value;
+  return out;
+}
+
+function applySignupEditIntent(data, s, edit){
+  if(!edit || !edit.field) return '';
+  s.data.signupDraft = s.data.signupDraft || {};
+  const draft = s.data.signupDraft;
+  const v = edit.value || '';
+  if(edit.field === 'name'){ draft.name = v; return '✅ Listo, actualicé el nombre.'; }
+  if(edit.field === 'phone'){ draft.phone = v; return '✅ Listo, actualicé el teléfono.'; }
+  if(edit.field === 'dni'){ draft.dni = String(v).replace(/\D/g,'') || v; return '✅ Listo, actualicé el DNI.'; }
+  if(edit.field === 'email'){ draft.email = v; return '✅ Listo, actualicé el mail.'; }
+  if(edit.field === 'notes'){ draft.notes = containsAny(normalizeUserText(v),['no','ninguna','sin observaciones','omitir']) ? '' : v; return '✅ Listo, actualicé las observaciones.'; }
+  if(edit.field === 'age'){
+    draft.age = v;
+    const advice = validateAndApplySignupAge(data, s, v || edit.value || '');
+    return `✅ Listo, actualicé la edad.${advice || (draft.category ? `
+
+Categoría recomendada ahora: **${draft.category}**.` : '')}`;
+  }
+  if(edit.field === 'activity'){
+    const act = detectActivityFreeText(v) || detectActivityFreeText(edit.value || '');
+    if(!act) return 'No pude ubicar esa actividad. Escribime por ejemplo: Softbol, Fútbol, Básquet, Natatorio o Gimnasia.';
+    draft.activity = act.label; s.data.currentActivity = act.label;
+    const info = extractAgeOrBirthYear(draft.age || '');
+    if(info){ const rec = phase6RecommendRule(data, act.label, info, draft.branch || s.data.userBranch || ''); draft.category = rec?.label || 'Categoría a confirmar'; draft.branch = rec?.branch || draft.branch || ''; }
+    else draft.category = 'Categoría a confirmar';
+    return `✅ Listo, actualicé la actividad a ${draft.activity}.`;
+  }
+  return '';
+}
+
+function contextFollowUpReply(data, s, rawText=''){
+  const activity = s.data?.currentActivity || s.data?.signupDraft?.activity || '';
+  const detail = s.data?.disciplineDetail || {};
+  const menu = getMenuContext(s);
+  if(!activity || String(menu||'').startsWith('signup_')) return '';
+  const t = normalizeUserText(rawText);
+  const asksSomething = containsAny(t,['horario','horarios','dias','dia','cuando','precio','cuota','cuanto','costo','profesor','profe','inscripcion','inscribir','anotar','telefono','whatsapp','administracion']);
+  const mentionsNewActivity = !!detectActivityFreeText(rawText);
+  if(!asksSomething || mentionsNewActivity) return '';
+  if(detail && detail.activity){
+    const kind = disciplineFollowUpKind(rawText);
+    if(kind && !['back','menu'].includes(kind)) return disciplineAnswer(data, s, kind);
+  }
+  if(containsAny(t,['precio','precios','cuota','cuotas','valor','valores','cuanto','costo'])){
+    const rows = (data.activities||[]).filter(a => a.active !== false && activityMatchesName(a, activity));
+    const costs = [...new Set(rows.map(a => Number(a.cost||0)).filter(n => n>0).map(n => money(n)))];
+    if(costs.length) return `💰 Para ${activity}, los valores cargados son: ${costs.slice(0,4).join(' / ')}.\n\nPuede variar según categoría o temporada, así que administración confirma el valor vigente.`;
+    return `💰 Para ${activity}, el valor puede depender de la categoría o cupo. Administración confirma el precio vigente.`;
+  }
+  if(containsAny(t,['horario','horarios','dias','dia','cuando','clases'])){
+    const rows = (data.activities||[]).filter(a => a.active !== false && activityMatchesName(a, activity)).slice(0,6);
+    if(rows.length) return `🕒 Horarios cargados para ${activity}:\n` + rows.map(a => `• ${a.category||'Categoría'}: ${a.days||'días a confirmar'} ${a.time||''}`.trim()).join('\n');
+    return `🕒 Para ${activity}, los horarios dependen de la categoría. Administración confirma los días y cupos vigentes.`;
+  }
+  const fakeSession = { data:{ currentActivity: activity, currentCategory: s.data?.currentCategory || '' } };
+  const detected = detectActivityFreeText(activity) || { label: activity, key: '' };
+  return directActivityReply(data, detected, rawText, fakeSession);
+}
+
 function categoryRule(activity='', category=''){
   const a = clean(activity);
   const c = clean(category);
@@ -814,6 +929,8 @@ function categoryRule(activity='', category=''){
   }
   if(a.includes('basquet')){
     const branch = c.includes('femenino') ? 'femenino' : c.includes('masculino') ? 'masculino' : 'mixto';
+    if(c.includes('sub 17') && c.includes('primera')) return {label: branch === 'femenino' ? 'Básquet Femenino Sub 17 / Primera' : 'Básquet Sub 17 / Primera', minAge:16, maxAge:99, branch};
+    if(c.includes('sub 13') && c.includes('sub 15')) return {label: branch === 'femenino' ? 'Básquet Femenino Sub 13 / Sub 15' : 'Básquet Sub 13 / Sub 15', minAge:12, maxAge:15, branch};
     if(c.includes('sub 9')) return {label: branch === 'mixto' ? 'Básquet Sub 9' : `Básquet ${branch === 'masculino' ? 'Masculino' : 'Femenino'} Sub 9`, minAge:6, maxAge:9, branch};
     if(c.includes('sub 11')) return {label: branch === 'mixto' ? 'Básquet Sub 11' : `Básquet ${branch === 'masculino' ? 'Masculino' : 'Femenino'} Sub 11`, minAge:10, maxAge:11, branch};
     if(c.includes('sub 13')) return {label: branch === 'mixto' ? 'Básquet Sub 13' : `Básquet ${branch === 'masculino' ? 'Masculino' : 'Femenino'} Sub 13`, minAge:12, maxAge:13, branch};
@@ -826,9 +943,9 @@ function categoryRule(activity='', category=''){
   if(a.includes('futbol')){
     if(c.includes('femenino')) return {label:'Femenino Sub 12 y Sub 14', minAge:11, maxAge:14, branch:'femenino'};
     // En fútbol, las categorías sin la palabra femenino corresponden al recorrido masculino/infantiles.
-    if(c.includes('cuarta') || c.includes('quinta') || c.includes('sexta')) return {label:'Cuarta, Quinta y Sexta División', minAge:16, maxAge:20, branch:'masculino'};
-    if(c.includes('septima') || c.includes('octava')) return {label:'Séptima y Octava División', minAge:14, maxAge:15, branch:'masculino'};
-    if(c.includes('novena') || c.includes('decima')) return {label:'Novena y Décima División', minAge:12, maxAge:13, branch:'masculino'};
+    if(c.includes('cuarta') || c.includes('quinta') || c.includes('sexta')) return {label:'Cuarta, Quinta y Sexta División', minAge:15, maxAge:18, branch:'masculino'};
+    if(c.includes('septima') || c.includes('octava')) return {label:'Séptima y Octava División', minAge:13, maxAge:14, branch:'masculino'};
+    if(c.includes('novena') || c.includes('decima')) return {label:'Novena y Décima División', minAge:11, maxAge:12, branch:'masculino'};
     if(c.includes('2017')) return {label:'Categoría 2017', years:[2017], branch:'masculino'};
     if(c.includes('2018')) return {label:'Categoría 2018', years:[2018], branch:'masculino'};
     if(c.includes('2019')) return {label:'Categoría 2019', years:[2019], branch:'masculino'};
@@ -992,6 +1109,54 @@ function recommendCategory(data, activity='', ageInfo=null, selectedCategory='')
   return fallbackRecommendedCategory(activity, ageInfo);
 }
 
+
+
+// V68 - Validación fuerte de edad/categoría en inscripción.
+// Antes el bot recalculaba la categoría silenciosamente y después decía
+// "corresponde" aunque el usuario hubiera elegido otra división.
+function validateAndApplySignupAge(data, s, rawAgeText=''){
+  s.data.signupDraft = s.data.signupDraft || {};
+  const draft = s.data.signupDraft;
+  const previousCategory = draft.category || s.data.currentCategory || '';
+  const info = extractAgeOrBirthYear(rawAgeText);
+  if(!info) return '';
+
+  draft.birthYear = info.birthYear || '';
+  s.data.userAge = info.age;
+  if(info.birthYear) s.data.userBirthYear = info.birthYear;
+
+  const dataLabel = info.source === 'year' ? `año ${info.birthYear}` : `${info.age} años`;
+  const activity = draft.activity || s.data.currentActivity || '';
+  const tooYoung = tooYoungMessage(activity, info);
+  if(tooYoung){
+    return `\n\n⚠️ ${tooYoung}`;
+  }
+
+  const oldRule = categoryRule(activity, previousCategory);
+  const oldWasOk = oldRule ? ruleMatchesAgeInfo(oldRule, info) : false;
+  const rec = phase6RecommendRule(data, activity, info, draft.branch || s.data.userBranch || '');
+
+  if(rec){
+    draft.category = rec.label || draft.category;
+    draft.branch = rec.branch || draft.branch || '';
+    s.data.currentCategory = rec.label || s.data.currentCategory;
+  }
+
+  if(oldRule && !oldWasOk){
+    return `\n\n⚠️ Por ${dataLabel}, la categoría elegida (**${previousCategory}**) no corresponde.\n\n✅ Te la acomodé a: **${draft.category || rec?.label || 'Categoría a confirmar'}**.\n\nIgual administración confirma cupo, documentación y categoría final.`;
+  }
+
+  if(oldRule && oldWasOk){
+    return `\n\n✅ Por ${dataLabel}, esa categoría corresponde de forma orientativa. Igual administración confirma cupo, documentación y categoría final.`;
+  }
+
+  if(rec){
+    return `\n\n📌 Por ${dataLabel}, te recomiendo: **${rec.label}**. Igual administración confirma la categoría final.`;
+  }
+
+  return `\n\n📌 Por ${dataLabel}, administración confirma la categoría final según cupo y reglamento.`;
+}
+
 function categoryAgeAdvice(data, activity='', category='', ageText=''){
   const info = extractAgeOrBirthYear(ageText);
   if(!info) return '';
@@ -1031,7 +1196,76 @@ function phase6SelectedCategoryFromBranch(activity='', branch=''){
   if(branch === 'masculino') return a.includes('futbol') ? 'Masculino' : 'Masculino';
   return '';
 }
+
+// V69 - Categoría precisa por edad/año, usando la categoría real cargada para horarios.
+function preciseCategoryByAge(activity='', ageInfo=null, branch=''){
+  if(!ageInfo) return null;
+  const a = clean(activity);
+  const age = Number(ageInfo.age || 0);
+  const y = Number(ageInfo.birthYear || (new Date().getFullYear() - age));
+
+  if(a.includes('futbol')){
+    if(branch === 'femenino'){
+      if(age >= 11 && age <= 12) return {label:'Femenino Sub 12', rawCategory:'Femenino Sub 12 y Sub 14', branch:'femenino'};
+      if(age >= 13 && age <= 14) return {label:'Femenino Sub 14', rawCategory:'Femenino Sub 12 y Sub 14', branch:'femenino'};
+      return null;
+    }
+    if(y === 2017) return {label:'Categoría 2017', rawCategory:'Categoría 2017', branch:'masculino'};
+    if(y === 2018) return {label:'Categoría 2018', rawCategory:'Categoría 2018', branch:'masculino'};
+    if(y === 2019) return {label:'Categoría 2019', rawCategory:'Categoría 2019', branch:'masculino'};
+    if(y === 2020 || y === 2021) return {label:'Categorías 2020-2021', rawCategory:'Categorías 2020-2021', branch:'masculino'};
+    if(y === 2015) return {label:'Décima División', rawCategory:'Novena y Décima División', branch:'masculino'};
+    if(y === 2014) return {label:'Novena División', rawCategory:'Novena y Décima División', branch:'masculino'};
+    if(y === 2013) return {label:'Octava División', rawCategory:'Séptima y Octava División', branch:'masculino'};
+    if(y === 2012) return {label:'Séptima División', rawCategory:'Séptima y Octava División', branch:'masculino'};
+    if(y === 2011) return {label:'Sexta División', rawCategory:'Cuarta, Quinta y Sexta División', branch:'masculino'};
+    if(y === 2010) return {label:'Quinta División', rawCategory:'Cuarta, Quinta y Sexta División', branch:'masculino'};
+    if(y === 2009 || y === 2008) return {label:'Cuarta División', rawCategory:'Cuarta, Quinta y Sexta División', branch:'masculino'};
+    return null;
+  }
+
+  if(a.includes('basquet')){
+    const b = branch === 'femenino' ? 'femenino' : branch === 'masculino' ? 'masculino' : '';
+    if(age >= 4 && age <= 6) return {label:'Escuelita', rawCategory:'Escuelita', branch:b||'mixto'};
+    if(age >= 7 && age <= 8) return {label:'Mosquitos / Sub 9', rawCategory:'Sub 9', branch:b||'mixto'};
+    if(age >= 9) {
+      const sub = age <= 9 ? 'Sub 9' : age <= 11 ? 'Sub 11' : age <= 13 ? 'Sub 13' : age <= 15 ? 'Sub 15' : age <= 17 ? 'Sub 17' : 'Primera división';
+      if(b === 'femenino'){
+        const raw = sub === 'Primera división' ? 'Femenino Sub 17 y Primera' : `Femenino ${sub}`;
+        return {label:`Básquet Femenino ${sub}`, rawCategory:raw, branch:'femenino'};
+      }
+      if(b === 'masculino'){
+        const raw = sub === 'Primera división' ? 'Primera división' : `Masculino ${sub}`;
+        return {label: sub === 'Primera división' ? 'Primera división' : `Básquet Masculino ${sub}`, rawCategory:raw, branch:'masculino'};
+      }
+      return {label:`Básquet ${sub}`, rawCategory:sub, branch:'mixto'};
+    }
+  }
+
+  if(a.includes('gimnasia')){
+    if(age >= 3 && age <= 4) return {label:'Pulguitas (3 y 4 años)', rawCategory:'Pulgas (3 y 4 años)', branch:'mixto'};
+    if(age >= 5 && age <= 7) return {label:'Escuela (5 a 7 años)', rawCategory:'Escuela (5 a 7 años)', branch:'mixto'};
+    if(age >= 8 && age <= 10) return {label:'Promocional (8 a 10 años)', rawCategory:'Promocional (8 a 10 años)', branch:'mixto'};
+    if(age >= 11) return {label:'Pre federadas (11 años en adelante)', rawCategory:'Pre federadas (11 años en adelante)', branch:'mixto'};
+  }
+
+  if(a.includes('softbol')){
+    if(age >= 6 && age <= 10) return {label:'Pre infantil mixto', rawCategory:'Pre infantil mixto', branch:'mixto'};
+    if(age >= 11 && age <= 15) return {label:'Infantil cadete mixto', rawCategory:'Infantil cadete mixto', branch:'mixto'};
+    if(age >= 16) return {label:'Femenino / categoría a confirmar', rawCategory:'Femenino', branch:branch||'femenino'};
+  }
+
+  if(a.includes('paleta')){
+    if(age >= 6 && age <= 12) return {label:'Niños y niñas de 6 a 12 años', rawCategory:'Niños y niñas de 6 a 12 años', branch:'mixto'};
+    if(age >= 13) return {label:'Adultos', rawCategory:'Adultos', branch:'mixto'};
+  }
+  return null;
+}
+
 function phase6RecommendRule(data, activity='', ageInfo=null, branch=''){
+  const precise = preciseCategoryByAge(activity, ageInfo, branch);
+  if(precise) return precise;
+
   const selected = phase6SelectedCategoryFromBranch(activity, branch);
   const rules = availableCategoryRules(data, activity, selected);
   const nearest = chooseNearestExistingRule(rules, ageInfo);
@@ -2037,6 +2271,25 @@ F. 🏠 Volver al menú principal
 `;
 }
 
+
+function responseUnknownActivity(data, activityName='esa actividad'){
+  const name = String(activityName || 'esa actividad').trim();
+  return `No encontré **${name}** dentro de las actividades cargadas del club.
+
+Por ahora puedo ayudarte con:
+• 🤸 Gimnasia artística
+• 🏀 Básquet
+• 🥎 Sóftbol
+• 🏓 Pelota a paleta
+• ⚽ Fútbol
+• 🏊 Natatorio / pileta
+
+Si querés, escribí el nombre de una de esas actividades o MENÚ para volver al inicio.
+
+Si necesitás confirmar si el club sumó ${name}, te dejo Administración:
+${adminContact(data)}`;
+}
+
 function responseBasketMenu(){
   return `🏀 ¡Excelente! Básquet es una gran elección.
 ${sportVibe('basket')}
@@ -2366,11 +2619,11 @@ async function smartReply(rawText, phone='demo'){
   // Ejemplo: "buen día" no puede convertirse en "horarios" por el normalizador.
   if(isGreetingText(rawText)){
     intent='saludo'; confidence=.99;
-    // Al saludar volvemos al menú principal real. Esto evita que una letra A/B/C
-    // quede atrapada en un submenú viejo como básquet femenino.
-    s.data = { ...(s.data||{}), menu:'main', topic:'', currentActivity:'', currentCategory:'', disciplineDetail:null };
+    // Si ya habló con Panchito, no lo presentamos de nuevo: volvemos al menú con chiste.
+    const alreadyMetPanchito = !!s.data?.seenPanchitoIntro || (data.conversations||[]).some(c => c.phone === phone);
+    s.data = { ...(s.data||{}), menu:'main', topic:'', currentActivity:'', currentCategory:'', disciplineDetail:null, seenPanchitoIntro:true };
     setSession(s,'idle', s.data);
-    reply = greetingMessage();
+    reply = alreadyMetPanchito ? panchitoMenu('volver') : panchitoMenu('inicio');
     return finish();
   }
 
@@ -2382,6 +2635,13 @@ async function smartReply(rawText, phone='demo'){
 
   function isMainMenuLetter(){
     return isLetter(rawText, ['A','B','C','D','E','F','G','H']);
+  }
+
+  const contextualFollow = contextFollowUpReply(data, s, rawText);
+  if(contextualFollow){
+    intent='seguimiento_contextual_v67'; confidence=.94;
+    reply = contextualFollow;
+    return finish();
   }
 
   function routeMainMenuLetter(){
@@ -3133,6 +3393,17 @@ E. Hablar con administración 📞`;
 
     s.data.signupDraft = s.data.signupDraft || {};
 
+    const naturalEdit = detectSignupEditIntent(rawText);
+    if(naturalEdit && menu !== 'signup_duplicate' && menu !== 'signup_done'){
+      intent='inscripcion_edicion_natural'; confidence=.97;
+      const msg = applySignupEditIntent(data, s, naturalEdit);
+      setMenuContext(s,'signup_confirm');
+      reply = `${msg}
+
+${signupStepPrompt('confirm', s.data.signupDraft)}`;
+      return finish();
+    }
+
     // IA / ayuda controlada dentro de la inscripción: si el usuario pregunta algo
     // como horarios, precio, cupos o requisitos, respondemos sin perder el paso actual.
     if(!String(menu||'').startsWith('signup_edit_') && menu !== 'signup_confirm' && menu !== 'signup_duplicate' && isSignupSideQuestion(rawText)){
@@ -3163,20 +3434,7 @@ Podés escribir MENÚ para cancelar.`;
     if(menu === 'signup_age'){
       intent='inscripcion_edad'; confidence=.94;
       s.data.signupDraft.age = rawText;
-      const info = extractAgeOrBirthYear(rawText);
-      if(info){
-        s.data.signupDraft.birthYear = info.birthYear || '';
-        s.data.userAge = info.age;
-        if(info.birthYear) s.data.userBirthYear = info.birthYear;
-
-        const rec = phase6RecommendRule(data, s.data.signupDraft.activity || '', info, s.data.signupDraft.branch || s.data.userBranch || '');
-        if(rec){
-          s.data.signupDraft.category = rec.label || s.data.signupDraft.category;
-          s.data.signupDraft.branch = rec.branch || s.data.signupDraft.branch || '';
-          s.data.currentCategory = rec.label || s.data.currentCategory;
-        }
-      }
-      const advice = categoryAgeAdvice(data, s.data.signupDraft.activity || '', s.data.signupDraft.category || '', rawText);
+      const advice = validateAndApplySignupAge(data, s, rawText);
       setMenuContext(s,'signup_dni');
       reply = `Perfecto ✅${advice}
 
@@ -3268,22 +3526,11 @@ ${signupStepPrompt('confirm', s.data.signupDraft)}`;
     if(menu === 'signup_edit_age'){
       intent='inscripcion_editar_edad'; confidence=.96;
       s.data.signupDraft.age = rawText;
-      const info = extractAgeOrBirthYear(rawText);
-      if(info){
-        s.data.signupDraft.birthYear = info.birthYear || '';
-        s.data.userAge = info.age;
-        if(info.birthYear) s.data.userBirthYear = info.birthYear;
-        const rec = phase6RecommendRule(data, s.data.signupDraft.activity || '', info, s.data.signupDraft.branch || s.data.userBranch || '');
-        if(rec){
-          s.data.signupDraft.category = rec.label || s.data.signupDraft.category;
-          s.data.signupDraft.branch = rec.branch || s.data.signupDraft.branch || '';
-          s.data.currentCategory = rec.label || s.data.currentCategory;
-        }
-      }
+      const advice = validateAndApplySignupAge(data, s, rawText);
       setMenuContext(s,'signup_confirm');
       const actividadActual = s.data.signupDraft.activity || s.data.currentActivity || 'la actividad elegida';
       const categoriaActual = s.data.signupDraft.category || 'Categoría a confirmar';
-      reply = `✅ Listo, actualicé solo la edad.
+      reply = `✅ Listo, actualicé solo la edad.${advice}
 
 La actividad sigue siendo: **${actividadActual}**
 Categoría recomendada ahora: **${categoriaActual}**
@@ -4273,16 +4520,11 @@ E. Hablar con administración 📞`;
     return finish();
   }
 
-  if(containsAny(text,['voley','vóley','volley','patin','patín','patinaje'])){
-    intent='actividad_derivar_admin'; confidence=.88;
-    addPending(data, phone, rawText, 'actividad', 'Consulta directa de actividad no cargada en menú');
-    reply = `Te ayudo con esa actividad 😊
-
-Por ahora no tengo horarios confirmados para esa disciplina. Lo mejor es validarlo con administración.
-
-${adminContact(data)}
-
-También podés escribir MENÚ para volver al inicio.`;
+  if(containsAny(text,['voley','vóley','volley','volei','voleibol','volleyball','patin','patín','patinaje'])){
+    intent='actividad_no_cargada'; confidence=.96;
+    const askedActivity = containsAny(text,['patin','patín','patinaje']) ? 'Patín / Patinaje' : 'Vóley';
+    addPending(data, phone, rawText, 'actividad_no_cargada', `Consultó por actividad no cargada: ${askedActivity}`);
+    reply = responseUnknownActivity(data, askedActivity);
     return finish();
   }
 
@@ -4710,19 +4952,24 @@ function logFullTwilioError(route, e){
   }
   console.error('=================================');
 }
-function quickTwilioReply(rawText=''){
-  // V41 Panchito Pro: respuesta rápida Twilio con saludo humano y menú natural.
-  // Limpia signos y variantes para que "hola", "buen día", "menu" o "inicio" muestren siempre el menú completo.
+function quickTwilioReply(rawText='', alreadyMet=false){
+  // Respuesta rápida Twilio: menú natural, sin presentarse de nuevo si ya venía hablando.
   const t = clean(rawText).replace(/[!¡?¿.,;:]+/g,' ').replace(/\s+/g,' ').trim();
-  if(!t) return panchitoMenu();
+  if(!t) return panchitoMenu(alreadyMet ? 'volver' : 'inicio');
   const menuWords = ['menu','menú','inicio','empezar','arrancar','opciones','opcion','opción','0'];
-  if(menuWords.includes(t)) return panchitoMenu();
-  if(isGreetingText(t)) return panchitoMenu();
-  if(['hola','holaa','buenas','buen dia','buen día','buenos dias','buenos días','buenas tardes','buenas noches'].includes(t)) return panchitoMenu();
+  if(menuWords.includes(t)) return panchitoMenu('volver');
+  if(isGreetingText(t)) return panchitoMenu(alreadyMet ? 'volver' : 'inicio');
+  if(['hola','holaa','buenas','buen dia','buen día','buenos dias','buenos días','buenas tardes','buenas noches'].includes(t)) return panchitoMenu(alreadyMet ? 'volver' : 'inicio');
   return '';
 }
 async function smartReplySafe(rawText, from){
-  const quick = quickTwilioReply(rawText);
+  let alreadyMetPanchitoFast = false;
+  try{
+    const dataFast = db();
+    const phoneFast = normalizeTwilioPhone(from);
+    alreadyMetPanchitoFast = (dataFast.sessions||[]).some(x => x.phone === phoneFast && x.data?.seenPanchitoIntro) || (dataFast.conversations||[]).some(c => c.phone === phoneFast);
+  }catch(e){}
+  const quick = quickTwilioReply(rawText, alreadyMetPanchitoFast);
   if(quick){
     // Guardamos que el usuario está en menú principal aunque haya entrado por la respuesta rápida.
     // Así, si después responde A, B, C, etc., no se mezcla con un submenú anterior.
@@ -4731,7 +4978,7 @@ async function smartReplySafe(rawText, from){
       data.sessions = data.sessions || [];
       const s = getSession(data, normalizeTwilioPhone(from));
       s.state = 'idle';
-      s.data = { ...(s.data||{}), menu:'main', topic:'', currentActivity:'', currentCategory:'', disciplineDetail:null };
+      s.data = { ...(s.data||{}), menu:'main', topic:'', currentActivity:'', currentCategory:'', disciplineDetail:null, seenPanchitoIntro:true };
       s.updatedAt = new Date().toISOString();
       save(data);
     }catch(e){ console.error('No se pudo guardar contexto de menú principal:', e); }
