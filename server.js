@@ -322,10 +322,27 @@ function pickRandom(arr=[]){
   if(!arr.length) return '';
   return arr[Math.floor(Math.random()*arr.length)];
 }
+function getArgentinaHour(){
+  try{
+    const parts = new Intl.DateTimeFormat('es-AR', {
+      timeZone: 'America/Argentina/Buenos_Aires',
+      hour: '2-digit',
+      hour12: false
+    }).formatToParts(new Date());
+    const hourPart = parts.find(p => p.type === 'hour');
+    let h = parseInt(hourPart?.value || '0', 10);
+    if(h === 24) h = 0;
+    return h;
+  }catch(e){
+    // Fallback: Argentina es UTC-3. Evita que Render/servidor UTC salude mal.
+    return (new Date().getUTCHours() + 21) % 24;
+  }
+}
+
 function timeGreeting(){
-  const h = new Date().getHours();
-  if(h >= 6 && h < 13) return '¡Buen día!';
-  if(h >= 13 && h < 20) return '¡Buenas tardes!';
+  const h = getArgentinaHour();
+  if(h >= 5 && h < 12) return '¡Buen día!';
+  if(h >= 12 && h < 20) return '¡Buenas tardes!';
   return '¡Buenas noches!';
 }
 function panchitoMicroPhrase(){
