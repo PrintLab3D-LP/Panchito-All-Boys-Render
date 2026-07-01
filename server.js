@@ -502,6 +502,119 @@ Categoría recomendada: ${draft.category || '-'}
 Observaciones: ${draft.notes || '-'}`;
 }
 
+
+function normalizePhoneForDuplicate(value=''){
+  return String(value||'').replace(/\D/g,'').replace(/^549?/,'');
+}
+
+function normalizeActivityForDuplicate(value=''){
+  return clean(value||'').replace(/\s+/g,' ');
+}
+
+function findDuplicateRegistration(data, phone, draft={}){
+  const regs = data.registrations || [];
+  const draftActivity = normalizeActivityForDuplicate(draft.activity || '');
+  const draftPhone = normalizePhoneForDuplicate(draft.phone || phone || '');
+  const draftDni = String(draft.dni || '').replace(/\D/g,'');
+  const draftName = clean(draft.name || '');
+  return regs.find(r => {
+    const st = clean(r.status || 'Pendiente');
+    if(st === 'cancelada' || st === 'anulada') return false;
+    const sameActivity = normalizeActivityForDuplicate(r.activity || '') === draftActivity;
+    if(!sameActivity) return false;
+    const rPhone = normalizePhoneForDuplicate(r.phone || '');
+    const rDni = String(r.dni || '').replace(/\D/g,'');
+    const rName = clean(r.name || '');
+    return (draftDni && rDni && draftDni === rDni) ||
+           (draftPhone && rPhone && (draftPhone.endsWith(rPhone) || rPhone.endsWith(draftPhone))) ||
+           (draftName && rName && draftName === rName);
+  });
+}
+
+function updateDuplicateRegistration(existing, draft={}){
+  if(!existing) return null;
+  existing.updatedAt = new Date().toISOString();
+  existing.status = existing.status === 'Confirmada' ? 'Confirmada' : 'Pendiente actualización';
+  existing.name = draft.name || existing.name || '';
+  existing.age = draft.age || existing.age || '';
+  existing.birthYear = draft.birthYear || existing.birthYear || '';
+  existing.dni = draft.dni || existing.dni || '';
+  existing.memberStatus = draft.memberStatus || existing.memberStatus || '';
+  existing.phone = draft.phone || existing.phone || '';
+  existing.email = draft.email || existing.email || '';
+  existing.activity = draft.activity || existing.activity || '';
+  existing.category = draft.category || existing.category || '';
+  existing.branch = draft.branch || existing.branch || '';
+  existing.notes = draft.notes || existing.notes || 'Datos actualizados desde Panchito';
+  existing.lastUpdateSource = 'Panchito';
+  return existing;
+}
+
+function isSignupSideQuestion(text=''){
+  const t = normalizeUserText(text);
+  return containsAny(t, [
+    'horario','horarios','dias','días','dia','día','cuando','clases',
+    'precio','precios','cuota','cuotas','valor','valores','cuanto sale','cuánto sale','costo','costos',
+    'profesor','profesora','profe','entrenador','entrenadora',
+    'requisito','requisitos','documentacion','documentación','apto medico','apto médico','cupos','cupo',
+    'whatsapp','wasap','wsp','telefono','teléfono','administracion','administración'
+  ]);
+}
+
+function signupSideAnswer(data, s, rawText=''){
+  const draft = s.data?.signupDraft || {};
+  const activity = draft.activity || s.data?.currentActivity || 'la actividad';
+  const category = draft.category || s.data?.currentCategory || '';
+  const t = normalizeUserText(rawText);
+  const matches = (data.activities||[]).filter(a =>
+    a && a.active !== false && clean(a.name||'') === clean(activity||'') && (!category || clean(a.category||'') === clean(category||''))
+  );
+  const anyActivity = (data.activities||[]).filter(a => a && a.active !== false && clean(a.name||'') === clean(activity||''));
+  const rows = (matches.length ? matches : anyActivity).slice(0,3);
+
+  if(containsAny(t,['precio','precios','cuota','cuotas','valor','valores','cuanto sale','cuánto sale','costo','costos'])){
+    const withCost = rows.find(a => Number(a.cost||0) > 0);
+    if(withCost) return `💰 Para ${activity}${category ? ` (${category})` : ''}, el valor cargado es ${money(withCost.cost)}. Igual administración confirma el valor vigente.`;
+    return `💰 Para ${activity}, el valor lo confirma administración para evitar pasarte un precio desactualizado.`;
+  }
+  if(containsAny(t,['horario','horarios','dias','dia','cuando','clases'])){
+    if(rows.length){
+      return `🕒 Horarios cargados para ${activity}:\n` + rows.map(a => `• ${a.category||'Categoría'}: ${a.days||'días a confirmar'} ${a.time||''}`.trim()).join('\n');
+    }
+    return `🕒 Los horarios de ${activity} los confirma administración según categoría, cupo y temporada.`;
+  }
+  if(containsAny(t,['profesor','profesora','profe','entrenador','entrenadora'])){
+    const withTeacher = rows.find(a => a.teacher);
+    if(withTeacher) return `👨‍🏫 Profesor/a de ${activity}: ${withTeacher.teacher}.`;
+    return `👨‍🏫 El profesor/a de ${activity} lo confirma administración.`;
+  }
+  if(containsAny(t,['requisito','requisitos','documentacion','documentación','apto medico','apto médico','cupos','cupo'])){
+    return `📌 Para ${activity}, administración confirma cupo, documentación y requisitos finales. Si corresponde, pueden pedir apto médico o datos del responsable.`;
+  }
+  if(containsAny(t,['whatsapp','wasap','wsp','telefono','teléfono','administracion','administración'])){
+    return adminSignupWhatsAppLine(data, draft);
+  }
+  return `Te contesto eso y seguimos con la inscripción: para ${activity}, administración confirma la información vigente.`;
+}
+
+function signupPromptForCurrentMenu(menu, draft={}){
+  const map = {
+    signup_name:'name', signup_age:'age', signup_dni:'dni', signup_socio:'socio', signup_phone:'phone', signup_email:'email', signup_notes:'notes', signup_confirm:'confirm',
+    signup_edit_name:'edit_name', signup_edit_age:'edit_age', signup_edit_phone:'edit_phone', signup_edit_dni:'edit_dni', signup_edit_email:'edit_email', signup_edit_activity:'edit_activity', signup_edit_notes:'edit_notes'
+  };
+  const prompts = {
+    edit_name:'Escribime únicamente el nuevo nombre y apellido.',
+    edit_age:'Escribime la nueva edad o fecha de nacimiento.',
+    edit_phone:'Escribime el nuevo teléfono de contacto.',
+    edit_dni:'Escribime el nuevo DNI, o poné OMITIR.',
+    edit_email:'Escribime el nuevo mail, o poné OMITIR.',
+    edit_activity:'Escribime el nuevo deporte o actividad. Ejemplo: Softbol, Fútbol, Básquet, Natatorio.',
+    edit_notes:'Escribime la nueva observación, o poné NO.'
+  };
+  const key = map[menu] || 'confirm';
+  return prompts[key] || signupStepPrompt(key, draft);
+}
+
 function signupWhatsAppLink(data, draft={}){
   const rawPhone = String(draft.phone || '').replace(/\D/g,'');
   const phone = rawPhone.startsWith('54') ? rawPhone : `549${rawPhone}`;
@@ -2227,6 +2340,7 @@ async function smartReply(rawText, phone='demo'){
   // y evita que una palabra como "horarios" rompa el bot cuando venía de Natatorio.
   const protectedMenus = [
     'signup_name','signup_age','signup_dni','signup_socio','signup_phone','signup_email','signup_notes','signup_confirm',
+    'signup_edit_name','signup_edit_age','signup_edit_phone','signup_edit_dni','signup_edit_email','signup_edit_activity','signup_edit_notes','signup_duplicate','signup_done',
     'admin_name','admin_phone','admin_topic','admin_message',
     'claim_name','claim_phone','claim_area','claim_detail'
   ];
@@ -2991,7 +3105,7 @@ E. Hablar con administración 📞`;
   }
 
 
-  if(['signup_name','signup_age','signup_dni','signup_socio','signup_phone','signup_email','signup_notes','signup_confirm','signup_edit_name','signup_edit_age','signup_edit_phone','signup_done'].includes(menu)){
+  if(['signup_name','signup_age','signup_dni','signup_socio','signup_phone','signup_email','signup_notes','signup_confirm','signup_edit_name','signup_edit_age','signup_edit_phone','signup_edit_dni','signup_edit_email','signup_edit_activity','signup_edit_notes','signup_duplicate','signup_done'].includes(menu)){
     if(containsAny(text,['menu','menú','inicio','salir','cancelar','volver'])){
       intent='inscripcion_cancelada'; confidence=.92;
       clearMenuContext(s);
@@ -3001,6 +3115,21 @@ E. Hablar con administración 📞`;
     }
 
     s.data.signupDraft = s.data.signupDraft || {};
+
+    // IA / ayuda controlada dentro de la inscripción: si el usuario pregunta algo
+    // como horarios, precio, cupos o requisitos, respondemos sin perder el paso actual.
+    if(!String(menu||'').startsWith('signup_edit_') && menu !== 'signup_confirm' && menu !== 'signup_duplicate' && isSignupSideQuestion(rawText)){
+      intent='inscripcion_consulta_intermedia'; confidence=.95;
+      const answer = signupSideAnswer(data, s, rawText);
+      reply = `${answer}
+
+Seguimos con la inscripción donde estábamos 😊
+
+${signupPromptForCurrentMenu(menu, s.data.signupDraft)}
+
+Podés escribir MENÚ para cancelar.`;
+      return finish();
+    }
 
     if(menu === 'signup_name'){
       intent='inscripcion_nombre'; confidence=.94;
@@ -3135,7 +3264,12 @@ ${signupStepPrompt('confirm', s.data.signupDraft)}`;
         }
       }
       setMenuContext(s,'signup_confirm');
-      reply = `✅ Listo, actualicé la edad.
+      const actividadActual = s.data.signupDraft.activity || s.data.currentActivity || 'la actividad elegida';
+      const categoriaActual = s.data.signupDraft.category || 'Categoría a confirmar';
+      reply = `✅ Listo, actualicé solo la edad.
+
+La actividad sigue siendo: **${actividadActual}**
+Categoría recomendada ahora: **${categoriaActual}**
 
 ${signupStepPrompt('confirm', s.data.signupDraft)}`;
       return finish();
@@ -3151,27 +3285,97 @@ ${signupStepPrompt('confirm', s.data.signupDraft)}`;
       return finish();
     }
 
+    if(menu === 'signup_edit_dni'){
+      intent='inscripcion_editar_dni'; confidence=.96;
+      if(containsAny(text,['omitir','no tengo','no se','no sé'])) s.data.signupDraft.dni = '';
+      else s.data.signupDraft.dni = rawText.replace(/\D/g,'') || rawText;
+      setMenuContext(s,'signup_confirm');
+      reply = `✅ Listo, actualicé el DNI.
+
+${signupStepPrompt('confirm', s.data.signupDraft)}`;
+      return finish();
+    }
+
+    if(menu === 'signup_edit_email'){
+      intent='inscripcion_editar_mail'; confidence=.96;
+      if(containsAny(text,['omitir','no tengo','no','saltear'])) s.data.signupDraft.email = '';
+      else s.data.signupDraft.email = rawText;
+      setMenuContext(s,'signup_confirm');
+      reply = `✅ Listo, actualicé el mail.
+
+${signupStepPrompt('confirm', s.data.signupDraft)}`;
+      return finish();
+    }
+
+    if(menu === 'signup_edit_activity'){
+      intent='inscripcion_editar_actividad'; confidence=.96;
+      const act = detectActivityFreeText(rawText);
+      if(!act){
+        reply = `No pude ubicar esa actividad todavía.
+
+Escribime el deporte o actividad, por ejemplo: Softbol, Fútbol, Básquet, Natatorio o Gimnasia.`;
+        return finish();
+      }
+      s.data.signupDraft.activity = act.label;
+      s.data.currentActivity = act.label;
+      const info = extractAgeOrBirthYear(s.data.signupDraft.age || '');
+      if(info){
+        const rec = phase6RecommendRule(data, act.label, info, s.data.signupDraft.branch || s.data.userBranch || '');
+        if(rec){
+          s.data.signupDraft.category = rec.label || s.data.signupDraft.category;
+          s.data.signupDraft.branch = rec.branch || s.data.signupDraft.branch || '';
+          s.data.currentCategory = rec.label || s.data.currentCategory;
+        } else {
+          s.data.signupDraft.category = 'Categoría a confirmar';
+        }
+      } else {
+        s.data.signupDraft.category = 'Categoría a confirmar';
+      }
+      setMenuContext(s,'signup_confirm');
+      reply = `✅ Listo, actualicé la actividad.
+
+Actividad actual: **${s.data.signupDraft.activity}**
+Categoría recomendada: **${s.data.signupDraft.category || 'Categoría a confirmar'}**
+
+${signupStepPrompt('confirm', s.data.signupDraft)}`;
+      return finish();
+    }
+
+    if(menu === 'signup_edit_notes'){
+      intent='inscripcion_editar_observaciones'; confidence=.96;
+      if(containsAny(text,['no','ninguna','sin observaciones','omitir'])) s.data.signupDraft.notes = '';
+      else s.data.signupDraft.notes = rawText;
+      setMenuContext(s,'signup_confirm');
+      reply = `✅ Listo, actualicé las observaciones.
+
+${signupStepPrompt('confirm', s.data.signupDraft)}`;
+      return finish();
+    }
+
     if(menu === 'signup_confirm'){
       if(isLetter(rawText,['A']) || containsAny(text,['confirmar','confirmo','si','sí','dale','ok'])){
         intent='inscripcion_registrada'; confidence=.98;
-        const dup=(data.registrations||[]).find(r=>
-          (r.phone=== (s.data.signupDraft.phone||phone||'')) &&
-          String(r.activity||'').toLowerCase()===String(s.data.signupDraft.activity||'').toLowerCase() &&
-          String(r.category||'').toLowerCase()===String(s.data.signupDraft.category||'').toLowerCase() &&
-          String(r.status||'').toLowerCase()!=='cancelada');
+        const dup = findDuplicateRegistration(data, phone, s.data.signupDraft);
         if(dup){
+          s.data.duplicateRegistrationId = dup.id;
           const st=(dup.status||'Pendiente');
-          let msg='⚠️ Ya estás inscripto en esta actividad.';
+          let msg='⚠️ Ya existe una inscripción o solicitud para esta actividad.';
           if(st==='Sin cupo') msg='⚠️ Ya figurás en la lista de espera de esta actividad.';
-          else if(st==='Confirmada') msg='✅ Tu inscripción ya fue confirmada.';
-          else msg='⚠️ Ya existe una solicitud registrada para esta actividad.';
+          else if(st==='Confirmada') msg='✅ Esta persona ya figura confirmada en esta actividad.';
+
           reply=`${msg}
 
-Actividad: ${dup.activity} - ${dup.category}
+Actividad: ${dup.activity} - ${dup.category || 'Categoría a confirmar'}
 Estado: ${st}
 
-Si necesitás modificar datos, comunicate con Administración.`;
-          setMenuContext(s,'signup_done');
+¿Querés actualizar los datos existentes con este resumen?
+
+${signupSummary(s.data.signupDraft)}
+
+A. ✅ Actualizar datos existentes
+B. 📲 Hablar con administración
+C. 🏠 Menú principal`;
+          setMenuContext(s,'signup_duplicate');
           return finish();
         }
         const resumen = signupSummary(s.data.signupDraft);
@@ -3221,6 +3425,34 @@ Escribime el nuevo teléfono de contacto.`;
         return finish();
       }
       if(isLetter(rawText,['E'])){
+        setMenuContext(s,'signup_edit_dni');
+        reply = `Dale, modificamos solo el DNI 😊
+
+Escribime el nuevo DNI, o poné OMITIR.`;
+        return finish();
+      }
+      if(isLetter(rawText,['F'])){
+        setMenuContext(s,'signup_edit_email');
+        reply = `Dale, modificamos solo el mail 😊
+
+Escribime el nuevo mail, o poné OMITIR.`;
+        return finish();
+      }
+      if(isLetter(rawText,['G'])){
+        setMenuContext(s,'signup_edit_activity');
+        reply = `Dale, modificamos solo el deporte / actividad 😊
+
+Escribime la nueva actividad. Ejemplo: Softbol, Fútbol, Básquet, Natatorio.`;
+        return finish();
+      }
+      if(isLetter(rawText,['H'])){
+        setMenuContext(s,'signup_edit_notes');
+        reply = `Dale, modificamos solo las observaciones 😊
+
+Escribime la nueva observación, o poné NO.`;
+        return finish();
+      }
+      if(isLetter(rawText,['I']) || containsAny(text,['cancelar','cancelo'])){
         intent='inscripcion_cancelada'; confidence=.92;
         clearMenuContext(s); s.data.signupDraft = {};
         reply = `Solicitud cancelada.
@@ -3232,6 +3464,43 @@ ${panchitoMenu()}`;
       reply = `No llegué a interpretar esa opción.
 
 ${signupStepPrompt('confirm', s.data.signupDraft)}`;
+      return finish();
+    }
+
+    if(menu === 'signup_duplicate'){
+      if(isLetter(rawText,['A']) || containsAny(text,['actualizar','modificar','usar estos datos'])){
+        const dup = (data.registrations||[]).find(r => String(r.id) === String(s.data.duplicateRegistrationId));
+        const updated = updateDuplicateRegistration(dup, s.data.signupDraft || {});
+        setMenuContext(s,'signup_done');
+        reply = `✅ Listo, actualicé la inscripción existente.
+
+${signupSummary(updated || s.data.signupDraft)}
+
+Estado: ${updated?.status || 'Pendiente actualización'}
+
+¿Qué querés hacer ahora?
+A. 📝 Cargar otra inscripción
+B. 📲 Hablar con administración
+C. 🏠 Menú principal`;
+        return finish();
+      }
+      if(isLetter(rawText,['B'])){
+        intent='administracion_por_duplicado'; confidence=.94;
+        reply = goAdmin(data, s, phone, rawText, 'Usuario detectó inscripción duplicada y pidió administración');
+        return finish();
+      }
+      if(isLetter(rawText,['C'])){
+        intent='menu_por_duplicado'; confidence=.94;
+        s.data.signupDraft = {};
+        clearMenuContext(s);
+        reply = panchitoMenu();
+        return finish();
+      }
+      reply = `No llegué a interpretar esa opción.
+
+A. ✅ Actualizar datos existentes
+B. 📲 Hablar con administración
+C. 🏠 Menú principal`;
       return finish();
     }
 
