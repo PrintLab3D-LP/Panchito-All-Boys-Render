@@ -766,7 +766,8 @@ function backMenuReply(back){
     : back === 'basket_fem' ? responseBasketFemenino('back')
     : back === 'basket_masc' ? responseBasketMasculino('back')
     : back === 'basket_init' ? responseBasketInicial('back')
-    : back === 'football_years' ? responseFootballD()
+    : back === 'basket' ? responseBasketMenu('back')
+    : back === 'football_years' ? responseFootballMenu('back')
     : back === 'football' ? responseFootballMenu('back')
     : responseActivityMenu();
 }
@@ -1528,7 +1529,9 @@ function trainWebsite(data){
 
 
 function setMenuContext(s, menu){
-  s.data = { ...(s.data||{}), menu };
+  // Guarda también lastMenu para que una letra (A/B/C...) se interprete
+  // por el último menú mostrado y no por el menú principal.
+  s.data = { ...(s.data||{}), menu, lastMenu: menu || (s.data||{}).lastMenu || '' };
   s.state = menu ? `waiting_${menu}` : 'idle';
   s.updatedAt = new Date().toISOString();
 }
@@ -1538,7 +1541,7 @@ function isLetter(text, letters){
   return letters.includes(t);
 }
 function clearMenuContext(s){
-  s.data = { ...(s.data||{}), menu:'' };
+  s.data = { ...(s.data||{}), menu:'', lastMenu:'main' };
   s.state = 'idle';
   s.updatedAt = new Date().toISOString();
 }
@@ -1828,7 +1831,7 @@ function handleAfterActivityAction(data, s, phone, rawText, letter, backMenu){
   }
   if(letter==='C'){
     setMenuContext(s, backMenu || 'activities');
-    return backMenu === 'basket' ? responseBasketMenu() : backMenu === 'football' ? responseFootballMenu() : responseActivityMenu();
+    return backMenu === 'basket' ? responseBasketMenu('back') : backMenu === 'football' ? responseFootballMenu('back') : responseActivityMenu();
   }
   if(letter==='D'){
     clearMenuContext(s);
@@ -2290,9 +2293,12 @@ Si necesitás confirmar si el club sumó ${name}, te dejo Administración:
 ${adminContact(data)}`;
 }
 
-function responseBasketMenu(){
-  return `🏀 ¡Excelente! Básquet es una gran elección.
-${sportVibe('basket')}
+function responseBasketMenu(mode='normal'){
+  const intro = mode === 'back'
+    ? `🔙 Volvimos al menú de Básquet.`
+    : `🏀 ¡Excelente! Básquet es una gran elección.
+${sportVibe('basket')}`;
+  return `${intro}
 
 Para orientarte bien, decime una cosa:
 
@@ -2602,8 +2608,18 @@ async function smartReply(rawText, phone='demo'){
   let intent='general', reply='', confidence=0.75;
 
   // Manejo de submenús: las letras A/B/C cambian según el contexto actual.
-  const menu = getMenuContext(s);
+  let menu = getMenuContext(s);
   const letter = clean(rawText).toUpperCase();
+
+  // FIX V75: si por algún reset quedó menu vacío/main pero el último menú mostrado
+  // era un submenú, una letra sola debe responder a ese submenú.
+  // Evita que E = "Volver a básquet" salte a "Administración".
+  const lastMenuForLetters = (s.data && s.data.lastMenu) || '';
+  if(isLetter(rawText, ['A','B','C','D','E','F','G','H']) && (!menu || menu === 'main') && lastMenuForLetters && lastMenuForLetters !== 'main') {
+    menu = lastMenuForLetters;
+    s.data.menu = menu;
+    s.state = `waiting_${menu}`;
+  }
 
   // Menús que son formularios paso a paso: acá no debe entrar la memoria de actividad.
   // Esto corrige el error interno "Cannot access protectedMenus before initialization"
@@ -2768,7 +2784,7 @@ Quedo atento a tu consulta.`;
       if(letter==='B'){ setDiscipline(s,'discipline_detail','⚽ Categoría 2018','Fútbol',['2018'],'football_years'); reply=disciplineAnswer(data,s,'all'); return true; }
       if(letter==='C'){ setDiscipline(s,'discipline_detail','⚽ Categoría 2019','Fútbol',['2019'],'football_years'); reply=disciplineAnswer(data,s,'all'); return true; }
       if(letter==='D'){ setDiscipline(s,'discipline_detail','⚽ Categoría 2020','Fútbol',['2020'],'football_years'); reply=disciplineAnswer(data,s,'all'); return true; }
-      if(letter==='E'){ setMenuContext(s,'football'); reply=responseFootballMenu(); return true; }
+      if(letter==='E'){ setMenuContext(s,'football'); reply=responseFootballMenu('back'); return true; }
       if(letter==='F'){ setMenuContext(s,'activities'); reply=responseActivityMenu(); return true; }
     }
 
@@ -2786,7 +2802,7 @@ Quedo atento a tu consulta.`;
       if(letter==='A'){ setDiscipline(s,'discipline_detail','🏀 Básquet Femenino Sub 17 y Primera','Básquet',['Femenino Sub 17','Femenino Primera'],'basket_fem'); reply=disciplineAnswer(data,s,'all'); return true; }
       if(letter==='B'){ setDiscipline(s,'discipline_detail','🏀 Básquet Femenino Sub 13 y Sub 15','Básquet',['Femenino Sub 13','Femenino Sub 15'],'basket_fem'); reply=disciplineAnswer(data,s,'all'); return true; }
       if(letter==='C'){ setDiscipline(s,'discipline_detail','🏀 Básquet Femenino Sub 11','Básquet',['Femenino Sub 11'],'basket_fem'); reply=disciplineAnswer(data,s,'all'); return true; }
-      if(letter==='D'){ setMenuContext(s,'basket'); reply=responseBasketMenu(); return true; }
+      if(letter==='D'){ setMenuContext(s,'basket'); reply=responseBasketMenu('back'); return true; }
       if(letter==='E'){ clearMenuContext(s); reply=panchitoMenu(); return true; }
     }
 
@@ -2797,7 +2813,7 @@ Quedo atento a tu consulta.`;
       if(letter==='C'){ setDiscipline(s,'discipline_detail','🏀 Básquet Masculino Sub 15','Básquet',['Masculino Sub 15'],'basket_masc'); reply=disciplineAnswer(data,s,'all'); return true; }
       if(letter==='D'){ setDiscipline(s,'discipline_detail','🏀 Básquet Masculino Primera división','Básquet',['Masculino Primera división','Primera división'],'basket_masc'); reply=disciplineAnswer(data,s,'all'); return true; }
       if(letter==='E'){ setDiscipline(s,'discipline_detail','🏀 Básquet Asociativo','Básquet',['Asociativo'],'basket_masc'); reply=disciplineAnswer(data,s,'all'); return true; }
-      if(letter==='F'){ setMenuContext(s,'basket'); reply=responseBasketMenu(); return true; }
+      if(letter==='F'){ setMenuContext(s,'basket'); reply=responseBasketMenu('back'); return true; }
       if(letter==='G'){ clearMenuContext(s); reply=panchitoMenu(); return true; }
     }
 
@@ -2807,7 +2823,7 @@ Quedo atento a tu consulta.`;
       if(letter==='B'){ setDiscipline(s,'discipline_detail','🏀 Básquet Sub 11','Básquet',['Sub 11'],'basket_init'); reply=disciplineAnswer(data,s,'all'); return true; }
       if(letter==='C'){ setDiscipline(s,'discipline_detail','🏀 Básquet Escuelita','Básquet',['Escuelita'],'basket_init'); reply=disciplineAnswer(data,s,'all'); return true; }
       if(letter==='D'){ setDiscipline(s,'discipline_detail','🏀 Básquet Mosquitos','Básquet',['Mosquitos'],'basket_init'); reply=disciplineAnswer(data,s,'all'); return true; }
-      if(letter==='E'){ setMenuContext(s,'basket'); reply=responseBasketMenu(); return true; }
+      if(letter==='E'){ setMenuContext(s,'basket'); reply=responseBasketMenu('back'); return true; }
       if(letter==='F'){ clearMenuContext(s); reply=panchitoMenu(); return true; }
     }
 
@@ -4090,7 +4106,7 @@ C. Volver al menú principal`;
     if(letter==='A'){ setDiscipline(s,'discipline_detail','🏀 Básquet Femenino Sub 17 y Primera','Básquet',['Femenino Sub 17','Femenino Primera'],'basket_fem'); reply=disciplineAnswer(data,s,'all'); return finish(); }
     if(letter==='B'){ setDiscipline(s,'discipline_detail','🏀 Básquet Femenino Sub 13 y Sub 15','Básquet',['Femenino Sub 13','Femenino Sub 15'],'basket_fem'); reply=disciplineAnswer(data,s,'all'); return finish(); }
     if(letter==='C'){ setDiscipline(s,'discipline_detail','🏀 Básquet Femenino Sub 11','Básquet',['Femenino Sub 11'],'basket_fem'); reply=disciplineAnswer(data,s,'all'); return finish(); }
-    if(letter==='D'){ setMenuContext(s,'basket'); reply=responseBasketMenu(); return finish(); }
+    if(letter==='D'){ setMenuContext(s,'basket'); reply=responseBasketMenu('back'); return finish(); }
     if(letter==='E'){ clearMenuContext(s); reply=panchitoMenu(); return finish(); }
   }
 
@@ -4101,7 +4117,7 @@ C. Volver al menú principal`;
     if(letter==='C'){ setDiscipline(s,'discipline_detail','🏀 Básquet Masculino Sub 15','Básquet',['Masculino Sub 15'],'basket_masc'); reply=disciplineAnswer(data,s,'all'); return finish(); }
     if(letter==='D'){ setDiscipline(s,'discipline_detail','🏀 Básquet Masculino Primera división','Básquet',['Masculino Primera división','Primera división'],'basket_masc'); reply=disciplineAnswer(data,s,'all'); return finish(); }
     if(letter==='E'){ setDiscipline(s,'discipline_detail','🏀 Básquet Asociativo','Básquet',['Asociativo'],'basket_masc'); reply=disciplineAnswer(data,s,'all'); return finish(); }
-    if(letter==='F'){ setMenuContext(s,'basket'); reply=responseBasketMenu(); return finish(); }
+    if(letter==='F'){ setMenuContext(s,'basket'); reply=responseBasketMenu('back'); return finish(); }
     if(letter==='G'){ clearMenuContext(s); reply=panchitoMenu(); return finish(); }
   }
 
@@ -4111,7 +4127,7 @@ C. Volver al menú principal`;
     if(letter==='B'){ setDiscipline(s,'discipline_detail','🏀 Básquet Sub 11','Básquet',['Sub 11'],'basket_init'); reply=disciplineAnswer(data,s,'all'); return finish(); }
     if(letter==='C'){ setDiscipline(s,'discipline_detail','🏀 Básquet Escuelita','Básquet',['Escuelita'],'basket_init'); reply=disciplineAnswer(data,s,'all'); return finish(); }
     if(letter==='D'){ setDiscipline(s,'discipline_detail','🏀 Básquet Mosquitos','Básquet',['Mosquitos'],'basket_init'); reply=disciplineAnswer(data,s,'all'); return finish(); }
-    if(letter==='E'){ setMenuContext(s,'basket'); reply=responseBasketMenu(); return finish(); }
+    if(letter==='E'){ setMenuContext(s,'basket'); reply=responseBasketMenu('back'); return finish(); }
     if(letter==='F'){ clearMenuContext(s); reply=panchitoMenu(); return finish(); }
   }
 
@@ -4132,7 +4148,7 @@ C. Volver al menú principal`;
     if(letter==='B'){ setDiscipline(s,'discipline_detail','⚽ Categoría 2018','Fútbol',['2018'],'football_years'); reply=disciplineAnswer(data,s,'all'); return finish(); }
     if(letter==='C'){ setDiscipline(s,'discipline_detail','⚽ Categoría 2019','Fútbol',['2019'],'football_years'); reply=disciplineAnswer(data,s,'all'); return finish(); }
     if(letter==='D'){ setDiscipline(s,'discipline_detail','⚽ Categorías 2020-2021','Fútbol',['2020','2021'],'football_years'); reply=disciplineAnswer(data,s,'all'); return finish(); }
-    if(letter==='E'){ setMenuContext(s,'football'); reply=responseFootballMenu(); return finish(); }
+    if(letter==='E'){ setMenuContext(s,'football'); reply=responseFootballMenu('back'); return finish(); }
     if(letter==='F'){ clearMenuContext(s); reply=panchitoMenu(); return finish(); }
   }
 
@@ -4528,7 +4544,7 @@ E. Hablar con administración 📞`;
     return finish();
   }
 
-  if(containsAny(text,['admin','administracion','administración','secretaria','secretaría','humano','persona','hablar con alguien','atencion','atención','ventanilla']) || text==='e'){
+  if(containsAny(text,['admin','administracion','administración','secretaria','secretaría','humano','persona','hablar con alguien','atencion','atención','ventanilla']) || ((!menu || menu === 'main') && text==='e')){
     intent='administracion'; confidence=.92; setTopic(s,'administracion',{});
     addPending(data, phone, rawText, 'administracion', 'Usuario pidió hablar con administración');
     reply = `Claro 😊
