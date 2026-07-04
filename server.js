@@ -1158,6 +1158,34 @@ function validateAndApplySignupAge(data, s, rawAgeText=''){
   return `\n\n📌 Por ${dataLabel}, administración confirma la categoría final según cupo y reglamento.`;
 }
 
+
+function signupAgeTooYoungInfo(data, s, rawAgeText=''){
+  const info = extractAgeOrBirthYear(rawAgeText);
+  if(!info) return null;
+  const draft = s.data?.signupDraft || {};
+  const activity = draft.activity || s.data?.currentActivity || '';
+  const msg = tooYoungMessage(activity, info);
+  if(!msg) return null;
+  return { info, activity, message: msg };
+}
+
+function signupAgeBlockedReply(data, s, rawAgeText=''){
+  const blocked = signupAgeTooYoungInfo(data, s, rawAgeText);
+  if(!blocked) return '';
+  const draft = s.data.signupDraft || {};
+  const activity = draft.activity || blocked.activity || 'la actividad elegida';
+  return `⚠️ ${blocked.message}
+
+Por eso no sigo pidiendo DNI todavía, así evitamos cargar una inscripción que después no corresponda.
+
+¿Qué querés hacer?
+
+A. 📞 Hablar con administración
+B. 🏟️ Elegir otro deporte
+C. 🔄 Cambiar la edad
+D. 🏠 Menú principal`;
+}
+
 function categoryAgeAdvice(data, activity='', category='', ageText=''){
   const info = extractAgeOrBirthYear(ageText);
   if(!info) return '';
@@ -2172,15 +2200,67 @@ function contextEmotionForActivity(activity){
   return sportVibe('activities');
 }
 
+function activityAgeInvalidOptions(activity='la actividad'){
+  return `¿Qué querés hacer?
+
+A. 🔄 Cambiar la edad
+B. 📋 Ver categorías de ${activity}
+C. 🏟️ Ver otras actividades
+D. 📞 Hablar con administración
+E. 🏠 Menú principal`;
+}
+
 function replyOnlyAgeRemembered(data, s, rawText=''){
   const ageInfo = extractAgeOrBirthYear(rawText);
   if(!ageInfo) return '';
-  // Si solo dijo una edad/año, la guardamos y preguntamos actividad.
+  // Si solo dijo una edad/año, la guardamos.
   if(detectActivityFreeText(rawText)) return '';
   if(phase6Intent(rawText)) return '';
+
+  const currentActivity = s.data?.currentActivity || '';
+  const currentMenu = getMenuContext(s) || '';
+  const hasActivityContext = !!currentActivity && ['gymnastics','football','basket','basket_fem','basket_masc','basket_init','softbol','paleta','activities','price_discipline_detail','discipline_detail'].includes(currentMenu);
   s.data = { ...(s.data||{}), userAge: ageInfo.age, userBirthYear: ageInfo.birthYear };
-  setMenuContext(s,'human_minor_activity');
   const dataLabel = ageInfo.source === 'year' ? `año ${ageInfo.birthYear}` : `${ageInfo.age} años`;
+
+  // V79: si ya estaba dentro de una disciplina, no se pierde el deporte.
+  // Antes, al escribir por ejemplo "1" dentro de Gimnasia, Panchito volvía a preguntar actividad.
+  // Ahora mantiene la actividad actual y ofrece caminos claros.
+  if(hasActivityContext){
+    const tooYoung = tooYoungMessage(currentActivity, ageInfo);
+    const rec = phase6RecommendRule(data, currentActivity, ageInfo, s.data?.userBranch || '');
+    if(tooYoung){
+      s.data.ageInvalidActivity = currentActivity;
+      s.data.ageInvalidBackMenu = currentMenu === 'activities' ? (activityFromMemory(s)?.key || 'activities') : currentMenu;
+      setMenuContext(s,'activity_age_invalid');
+      return `⚠️ ${tooYoung}
+
+No sigo con la inscripción ni te cambio de deporte, así no cargamos algo que después no corresponda.
+
+${activityAgeInvalidOptions(currentActivity)}`;
+    }
+    if(rec){
+      s.data.currentCategory = rec.label || s.data.currentCategory;
+      return `😊 Perfecto, ya me guardé el dato: **${dataLabel}**.
+
+Para **${currentActivity}**, por esa edad te recomiendo: **${rec.label}**.
+
+¿Qué querés consultar ahora?
+
+A. 📅 Horarios
+B. 💰 Costo / cuota
+C. 📝 Iniciar inscripción
+D. 👨‍🏫 Profesor/a
+E. 📞 Administración`;
+    }
+    return `😊 Perfecto, ya me guardé el dato: **${dataLabel}**.
+
+Seguimos en **${currentActivity}**. Administración confirma grupo, cupo y categoría final.
+
+${activityAgeInvalidOptions(currentActivity)}`;
+  }
+
+  setMenuContext(s,'human_minor_activity');
   return `😊 Perfecto, ya me guardé el dato: **${dataLabel}**.
 
 Ahora decime qué actividad le interesa y lo ubicamos mejor.
@@ -2649,8 +2729,54 @@ async function smartReply(rawText, phone='demo'){
     return finish();
   }
 
+  // V79: opciones cuando una edad no tiene categoría dentro de una actividad elegida.
+  if(menu === 'activity_age_invalid'){
+    intent='edad_sin_categoria_actividad_contextual'; confidence=.98;
+    const invalidActivity = s.data?.ageInvalidActivity || s.data?.currentActivity || 'la actividad';
+    const backMenu = s.data?.ageInvalidBackMenu || getMenuContext(s) || 'activities';
+    if(isLetter(rawText,['A']) || containsAny(text,['cambiar edad','otra edad','corregir edad','edad'])){
+      setMenuContext(s, backMenu && backMenu !== 'activity_age_invalid' ? backMenu : 'activities');
+      reply = `Dale, corregimos la edad para **${invalidActivity}**.
+
+Escribime la edad o el año de nacimiento.`;
+      return finish();
+    }
+    if(isLetter(rawText,['B']) || containsAny(text,['categorias','categorías','ver categorias','ver categorías'])){
+      const back = backMenu && backMenu !== 'activity_age_invalid' ? backMenu : 'activities';
+      setMenuContext(s, back);
+      reply = backMenuReply(back);
+      return finish();
+    }
+    if(isLetter(rawText,['C']) || containsAny(text,['otras actividades','otro deporte','otra actividad','actividades'])){
+      setMenuContext(s,'activities');
+      reply = responseActivityMenu();
+      return finish();
+    }
+    if(isLetter(rawText,['D']) || containsAny(text,['administracion','administración','admin','hablar'])){
+      reply = goAdmin(data, s, phone, rawText, `Edad sin categoría para ${invalidActivity}`);
+      return finish();
+    }
+    if(isLetter(rawText,['E']) || containsAny(text,['menu','menú','inicio','principal'])){
+      clearMenuContext(s);
+      reply = panchitoMenu();
+      return finish();
+    }
+    reply = activityAgeInvalidOptions(invalidActivity);
+    return finish();
+  }
+
   function isMainMenuLetter(){
     return isLetter(rawText, ['A','B','C','D','E','F','G','H']);
+  }
+
+  // V77 - Sinónimos fuertes de administración.
+  // Evita que frases como "secretaría", "hablar con alguien" o "humano"
+  // se mezclen con opciones de deportes si no son una letra de menú.
+  if(!isLetter(rawText, ['A','B','C','D','E','F','G','H']) && !protectedMenus.includes(menu) &&
+     containsAny(text,['administracion','administración','secretaria','secretaría','hablar con alguien','hablar con una persona','persona','humano','atencion','atención','telefono del club','whatsapp del club'])){
+    intent='administracion_sinonimo_v77'; confidence=.98;
+    reply = goAdmin(data, s, phone, rawText, 'Usuario pidió hablar con administración por texto libre');
+    return finish();
   }
 
   const contextualFollow = contextFollowUpReply(data, s, rawText);
@@ -3398,7 +3524,7 @@ E. Hablar con administración 📞`;
   }
 
 
-  if(['signup_name','signup_age','signup_dni','signup_socio','signup_phone','signup_email','signup_notes','signup_confirm','signup_edit_name','signup_edit_age','signup_edit_phone','signup_edit_dni','signup_edit_email','signup_edit_activity','signup_edit_notes','signup_duplicate','signup_done'].includes(menu)){
+  if(['signup_name','signup_age','signup_age_invalid','signup_dni','signup_socio','signup_phone','signup_email','signup_notes','signup_confirm','signup_edit_name','signup_edit_age','signup_edit_phone','signup_edit_dni','signup_edit_email','signup_edit_activity','signup_edit_notes','signup_duplicate','signup_done'].includes(menu)){
     if(containsAny(text,['menu','menú','inicio','salir','cancelar','volver'])){
       intent='inscripcion_cancelada'; confidence=.92;
       clearMenuContext(s);
@@ -3450,6 +3576,13 @@ Podés escribir MENÚ para cancelar.`;
     if(menu === 'signup_age'){
       intent='inscripcion_edad'; confidence=.94;
       s.data.signupDraft.age = rawText;
+      const blockedAge = signupAgeBlockedReply(data, s, rawText);
+      if(blockedAge){
+        validateAndApplySignupAge(data, s, rawText);
+        setMenuContext(s,'signup_age_invalid');
+        reply = blockedAge;
+        return finish();
+      }
       const advice = validateAndApplySignupAge(data, s, rawText);
       setMenuContext(s,'signup_dni');
       reply = `Perfecto ✅${advice}
@@ -3457,6 +3590,45 @@ Podés escribir MENÚ para cancelar.`;
 ${signupStepPrompt('dni', s.data.signupDraft)}
 
 Podés escribir MENÚ para cancelar.`;
+      return finish();
+    }
+
+    if(menu === 'signup_age_invalid'){
+      intent='inscripcion_edad_sin_categoria'; confidence=.96;
+      if(isLetter(rawText,['A']) || containsAny(text,['admin','administracion','administración','secretaria','secretaría','hablar'])){
+        const draft = s.data.signupDraft || {};
+        reply = goAdmin(data, s, phone, rawText, `Edad sin categoría para inscripción en ${draft.activity || 'actividad'}`);
+        return finish();
+      }
+      if(isLetter(rawText,['B']) || containsAny(text,['otro deporte','otra actividad','deporte','actividad'])){
+        s.data.signupDraft = {};
+        setMenuContext(s,'activities');
+        reply = `Dale, elegimos otra actividad y arrancamos bien desde ahí 😊
+
+${responseActivityMenu()}`;
+        return finish();
+      }
+      if(isLetter(rawText,['C']) || containsAny(text,['cambiar edad','edad','corregir'])){
+        setMenuContext(s,'signup_age');
+        reply = `Dale, corregimos la edad.
+
+${signupStepPrompt('age', s.data.signupDraft)}
+
+Podés escribir MENÚ para cancelar.`;
+        return finish();
+      }
+      if(isLetter(rawText,['D']) || containsAny(text,['menu','menú','inicio'])){
+        clearMenuContext(s);
+        s.data.signupDraft = {};
+        reply = panchitoMenu();
+        return finish();
+      }
+      reply = `Elegí una opción para seguir:
+
+A. 📞 Hablar con administración
+B. 🏟️ Elegir otro deporte
+C. 🔄 Cambiar la edad
+D. 🏠 Menú principal`;
       return finish();
     }
 
@@ -3542,6 +3714,15 @@ ${signupStepPrompt('confirm', s.data.signupDraft)}`;
     if(menu === 'signup_edit_age'){
       intent='inscripcion_editar_edad'; confidence=.96;
       s.data.signupDraft.age = rawText;
+      const blockedAge = signupAgeBlockedReply(data, s, rawText);
+      if(blockedAge){
+        validateAndApplySignupAge(data, s, rawText);
+        setMenuContext(s,'signup_age_invalid');
+        reply = `✅ Actualicé la edad, pero ojo:
+
+${blockedAge}`;
+        return finish();
+      }
       const advice = validateAndApplySignupAge(data, s, rawText);
       setMenuContext(s,'signup_confirm');
       const actividadActual = s.data.signupDraft.activity || s.data.currentActivity || 'la actividad elegida';
@@ -4376,12 +4557,37 @@ ${adminContact(data)}${afterGeneralMenu()}`;
     }
   }
 
-  // Comandos de navegación dentro de submenús
-  if(containsAny(text,['atras','atrás']) && menu){
-    intent='atras'; confidence=.9;
-    if(menu.includes('basket')){ setMenuContext(s,'activities'); reply=responseActivityMenu(); return finish(); }
-    if(menu.includes('football')){ setMenuContext(s,'activities'); reply=responseActivityMenu(); return finish(); }
-    clearMenuContext(s); reply=panchitoMenu(); return finish();
+  // V77 - Comandos de navegación dentro de submenús.
+  // Ahora VOLVER/ATRÁS respeta el nivel real del menú:
+  // basket_init -> basket, football_years -> football, deporte -> actividades.
+  // Además MENÚ/INICIO siempre limpia el contexto y vuelve al principal.
+  if(containsAny(text,['menu','menú','inicio','principal','empezar de nuevo','volver al menu','volver al menú'])){
+    intent='menu_global_v77'; confidence=.97;
+    s.data.priceFlow=false; s.data.priceMode='';
+    clearMenuContext(s); setTopic(s,'',{});
+    reply=panchitoMenu('volver');
+    return finish();
+  }
+
+  if(containsAny(text,['atras','atrás','volver','volver atras','volver atrás','regresar']) && menu){
+    intent='volver_contextual_v77'; confidence=.94;
+    const parentMap = {
+      basket_fem:'basket', basket_masc:'basket', basket_init:'basket',
+      football_years:'football',
+      discipline_detail: (s.data?.disciplineDetail?.backMenu || 'activities'),
+      price_discipline_detail: (s.data?.disciplineDetail?.backMenu || 'activities'),
+      natatorio_after:'natatorio',
+      general_after_prices:'prices', payments_after:'payments',
+      activity_price:'activities', basket_price:'basket', football_price:'football',
+      gymnastics:'activities', softbol:'activities', paleta:'activities',
+      basket:'activities', football:'activities', natatorio:'main',
+      prices:'main', payments:'main', institutional:'main', other:'main'
+    };
+    const parent = parentMap[menu] || 'main';
+    if(parent === 'main'){ clearMenuContext(s); reply=panchitoMenu('volver'); return finish(); }
+    setMenuContext(s,parent);
+    reply = backMenuReply(parent);
+    return finish();
   }
 
 
