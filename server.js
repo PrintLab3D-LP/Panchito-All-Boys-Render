@@ -252,22 +252,8 @@ ${activityWhatsAppLine(data, activity.label)}${responseNatatorioNextMenu('whatsa
     else body = responseNatatorioMenu(true);
   }
   else if(activity.key === 'gymnastics') body = responseGymnastics();
-  else if(activity.key === 'football') body = responseFootballMenu();
-  else if(activity.key === 'basket') {
-    if(containsAny(t,['masculino','varones','hombres'])){
-      if(session){ setMenuContext(session,'basket_masc'); session.data.currentActivity='Básquet'; }
-      if(containsAny(t,['sub 17','sub17'])){ if(session) setDiscipline(session,'discipline_detail','🏀 Básquet Masculino Sub 17','Básquet',['Masculino Sub 17'],'basket_masc'); body = disciplineAnswer(data,session||{data:{disciplineDetail:{activity:'Básquet',categoryNeedles:['Masculino Sub 17'],backMenu:'basket_masc'}}},'schedule'); }
-      else if(containsAny(t,['sub 13','sub13'])){ if(session) setDiscipline(session,'discipline_detail','🏀 Básquet Masculino Sub 13','Básquet',['Masculino Sub 13'],'basket_masc'); body = disciplineAnswer(data,session||{data:{disciplineDetail:{activity:'Básquet',categoryNeedles:['Masculino Sub 13'],backMenu:'basket_masc'}}},'schedule'); }
-      else if(containsAny(t,['sub 15','sub15'])){ if(session) setDiscipline(session,'discipline_detail','🏀 Básquet Masculino Sub 15','Básquet',['Masculino Sub 15'],'basket_masc'); body = disciplineAnswer(data,session||{data:{disciplineDetail:{activity:'Básquet',categoryNeedles:['Masculino Sub 15'],backMenu:'basket_masc'}}},'schedule'); }
-      else if(containsAny(t,['primera','primera division','primera división'])){ if(session) setDiscipline(session,'discipline_detail','🏀 Básquet Masculino Primera división','Básquet',['Masculino Primera división','Primera división'],'basket_masc'); body = disciplineAnswer(data,session||{data:{disciplineDetail:{activity:'Básquet',categoryNeedles:['Masculino Primera división'],backMenu:'basket_masc'}}},'schedule'); }
-      else body = responseBasketMasculino();
-    } else if(containsAny(t,['femenino','mujeres','chicas'])){
-      if(session){ setMenuContext(session,'basket_fem'); session.data.currentActivity='Básquet'; }
-      if(containsAny(t,['sub 17','sub17','primera'])){ if(session) setDiscipline(session,'discipline_detail','🏀 Básquet Femenino Sub 17 y Primera','Básquet',['Femenino Sub 17','Femenino Primera'],'basket_fem'); body = disciplineAnswer(data,session||{data:{disciplineDetail:{activity:'Básquet',categoryNeedles:['Femenino Sub 17','Femenino Primera'],backMenu:'basket_fem'}}},'schedule'); }
-      else if(containsAny(t,['sub 13','sub13','sub 15','sub15'])){ if(session) setDiscipline(session,'discipline_detail','🏀 Básquet Femenino Sub 13 y Sub 15','Básquet',['Femenino Sub 13','Femenino Sub 15'],'basket_fem'); body = disciplineAnswer(data,session||{data:{disciplineDetail:{activity:'Básquet',categoryNeedles:['Femenino Sub 13','Femenino Sub 15'],backMenu:'basket_fem'}}},'schedule'); }
-      else body = responseBasketFemenino();
-    } else body = responseBasketMenu();
-  }
+  else if(activity.key === 'football') { if(session){ setMenuContext(session,'football_all'); session.data.currentActivity='Fútbol'; } body = responseFootballAll(); }
+  else if(activity.key === 'basket') { if(session){ setMenuContext(session,'basket_all'); session.data.currentActivity='Básquet'; } body = responseBasketAll(); }
   else if(activity.key === 'softbol') body = responseSoftbol();
   else if(activity.key === 'paleta') body = responsePaleta();
   else body = responseActivityMenu();
@@ -418,6 +404,18 @@ function panchitoMenuBackFunny(){
 function greetingMessage(){
   return panchitoMenu('inicio');
 }
+
+function finalCloseMessage(){
+  return `🔵🟡 ¡Muchas gracias por comunicarte con el Club All Boys! 🟡🔵
+
+Fue un gusto poder ayudarte.
+
+Estoy para ayudarte siempre que lo necesites.
+
+📩 Escribí MENÚ para volver al inicio o enviame tu consulta cuando quieras.
+
+💙💛 ¡Te esperamos en el club!`;
+}
 function softSocialMessage(s){
   const topic = (currentTopic(s) || s.data?.currentActivity || '').trim();
   if(topic){
@@ -453,38 +451,37 @@ Respondé con A, B o C.
 También podés escribir OMITIR.`;
 }
 function panchitoMenu(mode='volver'){
-  const saludoInicio = pickRandom([
-    `👋 ${timeGreeting()} Soy Panchito, el bot de All Boys 😄`,
-    `💙 ¡Buenas! Soy Panchito, el asistente copado de All Boys.`,
-    `🏟️ ¡Hola! Panchito presente en la cancha de consultas.`,
-    `🤖 ¡Hola! Soy Panchito. Hoy juego de asistidor del club.`,
-    `⚽ ¡Buenas! Soy Panchito. Vos tirá la consulta que yo la bajo al piso.`,
-    `😄 ¡Hola! Panchito al habla, listo para darte una mano.`,
-    `💙 ¡Qué bueno verte por acá! Soy Panchito, asistente de All Boys.`,
-    `🥅 ¡Hola! Soy Panchito. Estoy más atento que arquero en penal.`,
-    `🏆 ¡Bienvenido a All Boys! Soy Panchito y entro de titular para ayudarte.`,
-    `🙌 ¡Buenas! Soy Panchito. Acá la buena onda juega de local.`
-  ]);
-  const encabezado = mode === 'inicio'
-    ? `${saludoInicio}\n${panchitoIntroFunny()}`
-    : `${panchitoMenuBackFunny()}`;
+  const saludoInicio = `🔵🟡 ¡Hola! Soy Panchito, el asistente virtual del Club All Boys. 🟡🔵
+
+Estoy para ayudarte con actividades, horarios, inscripciones, cuotas, pagos y mucho más.`;
+  const encabezado = mode === 'inicio' ? saludoInicio : `🔵🟡 Volvimos al menú principal. 🟡🔵`;
   return `${encabezado}
 
-¿Qué andás buscando hoy? 😄
-
-A. 🏟️ Actividades, días y horarios
-B. 📝 Precios e inscripción
-C. 💳 Cuotas y pagos
-D. 🏊 Natatorio / pileta
-E. 👨‍💼 Hablar con administración
-F. 💬 Reclamos o sugerencias
-G. 📩 Prensa, CV, proveedores o propuestas
-H. 🤔 Otra consulta`;
+¿En qué puedo ayudarte hoy?
+A. Actividades, días y horarios 🏀⚽🤸🏊
+B. Precios e inscripción 📝
+C. Cuotas y pagos 💳
+D. Hablar con Administración 📞
+E. Reclamos o sugerencias 💬
+F. Prensa, CV, proveedores o propuestas 📩
+G. Predio 📍
+H. Otra consulta 🔎`;
 }
 function adminContact(data){
-  return `Administración All Boys
-Responsables: Carolina y Mónica
-📲 Abrir WhatsApp Administración`;
+  return `Secretaría Club All Boys
+Agustina Barreto
+WhatsApp: 2954 60-9312`;
+}
+
+
+function outsideHoursMessage(){
+  return `📨 Tu consulta quedó registrada.
+
+Apenas Administración esté disponible, se pondrá en contacto con vos.
+
+Mientras tanto, si necesitás otra información, escribí MENÚ y con gusto voy a ayudarte.
+
+${adminContact({})}`;
 }
 
 function signupStepPrompt(step, draft={}){
@@ -1768,6 +1765,34 @@ function formatSchedule(items){
   }).join('\n');
 }
 
+
+function officialActivityContact(activity=''){
+  const a = clean(activity || '');
+  if(a.includes('gimnasia')) return `Patricia “Pato” Saavedra
+Responsable de Gimnasia artística
+WhatsApp: 2954 29-6451`;
+  if(a.includes('softbol') || a.includes('sóftbol')) return `Ángel Yorgoban
+Responsable de Sóftbol
+WhatsApp: 2954 66-4276`;
+  if(a.includes('paleta')) return `Lucas Gómez
+Responsable de Pelota a paleta
+WhatsApp: 2954 44-6373`;
+  if(a.includes('natatorio') || a.includes('natacion') || a.includes('natación') || a.includes('pileta')) return `José Luis “Chino” Weighant
+Coordinador de Natación
+WhatsApp: 2954 36-9045`;
+  if(a.includes('basquet') || a.includes('básquet') || a.includes('futbol') || a.includes('fútbol')) return `Secretaría Club All Boys
+Agustina Barreto
+WhatsApp: 2954 60-9312`;
+  return `Secretaría Club All Boys
+Agustina Barreto
+WhatsApp: 2954 60-9312`;
+}
+
+function officialContactIntro(activity='', purpose='precios, cupos o inscripción'){
+  return `Para consultar ${purpose}:
+${officialActivityContact(activity)}`;
+}
+
 function disciplineDetail(data, title, activityName, categoryNeedles, backMenu){
   const items = getActivityItems(data, activityName, categoryNeedles);
   const hasSchedule = items.some(a => String(a.days || '').trim() || String(a.time || '').trim());
@@ -1816,16 +1841,24 @@ function disciplineAnswer(data, s, kind){
     return `${body}${disciplineNextMenu(kindDone)}`;
   }
 
+  const officialContact = officialActivityContact(detail.activity || s.data?.currentActivity || title);
   if(kind === 'price') return finishAnswer(`💰 ${title}
 
-${shortCost(items)}`, 'price');
+Para consultar el precio actualizado:
+${officialContact}`, 'price');
   if(kind === 'teacher') return finishAnswer(`👨‍🏫 ${title}
 
-${shortTeacher(items)}`, 'teacher');
-  if(kind === 'inscription') return startSignupFlow(data, s, detail.activity || s.data?.currentActivity || 'Actividad', title);
+Contacto responsable:
+${officialContact}`, 'teacher');
+  if(kind === 'inscription') return finishAnswer(`📝 ${title}
+
+Para consultar cupos e inscripción:
+${officialContact}`, 'inscription');
   if(kind === 'schedule') return finishAnswer(`📅 ${title}
 
-${formatSchedule(items)}`, 'schedule');
+${formatSchedule(items)}
+
+${officialContactIntro(detail.activity || title)}`, 'schedule');
 
   // Flujo B: si el usuario ya eligió PRECIO o INSCRIPCIÓN antes de elegir deporte/categoría,
   // no hay que volver a preguntarle qué quiere consultar. Se responde directo.
@@ -2339,19 +2372,17 @@ function replyContextualMemory(data, s, rawText='', phone='demo'){
 }
 
 function responseActivityMenu(){
-  return `😄 ¡Perfecto! Vamos a encontrar la actividad ideal.
-${sportVibe('activities')}
+  return `¡Dale! ¿Qué actividad querés consultar?
 
-¿Cuál te interesa consultar?
+A. Gimnasia artística 🤸
+B. Básquet 🏀
+C. Sóftbol 🥎
+D. Pelota a paleta 🏓
+E. Fútbol ⚽
+F. Natación 🏊
+G. Volver al menú principal
 
-A. 🤸 Gimnasia artística
-B. 🏀 Básquet
-C. 🥎 Sóftbol
-D. 🏓 Pelota a paleta
-E. ⚽ Fútbol
-F. 🏠 Volver al menú principal
-
-`;
+Respondé con una letra o escribí el nombre de la actividad.`;
 }
 
 
@@ -2373,138 +2404,261 @@ Si necesitás confirmar si el club sumó ${name}, te dejo Administración:
 ${adminContact(data)}`;
 }
 
-function responseBasketMenu(mode='normal'){
-  const intro = mode === 'back'
-    ? `🔙 Volvimos al menú de Básquet.`
-    : `🏀 ¡Excelente! Básquet es una gran elección.
-${sportVibe('basket')}`;
+
+function responseBasketAll(mode='normal'){
+  const intro = mode === 'back' ? `🔙 Volvimos a Básquet.` : `🏀 ¡Vamos con Básquet!`;
   return `${intro}
 
-Para orientarte bien, decime una cosa:
+Estos son todos los grupos y horarios disponibles:
 
-A. 👧 Es para básquet femenino
-B. 👦 Es para básquet masculino
-C. 🐣 Escuelita / categorías iniciales
-D. 🔙 Ver otras actividades
-E. 🏠 Menú principal`;
+BÁSQUET FEMENINO
+• Martes y jueves:
+  - Sub 17 y Primera: de 16 a 17.15 hs.
+  - Sub 13 y Sub 15: de 17.15 a 18.30 hs.
+  - Sub 11: de 18.30 a 19.30 hs.
+• Viernes:
+  - Sub 17 y Primera: de 16.30 a 18 hs.
+• Sábados:
+  - Sub 13: de 8.30 a 9.30 hs.
+  - Sub 15: de 9.30 a 10.30 hs.
+  - Sub 11: de 10 a 11 hs.
+
+BÁSQUET MASCULINO
+• Sub 17: lunes y miércoles de 16.30 a 18 hs; viernes de 15 a 16.30 hs.
+• Preparación física Sub 17: lunes de 15.30 a 16.30 hs; martes y jueves de 15.30 a 16.30 hs.
+• Sub 13: lunes y miércoles de 20 a 21 hs; martes y jueves de 18.30 a 19.30 hs.
+• Preparación física Sub 13: martes y jueves de 17.30 a 18.30 hs.
+• Sub 15: lunes y miércoles de 15 a 16.30 hs; viernes de 16.30 a 18 hs.
+• Preparación física Sub 15: martes y jueves de 16.30 a 17.30 hs.
+• Primera división: martes y jueves de 20.30 a 22 hs.
+• Asociativo: martes y jueves de 19.30 a 20.30 hs; viernes de 20 a 21 hs.
+
+ESCUELITA Y CATEGORÍAS INICIALES
+• Sub 9: lunes, miércoles y viernes de 18 a 19 hs; sábados de 9 a 10 hs.
+• Sub 11: lunes, miércoles y viernes de 19 a 20 hs; sábados de 9 a 10 hs.
+• Escuelita: lunes, miércoles y viernes de 18 a 19 hs.
+• Mosquitos: lunes, miércoles y viernes de 19 a 20 hs.
+
+Para consultar edades, precios, cupos o inscripción:
+Secretaría Club All Boys
+Agustina Barreto
+WhatsApp: 2954 60-9312
+
+¿Qué querés hacer ahora?
+A. Consultar otra actividad
+B. Volver al menú principal
+C. Hablar con Administración`;
+}
+
+function responseFootballAll(mode='normal'){
+  const intro = mode === 'back' ? `🔙 Volvimos a Fútbol.` : `⚽ ¡Vamos con Fútbol!`;
+  return `${intro}
+
+Estos son todos los grupos y horarios disponibles:
+
+• Cuarta, Quinta y Sexta División: lunes a viernes a las 16 hs.
+• Séptima y Octava División: lunes, miércoles, jueves y viernes a las 18 hs.
+• Novena y Décima División: lunes a jueves a las 18 hs.
+• Categoría 2017: lunes, miércoles y viernes de 18 a 19.30 hs.
+• Categoría 2018: martes, jueves y viernes de 18 a 19.30 hs.
+• Categoría 2019: lunes, miércoles y viernes de 18 a 19.30 hs.
+• Categorías 2020 y 2021: martes, jueves y viernes de 18 a 19.30 hs.
+• Fútbol femenino Sub 12 y Sub 14: lunes, miércoles y viernes de 18 a 19.30 hs.
+
+Para consultar edades, precios, lugar de entrenamiento o inscripción:
+Secretaría Club All Boys
+Agustina Barreto
+WhatsApp: 2954 60-9312
+
+¿Qué querés hacer ahora?
+A. Consultar otra actividad
+B. Volver al menú principal
+C. Hablar con Administración`;
+}
+
+function responseBasketMenu(mode='normal'){
+  return `¡Vamos con Básquet! 🏀
+
+¿Qué querés consultar?
+A. Básquet femenino
+B. Básquet masculino
+C. Escuelita y categorías iniciales
+D. Volver a actividades
+E. Volver al menú principal`;
 }
 
 function responseFootballMenu(mode='normal'){
-  const intro = mode === 'back'
-    ? `🔙 Volvemos a las categorías de fútbol. Panchito acomoda la pelota y seguimos 😄`
-    : `⚽ ¡Vamos con fútbol!
-${sportVibe('football')}`;
-  return `${intro}
+  return `¡Vamos con Fútbol! ⚽
 
-Para ubicarte mejor, elegí la categoría o escribime la edad/año de nacimiento:
-
+¿Qué categoría querés consultar?
 A. Cuarta, Quinta y Sexta División
 B. Séptima y Octava División
 C. Novena y Décima División
 D. Categorías 2017, 2018, 2019, 2020 y 2021
 E. Femenino Sub 12 y Sub 14
-F. 🔙 Ver otras actividades
-G. 🏠 Menú principal`;
+F. Volver a actividades
+G. Volver al menú principal`;
 }
 
 function responseGymnastics(mode='normal'){
-  const intro = mode === 'back'
-    ? `🔙 Volvemos a las categorías de gimnasia. Panchito acomoda la colchoneta y seguimos 😄`
-    : `🤸 ¡Qué buena disciplina!
-${sportVibe('gymnastics')}`;
+  const intro = mode === 'back' ? `🔙 Volvimos a Gimnasia artística.` : `🤸 ¡Vamos con Gimnasia artística!\n${sportVibe('gymnastics')}`;
   return `${intro}
 
-Decime la edad o elegí una categoría:
+Estos son todos los grupos y horarios disponibles:
 
-A. Pulguitas (3 y 4 años)
-B. Escuela (5 a 7 años)
-C. Promocional (8 a 10 años)
-D. Pre federadas (11 años en adelante)
-E. Federadas
-F. 🔙 Ver otras actividades
-G. 🏠 Menú principal`;
+• Pulgas (3 y 4 años): martes y jueves de 18 a 19 hs.
+• Escuela (5 a 7 años): martes y jueves de 19 a 20 hs.
+• Promocional (8 a 10 años): lunes, miércoles y viernes de 18 a 19 hs.
+• Pre federadas (11 años en adelante): lunes, miércoles y viernes de 19 a 20 hs.
+• Federadas: lunes a viernes de 15 a 18 hs y de 20 a 21.30 hs.
+
+${officialContactIntro('Gimnasia artística')}
+
+¿Qué querés hacer ahora?
+A. 🏅 Consultar otra actividad
+B. 🏠 Menú principal
+C. 📞 Hablar con Administración`;
 }
 
 function responseSoftbol(mode='normal'){
-  const intro = mode === 'back'
-    ? `🔙 Volvemos a los grupos de sóftbol. Panchito prepara el guante y seguimos 😄`
-    : `🥎 ¡Vamos con sóftbol!
-${sportVibe('softbol')}`;
+  const intro = mode === 'back' ? `🔙 Volvimos a Sóftbol.` : `🥎 ¡Vamos con Sóftbol!\n${sportVibe('softbol')}`;
   return `${intro}
 
-¿Qué grupo querés consultar?
+Estos son todos los grupos y horarios disponibles:
 
-A. Pre infantil mixto
-B. Infantil cadete mixto
-C. Femenino
-D. 🔙 Ver otras actividades
-E. 🏠 Menú principal`;
+• Pre infantil mixto: martes y jueves de 18 a 19.15 hs.
+• Infantil cadete mixto: lunes, miércoles y viernes de 18 a 19.30 hs.
+• Femenino: miércoles y viernes de 20 a 21.30 hs.
+
+${officialContactIntro('Sóftbol', 'edades, precios, cupos o inscripción')}
+
+¿Qué querés hacer ahora?
+A. 🏅 Consultar otra actividad
+B. 🏠 Menú principal
+C. 📞 Hablar con Administración`;
 }
 
 function responsePaleta(mode='normal'){
-  const intro = mode === 'back'
-    ? `🔙 Volvemos a los grupos de pelota a paleta. Panchito devuelve la consulta con buen revés 😄`
-    : `🏓 ¡Linda elección! Pelota a paleta tiene mucha magia.
-${sportVibe('paleta')}`;
+  const intro = mode === 'back' ? `🔙 Volvimos a Pelota a paleta.` : `🏓 ¡Vamos con Pelota a paleta!\n${sportVibe('paleta')}`;
   return `${intro}
 
-¿Qué grupo querés consultar?
+Estos son todos los grupos y horarios disponibles:
 
-A. Niños y niñas de 6 a 12 años
-B. Adultos
-C. 🔙 Ver otras actividades
-D. 🏠 Menú principal`;
+• Niños y niñas de 6 a 12 años: martes y jueves de 18 a 19 hs; sábados de 10.30 a 12.30 hs.
+• Adultos: martes y jueves de 17 a 18 hs.
+
+${officialContactIntro('Pelota a paleta')}
+
+¿Qué querés hacer ahora?
+A. 🏅 Consultar otra actividad
+B. 🏠 Menú principal
+C. 📞 Hablar con Administración`;
 }
 
 function responseBasketFemenino(mode='normal'){
-  const intro = mode === 'back'
-    ? `🔙 Volvemos a las categorías de básquet femenino. Panchito pica la pelota y seguimos 😄`
-    : `🏀 Básquet femenino, ¡excelente!
-${sportVibe('basket')}`;
-  return `${intro}
+  return `Horarios de Básquet femenino 🏀
 
-Para no mandarte a cualquier categoría, decime la edad de la jugadora o elegí una opción:
+Martes y jueves:
+• Sub 17 y Primera: de 16 a 17.15 hs.
+• Sub 13 y Sub 15: de 17.15 a 18.30 hs.
+• Sub 11: de 18.30 a 19.30 hs.
+Viernes:
+• Sub 17 y Primera: de 16.30 a 18 hs.
+Sábados:
+• Sub 13: de 8.30 a 9.30 hs.
+• Sub 15: de 9.30 a 10.30 hs.
+• Sub 11: de 10 a 11 hs.
 
-A. Sub 17 y Primera
-B. Sub 13 y Sub 15
-C. Sub 11
-D. 🔙 Volver a básquet
-E. 🏠 Menú principal`;
+Para consultar precios, cupos o inscripción:
+Secretaría Club All Boys
+Agustina Barreto
+WhatsApp: 2954 60-9312
+
+¿Qué querés hacer ahora?
+A. Consultar otro grupo de Básquet
+B. Consultar otra actividad
+C. Volver al menú principal
+D. Hablar con Administración`;
 }
 
 function responseBasketMasculino(mode='normal'){
-  const intro = mode === 'back'
-    ? `🔙 Volvemos a las categorías de básquet masculino. Panchito tira una asistencia y seguimos 😄`
-    : `🏀 Básquet masculino, vamos ahí.
-${sportVibe('basket')}`;
-  return `${intro}
+  return `Horarios de Básquet masculino 🏀
 
-Decime la edad del jugador o elegí una categoría:
+• Sub 17: lunes y miércoles de 16.30 a 18 hs; viernes de 15 a 16.30 hs.
+• Preparación física Sub 17: lunes de 15.30 a 16.30 hs; martes y jueves de 15.30 a 16.30 hs.
+• Sub 13: lunes y miércoles de 20 a 21 hs; martes y jueves de 18.30 a 19.30 hs.
+• Preparación física Sub 13: martes y jueves de 17.30 a 18.30 hs.
+• Sub 15: lunes y miércoles de 15 a 16.30 hs; viernes de 16.30 a 18 hs.
+• Preparación física Sub 15: martes y jueves de 16.30 a 17.30 hs.
+• Primera división: martes y jueves de 20.30 a 22 hs.
+• Asociativo: martes y jueves de 19.30 a 20.30 hs; viernes de 20 a 21 hs.
 
-A. Sub 17
-B. Sub 13
-C. Sub 15
-D. Primera división
-E. Asociativo
-F. 🔙 Volver a básquet
-G. 🏠 Menú principal`;
+Para consultar precios, cupos o inscripción:
+Secretaría Club All Boys
+Agustina Barreto
+WhatsApp: 2954 60-9312
+
+¿Qué querés hacer ahora?
+A. Consultar otro grupo de Básquet
+B. Consultar otra actividad
+C. Volver al menú principal
+D. Hablar con Administración`;
 }
 
 function responseBasketInicial(mode='normal'){
-  const intro = mode === 'back'
-    ? `🔙 Volvemos a escuelita e iniciales. Panchito acomoda el tablero y seguimos 😄`
-    : `🏀 Escuelita e iniciales.
-Acá arrancan las primeras bandejas y los primeros pases 😄`;
-  return `${intro}
+  return `Horarios de Básquet para categorías iniciales 🏀
 
-¿Qué querés consultar?
+• Sub 9: lunes, miércoles y viernes de 18 a 19 hs; sábados de 9 a 10 hs.
+• Sub 11: lunes, miércoles y viernes de 19 a 20 hs; sábados de 9 a 10 hs.
+• Escuelita: lunes, miércoles y viernes de 18 a 19 hs.
+• Mosquitos: lunes, miércoles y viernes de 19 a 20 hs.
 
-A. Sub 9
-B. Sub 11
-C. Escuelita
-D. Mosquitos
-E. 🔙 Volver a básquet
-F. 🏠 Menú principal`;
+Para consultar edades, precios, cupos o inscripción:
+Secretaría Club All Boys
+Agustina Barreto
+WhatsApp: 2954 60-9312
+
+¿Qué querés hacer ahora?
+A. Consultar otro grupo de Básquet
+B. Consultar otra actividad
+C. Volver al menú principal
+D. Hablar con Administración`;
+}
+
+
+function footballWordDetail(title, schedule){
+  return `${title} ⚽
+${schedule}
+
+Para consultar edades, precios, lugar de entrenamiento o inscripción:
+Secretaría Club All Boys
+Agustina Barreto
+WhatsApp: 2954 60-9312
+
+¿Qué querés hacer ahora?
+A. Consultar otra categoría de Fútbol
+B. Consultar otra actividad
+C. Volver al menú principal
+D. Hablar con Administración`;
+}
+function responseFootballYearsWord(){
+  return `Horarios de Fútbol por categoría ⚽
+
+1. Categoría 2017: lunes, miércoles y viernes de 18 a 19.30 hs.
+2. Categoría 2018: martes, jueves y viernes de 18 a 19.30 hs.
+3. Categoría 2019: lunes, miércoles y viernes de 18 a 19.30 hs.
+4. Categorías 2020 y 2021: martes, jueves y viernes de 18 a 19.30 hs.
+
+Para consultar precios, lugar de entrenamiento o inscripción:
+Secretaría Club All Boys
+Agustina Barreto
+WhatsApp: 2954 60-9312
+
+¿Qué querés hacer ahora?
+A. Consultar otra categoría de Fútbol
+B. Consultar otra actividad
+C. Volver al menú principal
+D. Hablar con Administración`;
 }
 
 function responseFootballA(data){
@@ -2537,39 +2691,36 @@ function responseFootballE(data){
 }
 
 function responsePricesMenu(){
-  return `📝 Vamos con precios e inscripción.
-${topicVibe('signup')}
+  return `Te ayudo con precios e inscripción 📝
 
 ¿Qué necesitás?
-
-A. 💰 Precio de una actividad
-B. 📝 Cómo inscribirme a una actividad
-C. 🎫 Cómo asociarme al club
-D. 👧 Inscripción para un menor
-E. 📞 Hablar con administración
-F. 🏠 Volver al menú principal`;
+A. Consultar el precio de una actividad
+B. Inscribirme en una actividad
+C. Asociarme al club
+D. Inscripción para un menor
+E. Volver al menú principal`;
 }
 
 
 function responseNatatorioMenu(isMinor=false){
-  const intro = isMinor
-    ? `🏊 Sí, el club cuenta con natatorio / pileta y puede haber actividades para niños y niñas.
+  const intro = `Para consultar por Natación, comunicate directamente con el coordinador del área 🏊
 
-La disponibilidad depende de la edad, el nivel, la temporada y los cupos vigentes.`
-    : `Te ayudo con natatorio / pileta 🏊
+${officialActivityContact('Natación')}
 
-La información puede variar según temporada, niveles y cupos vigentes.`;
+Natación cuenta con diferentes niveles, edades, horarios y opciones de clases. Además, los cupos pueden variar, por eso el coordinador te va a indicar cuál es la alternativa más adecuada y si hay disponibilidad.
+
+Para que pueda orientarte mejor, podés enviarle:
+• Edad de la persona interesada.
+• Si sabe nadar o está comenzando.
+• Días u horarios disponibles.`;
 
   return `${intro}
 
-¿Qué querés consultar?
-
-A. Horarios
-B. Inscripción
-C. Edades y niveles
-D. Cupos disponibles
-E. Hablar con administración
-F. Volver al menú principal`;
+¿Qué querés hacer ahora?
+A. Consultar otra actividad
+B. Consultar el Plan de Natación
+C. Volver al menú principal
+D. Hablar con Administración`;
 }
 
 
@@ -2632,6 +2783,29 @@ ${activityWhatsAppLine(data, 'Natatorio / pileta')}` : `
 
 ${adminContact(data)}`;
   return `${body}${contact}${responseNatatorioNextMenu(option)}`;
+}
+
+
+function responseInstitutionalMenu(){
+  return `Gracias por escribirle al club 📩
+
+¿Qué querés enviar?
+A. Consulta de prensa o medios
+B. Dejar un CV
+C. Proponer un proyecto
+D. Ofrecer productos o servicios
+E. Sponsoreo, publicidad o auspicio`;
+}
+function institutionalDetail(kind){
+  const common=`\n\n¿Qué querés hacer ahora?\nA. Volver al menú institucional\nB. Volver al menú principal`;
+  if(kind==='press') return `Consulta de prensa o medios\n\nEnviá:\n• Nombre y medio.\n• Motivo de la consulta.\n• Fecha o evento relacionado.\n• Teléfono y correo electrónico.\n\nContacto:\nPresidencia\nJosé Luis Roston\nWhatsApp: 2954 59-3557${common}`;
+  if(kind==='cv') return `Dejar CV\n\nEnviá:\n• Nombre y apellido.\n• Área o actividad de interés.\n• Experiencia.\n• Teléfono y correo electrónico.\n• CV adjunto.\n\nContacto:\nSecretaría Club All Boys\nAgustina Barreto\nWhatsApp: 2954 60-9312${common}`;
+  if(kind==='project') return `Proponer un proyecto\n\nEnviá:\n• Nombre y apellido.\n• Tipo de proyecto.\n• Resumen breve.\n• Público al que está dirigido.\n• Teléfono y correo electrónico.\n\nContactos:\nSecretaría Club All Boys - Agustina Barreto - WhatsApp: 2954 60-9312\nPresidencia - José Luis Roston - WhatsApp: 2954 59-3557${common}`;
+  if(kind==='provider') return `Ofrecer productos o servicios\n\nEnviá:\n• Nombre o empresa.\n• Rubro.\n• Producto o servicio ofrecido.\n• Teléfono y correo electrónico.\n\nContacto:\nSecretaría Club All Boys\nAgustina Barreto\nWhatsApp: 2954 60-9312${common}`;
+  return `Sponsoreo, publicidad o auspicio\n\nEnviá:\n• Nombre o empresa.\n• Tipo de propuesta.\n• Teléfono y correo electrónico.\n• Breve detalle de la propuesta.\n\nContacto:\nPresidencia\nJosé Luis Roston\nWhatsApp: 2954 59-3557${common}`;
+}
+function responsePredio(){
+  return `Para consultas del Predio:\n\nAll Boys Predio\nRuta 35, pegado al Aeropuerto\nWhatsApp: 2954 37-0053\n\n¿Qué querés hacer ahora?\nA. Volver al menú principal\nB. Hablar con Secretaría del Club`;
 }
 
 function responsePaymentsMenu(){
@@ -2787,86 +2961,32 @@ Escribime la edad o el año de nacimiento.`;
   }
 
   function routeMainMenuLetter(){
-    // Router único del menú principal.
-    // Esto evita que una letra quede atrapada en un estado viejo, por ejemplo
-    // F después de cuotas no debe volver a cuotas: debe abrir Reclamos.
     const main = clean(rawText).toUpperCase();
+    if(main==='A'){ setSession(s,'idle',{}); setMenuContext(s,'activities'); reply=responseActivityMenu(); return finish(); }
+    if(main==='B'){ setSession(s,'idle',{}); setMenuContext(s,'prices'); reply=responsePricesMenu(); return finish(); }
+    if(main==='C'){ setSession(s,'idle',{}); setMenuContext(s,'payments'); reply=responsePaymentsMenu(); return finish(); }
+    if(main==='D'){ setSession(s,'idle',{}); setMenuContext(s,'admin_word'); reply=`Podés comunicarte con Administración en:
 
-    if(main === 'A'){
-      intent='actividades'; confidence=.96;
-      setSession(s,'idle',{}); setTopic(s,'actividades',{}); setMenuContext(s,'activities');
-      reply = responseActivityMenu();
-      return finish();
-    }
+${adminContact(data)}
 
-    if(main === 'B'){
-      intent='precios_inscripcion'; confidence=.96;
-      setSession(s,'idle',{}); setTopic(s,'inscripcion',{}); setMenuContext(s,'prices');
-      reply = responsePricesMenu();
-      return finish();
-    }
+Para que puedan responderte más rápido, enviá:
+• Nombre y apellido.
+• Motivo de la consulta.
+• DNI o número de socio, si corresponde.
 
-    if(main === 'C'){
-      intent='cuotas_pagos'; confidence=.96;
-      setSession(s,'idle',{}); setTopic(s,'cuota',{}); setMenuContext(s,'payments');
-      reply = responsePaymentsMenu();
-      return finish();
-    }
-
-    if(main === 'D'){
-      intent='natatorio'; confidence=.96;
-      setSession(s,'idle',{}); setTopic(s,'natatorio',{}); setMenuContext(s,'natatorio');
-      reply = responseNatatorioMenu(false);
-      return finish();
-    }
-
-    if(main === 'E'){
-      intent='administracion'; confidence=.96;
-      setSession(s,'idle',{}); setTopic(s,'administracion',{});
-      reply = goAdmin(data, s, phone, rawText, 'Usuario pidió hablar con administración desde menú principal');
-      return finish();
-    }
-
-    if(main === 'F'){
-      intent='reclamo_sugerencia'; confidence=.98;
-      setSession(s,'idle',{ claimDraft: {} }); setTopic(s,'reclamo',{}); setMenuContext(s,'claim_name');
-      s.data.claimDraft = {};
-      reply = responseClaimMenu();
-      return finish();
-    }
-
-    if(main === 'G'){
-      intent='institucional'; confidence=.96;
-      setSession(s,'idle',{}); setTopic(s,'institucional',{}); setMenuContext(s,'institutional');
-      reply = `📩 Gracias por escribirle al club.
-${topicVibe('institutional')}
-
-¿Qué querés enviar?
-
-A. Consulta de prensa o medios
-B. Dejar CV
-C. Proponer un proyecto
-D. Ofrecer productos o servicios
-E. Sponsoreo, publicidad o auspicio
-F. Consulta de estudiante o institución
-G. Volver al menú principal`;
-      return finish();
-    }
-
-    if(main === 'H'){
-      intent='otra_consulta'; confidence=.96;
-      setSession(s,'idle',{}); setTopic(s,'otra',{}); setMenuContext(s,'other');
-      reply = `No hay problema 😊
-${topicVibe('other')}
+¿Qué querés hacer ahora?
+A. Consultar actividades
+B. Consultar cuotas o pagos
+C. Volver al menú principal`; return finish(); }
+    if(main==='E'){ setSession(s,'idle',{claimDraft:{}}); setMenuContext(s,'claim_name'); s.data.claimDraft={}; reply=responseClaimMenu(); return finish(); }
+    if(main==='F'){ setSession(s,'idle',{}); setMenuContext(s,'institutional'); reply=responseInstitutionalMenu(); return finish(); }
+    if(main==='G'){ setSession(s,'idle',{}); setMenuContext(s,'predio'); reply=responsePredio(); return finish(); }
+    if(main==='H'){ setSession(s,'idle',{}); setMenuContext(s,'other'); reply=`No hay problema 😊
 
 Contame brevemente qué necesitás y trato de orientarte.
 
 A. Volver al menú principal
-B. Hablar con administración
-
-Quedo atento a tu consulta.`;
-      return finish();
-    }
+B. Hablar con Administración`; return finish(); }
   }
 
   // Si el último mensaje mostrado fue el menú principal, las letras A-H
@@ -2886,22 +3006,36 @@ Quedo atento a tu consulta.`;
     if(menu === 'activities'){
       intent='submenu_actividades_contexto_fuerte'; confidence=.99;
       if(letter==='A'){ setMenuContext(s,'gymnastics'); s.data.currentActivity='Gimnasia Artística'; reply=responseGymnastics(); return true; }
-      if(letter==='B'){ setMenuContext(s,'basket'); s.data.currentActivity='Básquet'; reply=responseBasketMenu(); return true; }
-      if(letter==='C'){ setMenuContext(s,'softbol'); s.data.currentActivity='Softbol'; reply=responseSoftbol(); return true; }
+      if(letter==='B'){ setMenuContext(s,'basket_all'); s.data.currentActivity='Básquet'; reply=responseBasketAll(); return true; }
+      if(letter==='C'){ setMenuContext(s,'softbol'); s.data.currentActivity='Sóftbol'; reply=responseSoftbol(); return true; }
       if(letter==='D'){ setMenuContext(s,'paleta'); s.data.currentActivity='Pelota a Paleta'; reply=responsePaleta(); return true; }
-      if(letter==='E'){ setMenuContext(s,'football'); s.data.currentActivity='Fútbol'; reply=responseFootballMenu(); return true; }
-      if(letter==='F'){ clearMenuContext(s); reply=panchitoMenu(); return true; }
+      if(letter==='E'){ setMenuContext(s,'football_all'); s.data.currentActivity='Fútbol'; reply=responseFootballAll(); return true; }
+      if(letter==='F'){ setMenuContext(s,'natatorio'); s.data.currentActivity='Natación'; reply=responseNatatorioMenu(false); return true; }
+      if(letter==='G'){ clearMenuContext(s); reply=panchitoMenu('volver'); return true; }
     }
 
-    if(menu === 'football'){
-      intent='submenu_futbol_contexto_fuerte'; confidence=.99;
-      if(letter==='A'){ setDiscipline(s,'discipline_detail','⚽ Cuarta, Quinta y Sexta División','Fútbol',['Cuarta','Quinta','Sexta'],'football'); reply=disciplineAnswer(data,s,'all'); return true; }
-      if(letter==='B'){ setDiscipline(s,'discipline_detail','⚽ Séptima y Octava División','Fútbol',['Séptima','Septima','Octava'],'football'); reply=disciplineAnswer(data,s,'all'); return true; }
-      if(letter==='C'){ setDiscipline(s,'discipline_detail','⚽ Novena y Décima División','Fútbol',['Novena','Décima','Decima'],'football'); reply=disciplineAnswer(data,s,'all'); return true; }
-      if(letter==='D'){ setMenuContext(s,'football_years'); reply=responseFootballD(); return true; }
-      if(letter==='E'){ setDiscipline(s,'discipline_detail','⚽ Femenino Sub 12 y Sub 14','Fútbol',['Femenino'],'football'); reply=disciplineAnswer(data,s,'all'); return true; }
+
+    if(menu === 'basket_all' || menu === 'football_all'){
+      if(letter==='A'){ setMenuContext(s,'activities'); reply=responseActivityMenu(); return true; }
+      if(letter==='B'){ clearMenuContext(s); reply=panchitoMenu('volver'); return true; }
+      if(letter==='C'){ reply=goAdmin(data,s,phone,rawText, menu === 'basket_all' ? 'Consulta desde Básquet' : 'Consulta desde Fútbol'); return true; }
+    }
+
+    if(menu === 'football_legacy'){
+      if(letter==='A'){ setMenuContext(s,'football_detail'); reply=footballWordDetail('Cuarta, Quinta y Sexta División','Lunes a viernes a las 16 hs.'); return true; }
+      if(letter==='B'){ setMenuContext(s,'football_detail'); reply=footballWordDetail('Séptima y Octava División','Lunes, miércoles, jueves y viernes a las 18 hs.'); return true; }
+      if(letter==='C'){ setMenuContext(s,'football_detail'); reply=footballWordDetail('Novena y Décima División','Lunes a jueves a las 18 hs.'); return true; }
+      if(letter==='D'){ setMenuContext(s,'football_detail'); reply=responseFootballYearsWord(); return true; }
+      if(letter==='E'){ setMenuContext(s,'football_detail'); reply=footballWordDetail('Fútbol femenino Sub 12 y Sub 14','Lunes, miércoles y viernes de 18 a 19.30 hs.'); return true; }
       if(letter==='F'){ setMenuContext(s,'activities'); reply=responseActivityMenu(); return true; }
-      if(letter==='G'){ clearMenuContext(s); reply=panchitoMenu(); return true; }
+      if(letter==='G'){ clearMenuContext(s); reply=panchitoMenu('volver'); return true; }
+    }
+
+    if(menu === 'football_detail'){
+      if(letter==='A'){ setMenuContext(s,'football_legacy'); reply=responseFootballMenu('back'); return true; }
+      if(letter==='B'){ setMenuContext(s,'activities'); reply=responseActivityMenu(); return true; }
+      if(letter==='C'){ clearMenuContext(s); reply=panchitoMenu('volver'); return true; }
+      if(letter==='D'){ reply=goAdmin(data,s,phone,rawText,'Consulta desde Fútbol'); return true; }
     }
 
     if(menu === 'football_years'){
@@ -2914,13 +3048,19 @@ Quedo atento a tu consulta.`;
       if(letter==='F'){ setMenuContext(s,'activities'); reply=responseActivityMenu(); return true; }
     }
 
-    if(menu === 'basket'){
-      intent='submenu_basquet_contexto_fuerte'; confidence=.99;
-      if(letter==='A'){ setMenuContext(s,'basket_fem'); s.data.currentActivity='Básquet'; reply=responseBasketFemenino(); return true; }
-      if(letter==='B'){ setMenuContext(s,'basket_masc'); s.data.currentActivity='Básquet'; reply=responseBasketMasculino(); return true; }
-      if(letter==='C'){ setMenuContext(s,'basket_init'); s.data.currentActivity='Básquet'; reply=responseBasketInicial(); return true; }
+    if(menu === 'basket_legacy'){
+      if(letter==='A'){ setMenuContext(s,'basket_detail'); reply=responseBasketFemenino(); return true; }
+      if(letter==='B'){ setMenuContext(s,'basket_detail'); reply=responseBasketMasculino(); return true; }
+      if(letter==='C'){ setMenuContext(s,'basket_detail'); reply=responseBasketInicial(); return true; }
       if(letter==='D'){ setMenuContext(s,'activities'); reply=responseActivityMenu(); return true; }
-      if(letter==='E'){ clearMenuContext(s); reply=panchitoMenu(); return true; }
+      if(letter==='E'){ clearMenuContext(s); reply=panchitoMenu('volver'); return true; }
+    }
+
+    if(menu === 'basket_detail'){
+      if(letter==='A'){ setMenuContext(s,'basket_legacy'); reply=responseBasketMenu('back'); return true; }
+      if(letter==='B'){ setMenuContext(s,'activities'); reply=responseActivityMenu(); return true; }
+      if(letter==='C'){ clearMenuContext(s); reply=panchitoMenu('volver'); return true; }
+      if(letter==='D'){ reply=goAdmin(data,s,phone,rawText,'Consulta desde Básquet'); return true; }
     }
 
     if(menu === 'basket_fem'){
@@ -2953,15 +3093,14 @@ Quedo atento a tu consulta.`;
       if(letter==='F'){ clearMenuContext(s); reply=panchitoMenu(); return true; }
     }
 
-    if(menu === 'gymnastics'){
-      intent='submenu_gimnasia_contexto_fuerte'; confidence=.99;
-      if(letter==='A'){ setDiscipline(s,'discipline_detail','🤸 Pulguitas (3 y 4 años)','Gimnasia Artística',['Pulgas','Pulguitas'],'gymnastics'); reply=disciplineAnswer(data,s,'all'); return true; }
-      if(letter==='B'){ setDiscipline(s,'discipline_detail','🤸 Escuela (5 a 7 años)','Gimnasia Artística',['Escuela'],'gymnastics'); reply=disciplineAnswer(data,s,'all'); return true; }
-      if(letter==='C'){ setDiscipline(s,'discipline_detail','🤸 Promocional (8 a 10 años)','Gimnasia Artística',['Promocional'],'gymnastics'); reply=disciplineAnswer(data,s,'all'); return true; }
-      if(letter==='D'){ setDiscipline(s,'discipline_detail','🤸 Pre federadas','Gimnasia Artística',['Pre federadas'],'gymnastics'); reply=disciplineAnswer(data,s,'all'); return true; }
-      if(letter==='E'){ setDiscipline(s,'discipline_detail','🤸 Federadas','Gimnasia Artística',['Federadas'],'gymnastics'); reply=disciplineAnswer(data,s,'all'); return true; }
-      if(letter==='F'){ setMenuContext(s,'activities'); reply=responseActivityMenu(); return true; }
-      if(letter==='G'){ clearMenuContext(s); reply=panchitoMenu(); return true; }
+    // V82: En las fichas completas de actividades, A/B/C son siempre las opciones
+    // que se muestran al final: otra actividad, menú principal y administración.
+    // No deben reutilizarse como categorías antiguas de Básquet o Fútbol.
+    if(menu === 'gymnastics' || menu === 'softbol' || menu === 'paleta'){
+      intent='actividad_horarios_completos_contexto_fuerte'; confidence=.99;
+      if(letter==='A'){ setMenuContext(s,'activities'); reply=responseActivityMenu(); return true; }
+      if(letter==='B'){ clearMenuContext(s); reply=panchitoMenu(); return true; }
+      if(letter==='C'){ reply=goAdmin(data,s,phone,rawText,`Consulta desde ${s.data.currentActivity || 'actividad'}`); return true; }
     }
 
     if(menu === 'softbol'){
@@ -3078,9 +3217,7 @@ E. 📲 Administración`;
     if(isThanksText(rawText) || isByeText(rawText)){
       intent='cierre_ya_registrado'; confidence=.99;
       setSession(s,'idle',{}); setTopic(s,'',{}); clearMenuContext(s);
-      reply = `De nada 😊 Gracias a vos por comunicarte con All Boys.
-
-Te dejo el menú principal por si necesitás algo más.
+      reply = `${finalCloseMessage()}
 
 ${panchitoMenu()}`;
       return finish();
@@ -3191,6 +3328,8 @@ Escribí tu comentario y lo voy a guardar para ayudar a mejorar el servicio.`;
 
 Quedó registrada para que el club pueda mejorar la atención.
 
+${finalCloseMessage()}
+
 A. 🏠 Menú principal
 B. 💬 Realizar otra consulta`;
       return finish();
@@ -3205,6 +3344,8 @@ B. 💬 Realizar otra consulta`;
     reply = `Gracias por tu comentario 😊
 
 Quedó registrado para que el club pueda mejorar la atención.
+
+${finalCloseMessage()}
 
 A. 🏠 Menú principal
 B. 💬 Realizar otra consulta`;
@@ -3222,6 +3363,8 @@ B. 💬 Realizar otra consulta`;
     reply = `Gracias por tu comentario 😊
 
 Quedó registrado para que el club pueda mejorar la atención.
+
+${finalCloseMessage()}
 
 A. 🏠 Menú principal
 B. 💬 Realizar otra consulta`;
@@ -3439,11 +3582,7 @@ Si querés consultar otro socio, elegí A en el menú de cuotas.`;
       setSession(s,'after_close_options',{});
       setTopic(s,'',{});
       clearMenuContext(s);
-      reply = `¡De nada! 😊
-
-Gracias por comunicarte con All Boys.
-
-Si necesitás información sobre actividades, horarios, inscripciones, cuotas o cualquier consulta del club, voy a estar para ayudarte.
+      reply = `${finalCloseMessage()}
 
 A. 🏠 Menú principal
 B. 💬 Nueva consulta`;
@@ -4235,92 +4374,22 @@ C. Volver al menú principal`;
     }
   }
 
-  if(menu === 'activities' && isLetter(rawText, ['A','B','C','D','E','F'])){
+  if(menu === 'activities' && isLetter(rawText, ['A','B','C','D','E','F','G'])){
     intent='submenu_actividades'; confidence=.96;
     if(letter==='A'){ setMenuContext(s,'gymnastics'); s.data.currentActivity='Gimnasia Artística'; reply=responseGymnastics(); return finish(); }
-    if(letter==='B'){ setMenuContext(s,'basket'); s.data.currentActivity='Básquet'; reply=responseBasketMenu(); return finish(); }
+    if(letter==='B'){ setMenuContext(s,'basket_legacy'); s.data.currentActivity='Básquet'; reply=responseBasketMenu(); return finish(); }
     if(letter==='C'){ setMenuContext(s,'softbol'); s.data.currentActivity='Softbol'; reply=responseSoftbol(); return finish(); }
     if(letter==='D'){ setMenuContext(s,'paleta'); s.data.currentActivity='Pelota a Paleta'; reply=responsePaleta(); return finish(); }
-    if(letter==='E'){ setMenuContext(s,'football'); s.data.currentActivity='Fútbol'; reply=responseFootballMenu(); return finish(); }
-    if(letter==='F'){ clearMenuContext(s); reply=panchitoMenu(); return finish(); }
+    if(letter==='E'){ setMenuContext(s,'football_legacy'); s.data.currentActivity='Fútbol'; reply=responseFootballMenu(); return finish(); }
+    if(letter==='F'){ setMenuContext(s,'natatorio'); s.data.currentActivity='Natación'; reply=responseNatatorioMenu(false); return finish(); }
+    if(letter==='G'){ clearMenuContext(s); reply=panchitoMenu('volver'); return finish(); }
   }
 
-  if(menu === 'gymnastics' && isLetter(rawText, ['A','B','C','D','E','F','G'])){
-    intent='submenu_gimnasia'; confidence=.96;
-    if(letter==='A'){ setDiscipline(s,'discipline_detail','🤸 Pulguitas (3 y 4 años)','Gimnasia Artística',['Pulgas','Pulguitas'],'gymnastics'); reply=disciplineAnswer(data,s,'all'); return finish(); }
-    if(letter==='B'){ setDiscipline(s,'discipline_detail','🤸 Escuela (5 a 7 años)','Gimnasia Artística',['Escuela'],'gymnastics'); reply=disciplineAnswer(data,s,'all'); return finish(); }
-    if(letter==='C'){ setDiscipline(s,'discipline_detail','🤸 Promocional (8 a 10 años)','Gimnasia Artística',['Promocional'],'gymnastics'); reply=disciplineAnswer(data,s,'all'); return finish(); }
-    if(letter==='D'){ setDiscipline(s,'discipline_detail','🤸 Pre federadas','Gimnasia Artística',['Pre federadas'],'gymnastics'); reply=disciplineAnswer(data,s,'all'); return finish(); }
-    if(letter==='E'){ setDiscipline(s,'discipline_detail','🤸 Federadas','Gimnasia Artística',['Federadas'],'gymnastics'); reply=disciplineAnswer(data,s,'all'); return finish(); }
-    if(letter==='F'){ setMenuContext(s,'activities'); reply=responseActivityMenu(); return finish(); }
-    if(letter==='G'){ clearMenuContext(s); reply=panchitoMenu(); return finish(); }
-  }
-
-  if(menu === 'softbol' && isLetter(rawText, ['A','B','C','D','E'])){
-    intent='submenu_softbol'; confidence=.96;
-    if(letter==='A'){ setDiscipline(s,'discipline_detail','🥎 Pre infantil mixto','Softbol',['Pre infantil'],'softbol'); reply=disciplineAnswer(data,s,'all'); return finish(); }
-    if(letter==='B'){ setDiscipline(s,'discipline_detail','🥎 Infantil cadete mixto','Softbol',['Infantil cadete'],'softbol'); reply=disciplineAnswer(data,s,'all'); return finish(); }
-    if(letter==='C'){ setDiscipline(s,'discipline_detail','🥎 Femenino','Softbol',['Femenino'],'softbol'); reply=disciplineAnswer(data,s,'all'); return finish(); }
-    if(letter==='D'){ setMenuContext(s,'activities'); reply=responseActivityMenu(); return finish(); }
-    if(letter==='E'){ clearMenuContext(s); reply=panchitoMenu(); return finish(); }
-  }
-
-  if(menu === 'paleta' && isLetter(rawText, ['A','B','C','D'])){
-    intent='submenu_paleta'; confidence=.96;
-    if(letter==='A'){ setDiscipline(s,'discipline_detail','🏓 Niños y niñas de 6 a 12 años','Pelota a Paleta',['Niños','niñas'],'paleta'); reply=disciplineAnswer(data,s,'all'); return finish(); }
-    if(letter==='B'){ setDiscipline(s,'discipline_detail','🏓 Adultos','Pelota a Paleta',['Adultos'],'paleta'); reply=disciplineAnswer(data,s,'all'); return finish(); }
-    if(letter==='C'){ setMenuContext(s,'activities'); reply=responseActivityMenu(); return finish(); }
-    if(letter==='D'){ clearMenuContext(s); reply=panchitoMenu(); return finish(); }
-  }
-
-  if(menu === 'basket' && isLetter(rawText, ['A','B','C','D','E'])){
-    intent='submenu_basquet'; confidence=.96;
-    if(letter==='A'){ setMenuContext(s,'basket_fem'); s.data.currentActivity='Básquet'; reply=responseBasketFemenino(); return finish(); }
-    if(letter==='B'){ setMenuContext(s,'basket_masc'); s.data.currentActivity='Básquet'; reply=responseBasketMasculino(); return finish(); }
-    if(letter==='C'){ setMenuContext(s,'basket_init'); s.data.currentActivity='Básquet'; reply=responseBasketInicial(); return finish(); }
-    if(letter==='D'){ setMenuContext(s,'activities'); reply=responseActivityMenu(); return finish(); }
-    if(letter==='E'){ clearMenuContext(s); reply=panchitoMenu(); return finish(); }
-  }
-
-  if(menu === 'basket_fem' && isLetter(rawText, ['A','B','C','D','E'])){
-    intent='submenu_basquet_fem'; confidence=.96;
-    if(letter==='A'){ setDiscipline(s,'discipline_detail','🏀 Básquet Femenino Sub 17 y Primera','Básquet',['Femenino Sub 17','Femenino Primera'],'basket_fem'); reply=disciplineAnswer(data,s,'all'); return finish(); }
-    if(letter==='B'){ setDiscipline(s,'discipline_detail','🏀 Básquet Femenino Sub 13 y Sub 15','Básquet',['Femenino Sub 13','Femenino Sub 15'],'basket_fem'); reply=disciplineAnswer(data,s,'all'); return finish(); }
-    if(letter==='C'){ setDiscipline(s,'discipline_detail','🏀 Básquet Femenino Sub 11','Básquet',['Femenino Sub 11'],'basket_fem'); reply=disciplineAnswer(data,s,'all'); return finish(); }
-    if(letter==='D'){ setMenuContext(s,'basket'); reply=responseBasketMenu('back'); return finish(); }
-    if(letter==='E'){ clearMenuContext(s); reply=panchitoMenu(); return finish(); }
-  }
-
-  if(menu === 'basket_masc' && isLetter(rawText, ['A','B','C','D','E','F','G'])){
-    intent='submenu_basquet_masc'; confidence=.96;
-    if(letter==='A'){ setDiscipline(s,'discipline_detail','🏀 Básquet Masculino Sub 17','Básquet',['Masculino Sub 17'],'basket_masc'); reply=disciplineAnswer(data,s,'all'); return finish(); }
-    if(letter==='B'){ setDiscipline(s,'discipline_detail','🏀 Básquet Masculino Sub 13','Básquet',['Masculino Sub 13'],'basket_masc'); reply=disciplineAnswer(data,s,'all'); return finish(); }
-    if(letter==='C'){ setDiscipline(s,'discipline_detail','🏀 Básquet Masculino Sub 15','Básquet',['Masculino Sub 15'],'basket_masc'); reply=disciplineAnswer(data,s,'all'); return finish(); }
-    if(letter==='D'){ setDiscipline(s,'discipline_detail','🏀 Básquet Masculino Primera división','Básquet',['Masculino Primera división','Primera división'],'basket_masc'); reply=disciplineAnswer(data,s,'all'); return finish(); }
-    if(letter==='E'){ setDiscipline(s,'discipline_detail','🏀 Básquet Asociativo','Básquet',['Asociativo'],'basket_masc'); reply=disciplineAnswer(data,s,'all'); return finish(); }
-    if(letter==='F'){ setMenuContext(s,'basket'); reply=responseBasketMenu('back'); return finish(); }
-    if(letter==='G'){ clearMenuContext(s); reply=panchitoMenu(); return finish(); }
-  }
-
-  if(menu === 'basket_init' && isLetter(rawText, ['A','B','C','D','E','F'])){
-    intent='submenu_basquet_inicial'; confidence=.96;
-    if(letter==='A'){ setDiscipline(s,'discipline_detail','🏀 Básquet Sub 9','Básquet',['Sub 9'],'basket_init'); reply=disciplineAnswer(data,s,'all'); return finish(); }
-    if(letter==='B'){ setDiscipline(s,'discipline_detail','🏀 Básquet Sub 11','Básquet',['Sub 11'],'basket_init'); reply=disciplineAnswer(data,s,'all'); return finish(); }
-    if(letter==='C'){ setDiscipline(s,'discipline_detail','🏀 Básquet Escuelita','Básquet',['Escuelita'],'basket_init'); reply=disciplineAnswer(data,s,'all'); return finish(); }
-    if(letter==='D'){ setDiscipline(s,'discipline_detail','🏀 Básquet Mosquitos','Básquet',['Mosquitos'],'basket_init'); reply=disciplineAnswer(data,s,'all'); return finish(); }
-    if(letter==='E'){ setMenuContext(s,'basket'); reply=responseBasketMenu('back'); return finish(); }
-    if(letter==='F'){ clearMenuContext(s); reply=panchitoMenu(); return finish(); }
-  }
-
-  if(menu === 'football' && isLetter(rawText, ['A','B','C','D','E','F','G'])){
-    intent='submenu_futbol'; confidence=.96;
-    if(letter==='A'){ setDiscipline(s,'discipline_detail','⚽ Cuarta, Quinta y Sexta División','Fútbol',['Cuarta','Quinta','Sexta'],'football'); reply=disciplineAnswer(data,s,'all'); return finish(); }
-    if(letter==='B'){ setDiscipline(s,'discipline_detail','⚽ Séptima y Octava División','Fútbol',['Séptima','Septima','Octava'],'football'); reply=disciplineAnswer(data,s,'all'); return finish(); }
-    if(letter==='C'){ setDiscipline(s,'discipline_detail','⚽ Novena y Décima División','Fútbol',['Novena','Décima','Decima'],'football'); reply=disciplineAnswer(data,s,'all'); return finish(); }
-    if(letter==='D'){ setMenuContext(s,'football_years'); reply=responseFootballD(); return finish(); }
-    if(letter==='E'){ setDiscipline(s,'discipline_detail','⚽ Femenino Sub 12 y Sub 14','Fútbol',['Femenino'],'football'); reply=disciplineAnswer(data,s,'all'); return finish(); }
-    if(letter==='F'){ setMenuContext(s,'activities'); reply=responseActivityMenu(); return finish(); }
-    if(letter==='G'){ clearMenuContext(s); reply=panchitoMenu(); return finish(); }
+  if(['gymnastics','softbol','paleta'].includes(menu) && isLetter(rawText, ['A','B','C'])){
+    intent='actividad_horarios_completos'; confidence=.98;
+    if(letter==='A'){ setMenuContext(s,'activities'); reply=responseActivityMenu(); return finish(); }
+    if(letter==='B'){ clearMenuContext(s); reply=panchitoMenu(); return finish(); }
+    if(letter==='C'){ reply=goAdmin(data,s,phone,rawText,`Consulta desde ${s.data.currentActivity || 'actividad'}`); return finish(); }
   }
 
   if(menu === 'football_years' && isLetter(rawText, ['A','B','C','D','E','F'])){
@@ -4397,14 +4466,39 @@ C. Volver al menú principal`;
   }
 
 
-  if(menu === 'natatorio' && isLetter(rawText, ['A','B','C','D','E','F'])){
+  if(menu === 'natatorio' && isLetter(rawText, ['A','B','C','D'])){
     intent='submenu_natatorio'; confidence=.92;
-    if(letter==='A'){ setMenuContext(s,'natatorio_after'); reply=responseNatatorioOption(data,'horarios'); return finish(); }
-    if(letter==='B'){ reply=startSignupFlow(data, s, 'Natatorio / pileta', 'Inscripción a natatorio'); return finish(); }
-    if(letter==='C'){ setMenuContext(s,'natatorio_after'); reply=responseNatatorioOption(data,'edades'); return finish(); }
-    if(letter==='D'){ setMenuContext(s,'natatorio_after'); reply=responseNatatorioOption(data,'cupos'); return finish(); }
-    if(letter==='E'){ reply=goAdmin(data, s, phone, rawText, 'Usuario pidió administración desde natatorio'); return finish(); }
-    if(letter==='F'){ clearMenuContext(s); reply=panchitoMenu(); return finish(); }
+    if(letter==='A'){ setMenuContext(s,'activities'); reply=responseActivityMenu(); return finish(); }
+    if(letter==='B'){
+      setMenuContext(s,'natatorio_plan');
+      reply=`🏊 Plan de Natación
+
+El Plan de Natación está destinado a personas con discapacidad que quieran iniciarse en el aprendizaje y en la práctica deportiva.
+
+La información y la inscripción se consultan presencialmente en:
+Dirección de Deportes Provincial
+Quintana y Pellegrini, Santa Rosa
+Lunes a viernes de 9 a 12 hs.
+
+El Plan tiene cupos limitados. Si no hay una vacante disponible, la persona puede quedar anotada para ser contactada cuando haya disponibilidad.
+
+¿Qué querés hacer ahora?
+A. Volver a Natación
+B. Consultar otra actividad
+C. Volver al menú principal
+D. Hablar con Administración`;
+      return finish();
+    }
+    if(letter==='C'){ clearMenuContext(s); reply=panchitoMenu(); return finish(); }
+    if(letter==='D'){ reply=goAdmin(data, s, phone, rawText, 'Usuario pidió administración desde natatorio'); return finish(); }
+  }
+
+  if(menu === 'natatorio_plan' && isLetter(rawText, ['A','B','C','D'])){
+    intent='submenu_plan_natacion'; confidence=.92;
+    if(letter==='A'){ setMenuContext(s,'natatorio'); reply=responseNatatorioMenu(false); return finish(); }
+    if(letter==='B'){ setMenuContext(s,'activities'); reply=responseActivityMenu(); return finish(); }
+    if(letter==='C'){ clearMenuContext(s); reply=panchitoMenu(); return finish(); }
+    if(letter==='D'){ reply=goAdmin(data, s, phone, rawText, 'Usuario pidió administración desde Plan de Natación'); return finish(); }
   }
 
   if(menu === 'natatorio_after' && isLetter(rawText, ['A','B','C','D'])){
@@ -4415,79 +4509,83 @@ C. Volver al menú principal`;
     if(letter==='D'){ setMenuContext(s,'free'); reply='Contame qué necesitás consultar y te ayudo.'; return finish(); }
   }
 
-  if(menu === 'institutional' && isLetter(rawText, ['A','B','C','D','E','F','G'])){
-    intent='submenu_institucional'; confidence=.92;
-    if(letter==='G'){ clearMenuContext(s); reply=panchitoMenu(); return finish(); }
-    const labels = {A:'Consulta de prensa o medios',B:'Dejar CV',C:'Proponer un proyecto',D:'Ofrecer productos o servicios',E:'Sponsoreo, publicidad o auspicio',F:'Consulta de estudiante o institución'};
-    addPending(data, phone, rawText, 'institucional', labels[letter] || 'Consulta institucional');
-    setMenuContext(s,'admin');
-    reply = `${labels[letter] || 'Consulta institucional'} 📩\n\nPara que administración lo revise, escribí el detalle en un solo mensaje y, si corresponde, agregá contacto o archivo.\n\n${adminContact(data)}`;
+  if(menu === 'institutional' && isLetter(rawText,['A','B','C','D','E'])){
+    const kinds={A:'press',B:'cv',C:'project',D:'provider',E:'sponsor'};
+    setMenuContext(s,'institutional_detail');
+    reply=institutionalDetail(kinds[letter]);
     return finish();
   }
+  if(menu === 'institutional_detail' && isLetter(rawText,['A','B'])){
+    if(letter==='A'){ setMenuContext(s,'institutional'); reply=responseInstitutionalMenu(); return finish(); }
+    clearMenuContext(s); reply=panchitoMenu('volver'); return finish();
+  }
+  if(menu === 'predio' && isLetter(rawText,['A','B'])){
+    if(letter==='A'){ clearMenuContext(s); reply=panchitoMenu('volver'); return finish(); }
+    reply=goAdmin(data,s,phone,rawText,'Consulta desde Predio'); return finish();
+  }
+  if(menu === 'admin_word' && isLetter(rawText,['A','B','C'])){
+    if(letter==='A'){ setMenuContext(s,'activities'); reply=responseActivityMenu(); return finish(); }
+    if(letter==='B'){ setMenuContext(s,'payments'); reply=responsePaymentsMenu(); return finish(); }
+    clearMenuContext(s); reply=panchitoMenu('volver'); return finish();
+  }
+  if(menu === 'other' && isLetter(rawText,['A','B'])){
+    if(letter==='A'){ clearMenuContext(s); reply=panchitoMenu('volver'); return finish(); }
+    reply=goAdmin(data,s,phone,rawText,'Otra consulta'); return finish();
+  }
 
-  if(menu === 'prices' && isLetter(rawText, ['A','B','C','D','E','F'])){
-    intent='submenu_precios'; confidence=.94;
-    if(letter==='A'){
-      s.data.priceFlow = true;
-      s.data.priceMode = 'price';
-      setMenuContext(s,'activities');
-      reply = `Perfecto. Primero elegí el deporte o disciplina para consultar el precio
+  if(menu === 'prices' && isLetter(rawText,['A','B','C','D','E'])){
+    if(letter==='A'){ s.data.priceFlow=true; s.data.priceMode='price'; setMenuContext(s,'word_price_activity'); reply=`¿Sobre qué actividad querés consultar?
 
-A. Gimnasia artística 🤸
-B. Básquet 🏀
-C. Sóftbol 🥎
-D. Pelota a paleta
-E. Fútbol ⚽
-F. Volver al menú principal`;
-      return finish();
-    }
-    if(letter==='B'){
-      s.data.priceFlow = true;
-      s.data.priceMode = 'inscription';
-      setMenuContext(s,'activities');
-      reply = `Perfecto. Primero elegí el deporte o disciplina para consultar la inscripción 📝
+A. Gimnasia artística
+B. Sóftbol
+C. Pelota a paleta
+D. Natación
+E. Otra actividad`; return finish(); }
+    if(letter==='B'){ s.data.priceFlow=true; s.data.priceMode='inscription'; setMenuContext(s,'word_signup_activity'); reply=`¿En qué actividad querés inscribirte?
 
-A. Gimnasia artística 🤸
-B. Básquet 🏀
-C. Sóftbol 🥎
-D. Pelota a paleta
-E. Fútbol ⚽
-F. Volver al menú principal`;
-      return finish();
-    }
-    if(letter==='C'){
-      addPending(data, phone, rawText, 'asociarse', 'Consulta cómo asociarse');
-      setMenuContext(s,'general_after_prices');
-      reply = `Para asociarte al club, administración te puede indicar los requisitos actualizados.
+A. Gimnasia artística
+B. Sóftbol
+C. Pelota a paleta
+D. Natación
+E. Otra actividad`; return finish(); }
+    if(letter==='C'){ setMenuContext(s,'word_simple_end'); reply=`¡Qué bueno que quieras sumarte al club! ⚫⚪
 
-${adminContact(data)}${afterGeneralMenu()}`;
-      return finish();
-    }
-    if(letter==='D'){
-      s.data.priceFlow = true;
-      s.data.priceMode = 'inscription';
-      setMenuContext(s,'activities');
-      reply = `Si es para un menor, primero elegí la actividad y categoría. Después te muestro cómo consultar la inscripción 📝
+Para conocer requisitos, valores y documentación necesaria, comunicate con:
+${adminContact(data)}
 
-A. Gimnasia artística 🤸
-B. Básquet 🏀
-C. Sóftbol 🥎
-D. Pelota a paleta
-E. Fútbol ⚽
-F. Volver al menú principal`;
-      return finish();
-    }
-    if(letter==='E'){
-      addPending(data, phone, rawText, 'administracion', 'Usuario pidió administración desde precios');
-      setMenuContext(s,'general_after_prices');
-      reply = `Claro 😊
+¿Qué querés hacer ahora?
+A. Consultar actividades
+B. Volver al menú principal`; return finish(); }
+    if(letter==='D'){ setMenuContext(s,'human_minor_activity'); reply=`Si la inscripción es para un menor, por favor que continúe un adulto responsable 😊
 
-Te derivo con administración.
+¿Qué actividad querés consultar?
+A. Gimnasia artística
+B. Sóftbol o Pelota a paleta
+C. Básquet o Fútbol
+D. Natación
+E. Plan de Natación`; return finish(); }
+    if(letter==='E'){ clearMenuContext(s); reply=panchitoMenu('volver'); return finish(); }
+  }
+  if((menu==='word_price_activity' || menu==='word_signup_activity') && isLetter(rawText,['A','B','C','D','E'])){
+    const mode=menu==='word_price_activity'?'precio actualizado':'inscripción';
+    const map={A:['Gimnasia artística','Patricia “Pato” Saavedra','2954 29-6451'],B:['Sóftbol','Ángel Yorgoban','2954 66-4276'],C:['Pelota a paleta','Lucas Gómez','2954 44-6373'],D:['Natación','José Luis “Chino” Weighant','2954 36-9045'],E:['Básquet, Fútbol u otra actividad','Secretaría Club All Boys - Agustina Barreto','2954 60-9312']};
+    const x=map[letter]; setMenuContext(s,'word_price_end');
+    reply=`Para consultar ${mode} de ${x[0]}:
+${x[1]}
+WhatsApp: ${x[2]}
 
-${adminContact(data)}${afterGeneralMenu()}`;
-      return finish();
-    }
-    if(letter==='F'){ s.data.priceFlow=false; s.data.priceMode=''; clearMenuContext(s); reply=panchitoMenu(); return finish(); }
+¿Qué querés hacer ahora?
+A. Consultar otra actividad
+B. Volver al menú principal`;
+    return finish();
+  }
+  if(menu==='word_price_end' && isLetter(rawText,['A','B'])){
+    if(letter==='A'){ setMenuContext(s,'prices'); reply=responsePricesMenu(); return finish(); }
+    clearMenuContext(s); reply=panchitoMenu('volver'); return finish();
+  }
+  if(menu==='word_simple_end' && isLetter(rawText,['A','B'])){
+    if(letter==='A'){ setMenuContext(s,'activities'); reply=responseActivityMenu(); return finish(); }
+    clearMenuContext(s); reply=panchitoMenu('volver'); return finish();
   }
 
   if(menu === 'payments' && isLetter(rawText, ['A','B','C','D','E'])){
@@ -4862,7 +4960,7 @@ F. Volver al menú principal
     return finish();
   }
 
-  if(text==='f' || containsAny(text,['reclamo','queja','problema','sugerencia','inconveniente','mala atencion','mala atención','quiero reclamar','quiero sugerir'])){
+  if(text==='e' || containsAny(text,['reclamo','queja','problema','sugerencia','inconveniente','mala atencion','mala atención','quiero reclamar','quiero sugerir'])){
     intent='reclamo_sugerencia'; confidence=.9;
     setSession(s,'idle',{ claimDraft: {} });
     setMenuContext(s,'claim_name');
@@ -4884,23 +4982,16 @@ Las urgencias necesitan atención inmediata de una persona responsable.`;
     return finish();
   }
 
-  if(text==='g' || containsAny(text,['prensa','periodista','entrevista','acreditacion','acreditación','cv','curriculum','currículum','trabajo','profesor','entrenador','proyecto','propuesta','proveedor','sponsor','auspicio','publicidad','convenio','estudiante','investigacion','investigación'])){
+  if(text==='f' || containsAny(text,['prensa','periodista','entrevista','acreditacion','acreditación','cv','curriculum','currículum','trabajo','profesor','entrenador','proyecto','propuesta','proveedor','sponsor','auspicio','publicidad','convenio','estudiante','investigacion','investigación'])){
     intent='institucional'; confidence=.9;
     addPending(data, phone, rawText, 'institucional', 'Prensa/CV/proveedor/propuesta');
     setMenuContext(s,'institutional');
-    reply = `📩 Gracias por escribirle al club.
-${topicVibe('institutional')}
-
-¿Qué querés enviar?
-
-A. Consulta de prensa o medios
-B. Dejar CV
-C. Proponer un proyecto
-D. Ofrecer productos o servicios
-E. Sponsoreo, publicidad o auspicio
-F. Consulta de estudiante o institución
-G. Volver al menú principal`;
+    reply = responseInstitutionalMenu();
     return finish();
+  }
+
+  if(text==='g' || containsAny(text,['predio','ruta 35','aeropuerto'])){
+    intent='predio'; confidence=.94; setMenuContext(s,'predio'); reply=responsePredio(); return finish();
   }
 
   if(text==='h' || containsAny(text,['otra consulta','otra','no se','no sé','no aparece','ninguna opcion','ninguna opción','consulta'])){
@@ -4943,23 +5034,26 @@ Quedo atento a tu consulta.`;
 
 Podés escribirme de nuevo con esa palabra o elegir una opción:
 
-A. Actividades, días y horarios 🏀⚽🤸
+A. Actividades, días y horarios 🏀⚽🤸🏊
 B. Precios e inscripción 📝
 C. Cuotas y pagos 💳
-D. Natatorio / pileta 🏊
-E. Hablar con administración 📞`;
+D. Hablar con Administración 📞
+E. Reclamos o sugerencias 💬
+F. Prensa, CV, proveedores o propuestas 📩
+G. Predio 📍
+H. Otra consulta 🔎`;
   } else {
-    reply = `Perdón, no terminé de entender la consulta.
+    reply = `😊 Perdón, no entendí esa consulta.
 
-Podés elegir una opción:
+Elegí una de las opciones del menú o escribime qué necesitás e intentaré ayudarte.
 
-A. Actividades, días y horarios 🏀⚽🤸
+A. Actividades, días y horarios 🏀⚽🤸🏊
 B. Precios e inscripción 📝
 C. Cuotas y pagos 💳
-D. Natatorio / pileta 🏊
-E. Hablar con administración 📞
-F. Reclamos o sugerencias 💬
-G. Prensa, CV, proveedores o propuestas 📩
+D. Hablar con Administración 📞
+E. Reclamos o sugerencias 💬
+F. Prensa, CV, proveedores o propuestas 📩
+G. Predio 📍
 H. Otra consulta 🔎`;
   }
   return finish();
