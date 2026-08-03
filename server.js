@@ -166,6 +166,18 @@ function correctionHint(rawText=''){
 function today(){ return new Date().toISOString().slice(0,10); }
 function getSession(data, phone){ let s=(data.sessions||[]).find(x=>x.phone===phone); if(!s){ s={phone,state:'idle',data:{},updatedAt:new Date().toISOString()}; data.sessions.unshift(s); } return s; }
 function setSession(s,state,extra={}){ s.state=state; s.data={...(s.data||{}),...extra}; s.updatedAt=new Date().toISOString(); }
+
+// V93 - Pase de atención automática a atención humana.
+function isHumanMode(session){ return session?.data?.attentionMode === 'human'; }
+function setAttentionMode(session, mode='bot', extra={}){
+  session.data = { ...(session.data||{}), ...extra, attentionMode: mode };
+  session.updatedAt = new Date().toISOString();
+}
+function humanModeMessage(){
+  return `✅ Listo. La conversación quedó en manos de Administración.
+
+Panchito queda pausado en este chat para no interrumpir mientras te atiende una persona.`;
+}
 function findMember(data, value){ return (data.members||[]).find(m => m.dni === value || m.memberNo === value || clean(m.phone||'').endsWith(clean(value||''))); }
 
 function friendlyLead(kind='general'){
@@ -4196,22 +4208,22 @@ Escribí MENÚ para cancelar.`;
       pending.priority = derivationPriority(s.data.adminDraft);
       pending.whatsappLink = replyToUserWhatsAppLink(s.data.adminDraft, phone);
       setMenuContext(s,'admin_done');
+      setAttentionMode(s,'human',{
+        handoffAt:new Date().toISOString(),
+        handoffReason:s.data.adminDraft.note || 'Derivación a administración',
+        handoffId:pending.id
+      });
       reply = `✅ Consulta registrada
 
-Estado: PENDIENTE
+Estado: DERIVADA A ADMINISTRACIÓN
 Tipo: ${pending.priority}
 N°: DER-${String(pending.id).slice(-4)}
 
 ${resumen}
 
-✅ Tu consulta fue enviada correctamente.
-Administración se comunicará con vos a la brevedad.
+${humanModeMessage()}
 
-${adminContact(data)}
-
-¿Qué querés hacer ahora?
-A. 📝 Cargar otra consulta
-B. 🏠 Volver al menú principal`;
+${adminContact(data)}`;
       return finish();
     }
 
@@ -5199,6 +5211,36 @@ app.delete('/api/registrations/:id',(req,res)=>{
 app.get('/api/pending',(req,res)=>{ const data=db(); res.json(data.pendingQueries||[]); });
 app.put('/api/pending/:id',(req,res)=>{ const data=db(); const id=Number(req.params.id); data.pendingQueries=(data.pendingQueries||[]).map(p=>p.id===id?{...p,...req.body,id,updatedAt:new Date().toISOString()}:p); save(data); res.json({ok:true}); });
 app.delete('/api/pending/:id',(req,res)=>{ const data=db(); data.pendingQueries=(data.pendingQueries||[]).filter(p=>p.id!==Number(req.params.id)); save(data); res.json({ok:true}); });
+
+// V93 - Bandeja/controles básicos para atención humana.
+app.get('/api/handoffs',(req,res)=>{
+  const data=db();
+  const items=(data.sessions||[])
+    .filter(isHumanMode)
+    .map(s=>({
+      phone:s.phone,
+      mode:'human',
+      handoffAt:s.data?.handoffAt||s.updatedAt,
+      reason:s.data?.handoffReason||'Administración',
+      handoffId:s.data?.handoffId||null,
+      updatedAt:s.updatedAt
+    }));
+  res.json(items);
+});
+app.post('/api/handoffs/:phone/human',(req,res)=>{
+  const data=db(); data.sessions=data.sessions||[];
+  const s=getSession(data, String(req.params.phone));
+  setAttentionMode(s,'human',{handoffAt:new Date().toISOString(),handoffReason:req.body?.reason||'Tomado manualmente por Administración'});
+  save(data); res.json({ok:true,phone:s.phone,mode:'human'});
+});
+app.post('/api/handoffs/:phone/bot',(req,res)=>{
+  const data=db(); data.sessions=data.sessions||[];
+  const s=getSession(data, String(req.params.phone));
+  setAttentionMode(s,'bot',{returnedToBotAt:new Date().toISOString(),handoffReason:'',handoffId:null});
+  resetToMainContext(s);
+  save(data); res.json({ok:true,phone:s.phone,mode:'bot'});
+});
+
 app.post('/api/member-login',(req,res)=>{ const data=db(); const member=data.members.find(m=>m.dni===String(req.body.dni||'') && String(m.password||'1234')===String(req.body.password||'')); if(!member) return res.status(401).json({error:'Datos incorrectos'}); const payments=(data.payments||[]).filter(p=>p.memberId===member.id); res.json({member,payments,club:data.club}); });
 
 
@@ -5235,6 +5277,10 @@ function chunkWhatsApp(text='', max=1450){
 function twilioXml(text=''){
   const messages = chunkWhatsApp(text);
   return `<?xml version="1.0" encoding="UTF-8"?><Response>${messages.map(m=>`<Message>${escapeXml(m)}</Message>`).join('')}</Response>`;
+}
+
+function twilioSilentXml(){
+  return `<?xml version="1.0" encoding="UTF-8"?><Response></Response>`;
 }
 
 function logTwilioDiagnostic(route, incomingText, from, result, replyText, xml){
@@ -5283,8 +5329,20 @@ async function smartReplySafe(rawText, from){
   try{
     const dataFast = db();
     const phoneFast = normalizeTwilioPhone(from);
-    alreadyMetPanchitoFast = (dataFast.sessions||[]).some(x => x.phone === phoneFast && x.data?.seenPanchitoIntro) || (dataFast.conversations||[]).some(c => c.phone === phoneFast);
-  }catch(e){}
+    const sessionFast = (dataFast.sessions||[]).find(x => x.phone === phoneFast);
+    if(isHumanMode(sessionFast)){
+      dataFast.conversations = dataFast.conversations || [];
+      dataFast.conversations.unshift({
+        id:Date.now(), phone:phoneFast, text:rawText, reply:'', intent:'modo_humano_sin_respuesta',
+        confidence:1, sessionState:sessionFast.state, topic:sessionFast.data?.handoffReason || 'administracion',
+        createdAt:new Date().toISOString()
+      });
+      dataFast.conversations = dataFast.conversations.slice(0,500);
+      save(dataFast);
+      return { reply:'', silent:true, intent:'modo_humano', confidence:1 };
+    }
+    alreadyMetPanchitoFast = !!sessionFast?.data?.seenPanchitoIntro || (dataFast.conversations||[]).some(c => c.phone === phoneFast);
+  }catch(e){ console.error('No se pudo comprobar modo humano:', e); }
   const quick = quickTwilioReply(rawText, alreadyMetPanchitoFast);
   if(quick){
     // Guardamos que el usuario está en menú principal aunque haya entrado por la respuesta rápida.
@@ -5316,7 +5374,7 @@ app.post('/whatsapp', async (req,res)=>{
     console.log('Twilio WhatsApp recibido:', { from, text: incomingText });
     const result = await smartReplySafe(incomingText, from);
     const replyText = result?.reply || result?.text || String(result || '');
-    const xml = twilioXml(replyText);
+    const xml = result?.silent ? twilioSilentXml() : twilioXml(replyText);
     logTwilioDiagnostic('/whatsapp', incomingText, from, result, replyText, xml);
     res.type('text/xml').send(xml);
   }catch(e){
@@ -5342,7 +5400,7 @@ app.post('/webhook', async (req,res)=>{
 
     const result = await smartReplySafe(incomingText, from);
     const replyText = result?.reply || result?.text || String(result || '');
-    const xml = twilioXml(replyText);
+    const xml = result?.silent ? twilioSilentXml() : twilioXml(replyText);
     logTwilioDiagnostic('/webhook', incomingText, from, result, replyText, xml);
     res.type('text/xml').send(xml);
   }catch(e){
