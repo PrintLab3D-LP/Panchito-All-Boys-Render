@@ -5384,30 +5384,143 @@ app.post('/whatsapp', async (req,res)=>{
   }
 });
 
-// /webhook compatible con Twilio Sandbox y Meta verification.
-// En Twilio > WhatsApp Sandbox > Sandbox settings > When a message comes in:
-// https://TU_URL_PUBLICA/webhook  (Method: POST)
+// WEBHOOK UNIFICADO: Twilio Sandbox + WhatsApp Business Platform (Meta Cloud API)
+// Meta configura esta URL para verificación y recepción:
+// https://TU_URL_PUBLICA/webhook
+function isMetaWebhook(body={}){
+  return body?.object === 'whatsapp_business_account' || Array.isArray(body?.entry);
+}
+
+function extractMetaMessages(body={}){
+  const items=[];
+  for(const entry of (body.entry||[])){
+    for(const change of (entry.changes||[])){
+      const value=change?.value||{};
+      const metadata=value.metadata||{};
+      for(const message of (value.messages||[])){
+        let text='';
+        if(message.type==='text') text=message.text?.body||'';
+        else if(message.type==='button') text=message.button?.text||message.button?.payload||'';
+        else if(message.type==='interactive'){
+          text=message.interactive?.button_reply?.title
+            || message.interactive?.button_reply?.id
+            || message.interactive?.list_reply?.title
+            || message.interactive?.list_reply?.id
+            || '';
+        }else if(message.type==='image') text=message.image?.caption||'[imagen]';
+        else if(message.type==='document') text=message.document?.caption||'[documento]';
+        else if(message.type==='audio') text='[audio]';
+        else if(message.type==='location') text='[ubicación]';
+        else text=`[${message.type||'mensaje'}]`;
+        items.push({
+          from:String(message.from||''),
+          text:String(text||''),
+          messageId:message.id||'',
+          timestamp:message.timestamp||'',
+          phoneNumberId:metadata.phone_number_id||process.env.WHATSAPP_PHONE_NUMBER_ID||'',
+          displayPhoneNumber:metadata.display_phone_number||''
+        });
+      }
+    }
+  }
+  return items;
+}
+
+async function sendMetaText(to, text, phoneNumberId=process.env.WHATSAPP_PHONE_NUMBER_ID){
+  const token=process.env.WHATSAPP_ACCESS_TOKEN;
+  const apiVersion=process.env.WHATSAPP_API_VERSION || 'v23.0';
+  if(!token) throw new Error('Falta WHATSAPP_ACCESS_TOKEN');
+  if(!phoneNumberId) throw new Error('Falta WHATSAPP_PHONE_NUMBER_ID');
+  const messages=chunkWhatsApp(text, 3900);
+  const results=[];
+  for(const body of messages){
+    const r=await fetch(`https://graph.facebook.com/${apiVersion}/${phoneNumberId}/messages`,{
+      method:'POST',
+      headers:{'Authorization':`Bearer ${token}`,'Content-Type':'application/json'},
+      body:JSON.stringify({messaging_product:'whatsapp',recipient_type:'individual',to:String(to).replace(/\D/g,''),type:'text',text:{preview_url:false,body}})
+    });
+    const json=await r.json().catch(()=>({}));
+    if(!r.ok) throw new Error(`Meta WhatsApp ${r.status}: ${JSON.stringify(json).slice(0,800)}`);
+    results.push(json);
+  }
+  return results;
+}
+
+async function processMetaIncoming(item){
+  console.log('Meta WhatsApp recibido:', {from:item.from,text:item.text,messageId:item.messageId});
+  const result=await smartReplySafe(item.text,item.from);
+  const replyText=result?.reply || result?.text || String(result||'');
+  if(!result?.silent && replyText){
+    await sendMetaText(item.from,replyText,item.phoneNumberId);
+  }
+  return result;
+}
+
 app.get('/webhook',(req,res)=>{
   const verifyToken=process.env.WHATSAPP_VERIFY_TOKEN || 'clubbot-demo';
-  if(req.query['hub.verify_token']===verifyToken) return res.send(req.query['hub.challenge']);
-  res.type('text/plain').send('Panchito webhook OK. Para Twilio usá POST a esta URL.');
+  const mode=req.query['hub.mode'];
+  const token=req.query['hub.verify_token'];
+  const challenge=req.query['hub.challenge'];
+  if(mode==='subscribe' && token===verifyToken) return res.status(200).send(challenge);
+  if(token===verifyToken && challenge) return res.status(200).send(challenge);
+  if(Object.keys(req.query||{}).length) return res.sendStatus(403);
+  res.type('text/plain').send('Panchito webhook activo: Twilio + WhatsApp Business Platform.');
 });
-app.post('/webhook', async (req,res)=>{
-  try{
-    const incomingText = req.body?.Body || req.body?.body || req.body?.message || '';
-    const from = normalizeTwilioPhone(req.body?.From || req.body?.WaId || 'whatsapp:demo');
-    console.log('Webhook WhatsApp recibido:', { from, text: incomingText, body: JSON.stringify(req.body).slice(0,400) });
 
-    const result = await smartReplySafe(incomingText, from);
-    const replyText = result?.reply || result?.text || String(result || '');
-    const xml = result?.silent ? twilioSilentXml() : twilioXml(replyText);
-    logTwilioDiagnostic('/webhook', incomingText, from, result, replyText, xml);
+app.post('/webhook', async (req,res)=>{
+  // Meta necesita recibir HTTP 200 rápidamente. Procesamos luego de confirmar recepción.
+  if(isMetaWebhook(req.body)){
+    const messages=extractMetaMessages(req.body);
+    res.sendStatus(200);
+    for(const item of messages){
+      try{ await processMetaIncoming(item); }
+      catch(e){ console.error('ERROR META WHATSAPP:',e?.stack||e); }
+    }
+    return;
+  }
+
+  // Compatibilidad con Twilio mientras se usa el entorno de prueba.
+  try{
+    const incomingText=req.body?.Body || req.body?.body || req.body?.message || '';
+    const from=normalizeTwilioPhone(req.body?.From || req.body?.WaId || 'whatsapp:demo');
+    console.log('Webhook Twilio recibido:',{from,text:incomingText});
+    const result=await smartReplySafe(incomingText,from);
+    const replyText=result?.reply || result?.text || String(result||'');
+    const xml=result?.silent ? twilioSilentXml() : twilioXml(replyText);
+    logTwilioDiagnostic('/webhook',incomingText,from,result,replyText,xml);
     res.type('text/xml').send(xml);
   }catch(e){
-    logFullTwilioError('/webhook', e);
-    const fallback = 'Perdón, Panchito tuvo un inconveniente para responder. Escribí MENÚ o probá de nuevo en unos segundos.';
-    res.type('text/xml').send(twilioXml(fallback));
+    logFullTwilioError('/webhook',e);
+    res.type('text/xml').send(twilioXml('Perdón, Panchito tuvo un inconveniente para responder. Escribí MENÚ o probá de nuevo.'));
   }
+});
+
+// Envío manual/base para una futura bandeja de Administración.
+// Requiere proteger esta ruta con ADMIN_API_KEY en producción.
+app.post('/api/whatsapp/send', async (req,res)=>{
+  try{
+    const adminKey=process.env.ADMIN_API_KEY;
+    if(adminKey && req.get('x-admin-key')!==adminKey) return res.status(401).json({ok:false,error:'No autorizado'});
+    const to=String(req.body?.to||'').replace(/\D/g,'');
+    const text=String(req.body?.text||'').trim();
+    if(!to || !text) return res.status(400).json({ok:false,error:'Faltan to y text'});
+    const result=await sendMetaText(to,text);
+    res.json({ok:true,result});
+  }catch(e){
+    console.error('ERROR ENVÍO MANUAL META:',e?.stack||e);
+    res.status(500).json({ok:false,error:e?.message||'No se pudo enviar'});
+  }
+});
+
+app.get('/api/whatsapp/config-status',(req,res)=>{
+  res.json({
+    provider:'meta-cloud-api',
+    ready:Boolean(process.env.WHATSAPP_ACCESS_TOKEN && process.env.WHATSAPP_PHONE_NUMBER_ID && process.env.WHATSAPP_VERIFY_TOKEN),
+    verifyToken:Boolean(process.env.WHATSAPP_VERIFY_TOKEN),
+    accessToken:Boolean(process.env.WHATSAPP_ACCESS_TOKEN),
+    phoneNumberId:Boolean(process.env.WHATSAPP_PHONE_NUMBER_ID),
+    apiVersion:process.env.WHATSAPP_API_VERSION || 'v23.0'
+  });
 });
 
 
