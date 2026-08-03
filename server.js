@@ -178,6 +178,30 @@ function humanModeMessage(){
 
 Panchito queda pausado en este chat para no interrumpir mientras te atiende una persona.`;
 }
+function adminControlPin(){ return String(process.env.ADMIN_CONTROL_PIN || '2416').trim(); }
+function isAdminControlCommand(rawText='', command='bot'){
+  const t=String(rawText||'').trim().toLowerCase().replace(/\s+/g,' ');
+  const pin=adminControlPin();
+  return t===`/${command} ${pin}` || t===`${command} ${pin}`;
+}
+function addHandoffHistory(data, session, action, extra={}){
+  data.handoffHistory = data.handoffHistory || [];
+  const item={
+    id:Date.now(), phone:session?.phone||'', action,
+    at:new Date().toISOString(), handoffId:session?.data?.handoffId||null,
+    reason:session?.data?.handoffReason||'', ...extra
+  };
+  data.handoffHistory.unshift(item);
+  data.handoffHistory=data.handoffHistory.slice(0,1000);
+  return item;
+}
+function botReturnedMessage(){
+  return `✅ Administración finalizó la atención.
+
+🤖 Panchito vuelve a estar disponible para ayudarte.
+
+Escribí *MENÚ* para ver todas las opciones.`;
+}
 function findMember(data, value){ return (data.members||[]).find(m => m.dni === value || m.memberNo === value || clean(m.phone||'').endsWith(clean(value||''))); }
 
 function friendlyLead(kind='general'){
@@ -4205,6 +4229,7 @@ Escribí MENÚ para cancelar.`;
         handoffReason:s.data.adminDraft.note || 'Derivación a administración',
         handoffId:pending.id
       });
+      addHandoffHistory(data,s,'derived',{priority:pending.priority,topic:pending.topic||'',name:pending.name||''});
       reply = `✅ Consulta registrada
 
 Estado: DERIVADA A ADMINISTRACIÓN
@@ -5207,30 +5232,54 @@ app.delete('/api/pending/:id',(req,res)=>{ const data=db(); data.pendingQueries=
 // V93 - Bandeja/controles básicos para atención humana.
 app.get('/api/handoffs',(req,res)=>{
   const data=db();
+  const pendingById=new Map((data.pendingQueries||[]).map(p=>[String(p.id),p]));
   const items=(data.sessions||[])
     .filter(isHumanMode)
-    .map(s=>({
-      phone:s.phone,
-      mode:'human',
-      handoffAt:s.data?.handoffAt||s.updatedAt,
-      reason:s.data?.handoffReason||'Administración',
-      handoffId:s.data?.handoffId||null,
-      updatedAt:s.updatedAt
-    }));
+    .map(s=>{
+      const pending=pendingById.get(String(s.data?.handoffId||''))||{};
+      const recent=(data.conversations||[]).filter(c=>c.phone===s.phone).slice(0,10);
+      return {
+        phone:s.phone, mode:'human', handoffAt:s.data?.handoffAt||s.updatedAt,
+        reason:s.data?.handoffReason||'Administración', handoffId:s.data?.handoffId||null,
+        name:pending.name||'', contactPhone:pending.contactPhone||'', topic:pending.topic||'',
+        message:pending.message||'', priority:pending.priority||'🟡 Consulta', recentMessages:recent,
+        updatedAt:s.updatedAt
+      };
+    });
   res.json(items);
 });
+app.get('/api/handoffs/history',(req,res)=>{ const data=db(); res.json(data.handoffHistory||[]); });
 app.post('/api/handoffs/:phone/human',(req,res)=>{
   const data=db(); data.sessions=data.sessions||[];
   const s=getSession(data, String(req.params.phone));
   setAttentionMode(s,'human',{handoffAt:new Date().toISOString(),handoffReason:req.body?.reason||'Tomado manualmente por Administración'});
+  addHandoffHistory(data,s,'taken',{operator:req.body?.operator||'Administración'});
   save(data); res.json({ok:true,phone:s.phone,mode:'human'});
 });
 app.post('/api/handoffs/:phone/bot',(req,res)=>{
   const data=db(); data.sessions=data.sessions||[];
   const s=getSession(data, String(req.params.phone));
+  addHandoffHistory(data,s,'returned_to_bot',{operator:req.body?.operator||'Administración'});
   setAttentionMode(s,'bot',{returnedToBotAt:new Date().toISOString(),handoffReason:'',handoffId:null});
   resetToMainContext(s);
-  save(data); res.json({ok:true,phone:s.phone,mode:'bot'});
+  save(data); res.json({ok:true,phone:s.phone,mode:'bot',message:botReturnedMessage()});
+});
+app.post('/api/handoffs/:phone/close', async (req,res)=>{
+  try{
+    const adminKey=process.env.ADMIN_API_KEY;
+    if(adminKey && req.get('x-admin-key')!==adminKey) return res.status(401).json({ok:false,error:'No autorizado'});
+    const data=db(); data.sessions=data.sessions||[];
+    const phone=String(req.params.phone).replace(/\D/g,'');
+    const s=getSession(data,phone);
+    addHandoffHistory(data,s,'closed',{operator:req.body?.operator||'Administración'});
+    setAttentionMode(s,'bot',{returnedToBotAt:new Date().toISOString(),handoffReason:'',handoffId:null});
+    resetToMainContext(s); save(data);
+    let notified=false;
+    if(process.env.WHATSAPP_ACCESS_TOKEN && process.env.WHATSAPP_PHONE_NUMBER_ID){
+      await sendMetaText(phone,botReturnedMessage()); notified=true;
+    }
+    res.json({ok:true,phone,mode:'bot',notified,message:botReturnedMessage()});
+  }catch(e){ res.status(500).json({ok:false,error:e?.message||'No se pudo cerrar la atención'}); }
 });
 
 app.post('/api/member-login',(req,res)=>{ const data=db(); const member=data.members.find(m=>m.dni===String(req.body.dni||'') && String(m.password||'1234')===String(req.body.password||'')); if(!member) return res.status(401).json({error:'Datos incorrectos'}); const payments=(data.payments||[]).filter(p=>p.memberId===member.id); res.json({member,payments,club:data.club}); });
@@ -5323,6 +5372,14 @@ async function smartReplySafe(rawText, from){
     const phoneFast = normalizeTwilioPhone(from);
     const sessionFast = (dataFast.sessions||[]).find(x => x.phone === phoneFast);
     if(isHumanMode(sessionFast)){
+      // Control de prueba/administración. PIN configurable con ADMIN_CONTROL_PIN.
+      if(isAdminControlCommand(rawText,'bot') || isAdminControlCommand(rawText,'cerrar')){
+        addHandoffHistory(dataFast,sessionFast,'returned_to_bot_command',{channel:'whatsapp'});
+        setAttentionMode(sessionFast,'bot',{returnedToBotAt:new Date().toISOString(),handoffReason:'',handoffId:null});
+        resetToMainContext(sessionFast);
+        save(dataFast);
+        return {reply:botReturnedMessage(),silent:false,intent:'admin_reactiva_bot',confidence:1};
+      }
       dataFast.conversations = dataFast.conversations || [];
       dataFast.conversations.unshift({
         id:Date.now(), phone:phoneFast, text:rawText, reply:'', intent:'modo_humano_sin_respuesta',
@@ -5332,6 +5389,12 @@ async function smartReplySafe(rawText, from){
       dataFast.conversations = dataFast.conversations.slice(0,500);
       save(dataFast);
       return { reply:'', silent:true, intent:'modo_humano', confidence:1 };
+    }
+    if(isAdminControlCommand(rawText,'tomar')){
+      setAttentionMode(sessionFast,'human',{handoffAt:new Date().toISOString(),handoffReason:'Tomado con comando administrativo'});
+      addHandoffHistory(dataFast,sessionFast,'taken_command',{channel:'whatsapp'});
+      save(dataFast);
+      return {reply:'✅ Conversación puesta en modo humano. Panchito queda pausado.',silent:false,intent:'admin_toma_chat',confidence:1};
     }
     alreadyMetPanchitoFast = !!sessionFast?.data?.seenPanchitoIntro || (dataFast.conversations||[]).some(c => c.phone === phoneFast);
   }catch(e){ console.error('No se pudo comprobar modo humano:', e); }

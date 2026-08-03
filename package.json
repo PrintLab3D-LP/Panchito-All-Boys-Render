@@ -1,14 +1,16 @@
 {
   "name": "panchito-all-boys-bot",
-  "version": "94.0.0",
+  "version": "96.0.0",
   "private": true,
-  "description": "Bot de WhatsApp del Club All Boys preparado para Meta WhatsApp Business Platform",
+  "description": "Bot de WhatsApp del Club All Boys con pase bot-humano, controles y base Meta",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
     "check": "node --check server.js"
   },
-  "engines": { "node": ">=18" },
+  "engines": {
+    "node": ">=18"
+  },
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
