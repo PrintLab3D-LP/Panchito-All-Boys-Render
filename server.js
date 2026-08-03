@@ -2977,19 +2977,11 @@ Escribime la edad o el año de nacimiento.`;
     if(main==='A'){ setSession(s,'idle',{}); setMenuContext(s,'activities'); reply=responseActivityMenu(); return finish(); }
     if(main==='B'){ setSession(s,'idle',{}); setMenuContext(s,'prices'); reply=responsePricesMenu(); return finish(); }
     if(main==='C'){ setSession(s,'idle',{}); setMenuContext(s,'payments'); reply=responsePaymentsMenu(); return finish(); }
-    if(main==='D'){ setSession(s,'idle',{}); setMenuContext(s,'admin_word'); reply=`Podés comunicarte con Administración en:
-
-${adminContact(data)}
-
-Para que puedan responderte más rápido, enviá:
-• Nombre y apellido.
-• Motivo de la consulta.
-• DNI o número de socio, si corresponde.
-
-¿Qué querés hacer ahora?
-A. Consultar actividades
-B. Consultar cuotas o pagos
-C. Volver al menú principal`; return finish(); }
+    if(main==='D'){
+      setSession(s,'idle',{});
+      reply = goAdmin(data, s, phone, rawText, 'Usuario pidió hablar con Administración desde el menú principal');
+      return finish();
+    }
     if(main==='E'){ setSession(s,'idle',{claimDraft:{}}); setMenuContext(s,'claim_name'); s.data.claimDraft={}; reply=responseClaimMenu(); return finish(); }
     if(main==='F'){ setSession(s,'idle',{}); setMenuContext(s,'institutional'); reply=responseInstitutionalMenu(); return finish(); }
     if(main==='G'){ setSession(s,'idle',{}); setMenuContext(s,'predio'); reply=responsePredio(); return finish(); }
