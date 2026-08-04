@@ -15,8 +15,27 @@ app.use(express.json({ limit: '15mb' }));
 app.use(express.urlencoded({ extended: false, limit: '2mb' }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-function db(){ return JSON.parse(fs.readFileSync(DB_PATH,'utf8')); }
-function save(data){ fs.writeFileSync(DB_PATH, JSON.stringify(data,null,2)); }
+const DEFAULT_DB = {
+  club: { name: 'Club All Boys', whatsapp: '2954592313' },
+  members: [], activities: [], payments: [], knowledge: [], documents: [],
+  sessions: [], conversations: [], pendingQueries: [], registrations: [],
+  surveys: [], handoffHistory: []
+};
+function ensureDb(){
+  const dir=path.dirname(DB_PATH);
+  if(!fs.existsSync(dir)) fs.mkdirSync(dir,{recursive:true});
+  if(!fs.existsSync(DB_PATH)) fs.writeFileSync(DB_PATH, JSON.stringify(DEFAULT_DB,null,2));
+}
+function db(){
+  ensureDb();
+  const parsed=JSON.parse(fs.readFileSync(DB_PATH,'utf8'));
+  return { ...DEFAULT_DB, ...parsed };
+}
+function save(data){
+  ensureDb();
+  fs.writeFileSync(DB_PATH, JSON.stringify(data,null,2));
+}
+ensureDb();
 function clean(t=''){ return String(t).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim(); }
 function money(n){ return new Intl.NumberFormat('es-AR',{style:'currency',currency:'ARS',maximumFractionDigits:0}).format(Number(n)||0); }
 function containsAny(text, words){ return words.some(w => text.includes(clean(w))); }
@@ -5594,6 +5613,47 @@ app.post('/api/train/website', (req,res)=>{
 app.get('/api/train/website/preview', (req,res)=>{
   res.json({ ok:true, documents: allBoysWebsiteDocuments });
 });
+
+
+// V97 - Base de integración de solo lectura con DigitalClub.
+function digitalClubConfig(){
+  return {
+    baseUrl:String(process.env.DIGITALCLUB_API_URL||'').replace(/\/$/,''),
+    apiKey:String(process.env.DIGITALCLUB_API_KEY||''),
+    memberPath:String(process.env.DIGITALCLUB_MEMBER_PATH||'/socios'),
+    authHeader:String(process.env.DIGITALCLUB_AUTH_HEADER||'Authorization'),
+    authPrefix:String(process.env.DIGITALCLUB_AUTH_PREFIX||'Bearer')
+  };
+}
+function digitalClubReady(){ const c=digitalClubConfig(); return Boolean(c.baseUrl && c.apiKey); }
+async function digitalClubFindMember(value){
+  const c=digitalClubConfig();
+  if(!digitalClubReady()) throw new Error('DigitalClub todavía no está configurado');
+  const url=new URL(c.baseUrl+c.memberPath);
+  const raw=String(value||'').trim();
+  if(/^\d{7,8}$/.test(raw)) url.searchParams.set('dni',raw);
+  else url.searchParams.set('numeroSocio',raw);
+  const headers={Accept:'application/json'};
+  headers[c.authHeader]=`${c.authPrefix} ${c.apiKey}`.trim();
+  const controller=new AbortController();
+  const timer=setTimeout(()=>controller.abort(),7000);
+  try{
+    const r=await fetch(url,{headers,signal:controller.signal});
+    const body=await r.json().catch(()=>({}));
+    if(!r.ok) throw new Error(`DigitalClub respondió ${r.status}`);
+    return body;
+  } finally { clearTimeout(timer); }
+}
+app.get('/api/integrations/digitalclub/status',(req,res)=>{
+  const c=digitalClubConfig();
+  res.json({ready:digitalClubReady(),baseUrl:c.baseUrl||null,memberPath:c.memberPath,hasApiKey:Boolean(c.apiKey)});
+});
+app.post('/api/integrations/digitalclub/member-test',async(req,res)=>{
+  try{ res.json({ok:true,data:await digitalClubFindMember(req.body?.value)}); }
+  catch(e){ res.status(400).json({ok:false,error:e?.message||'No se pudo consultar DigitalClub'}); }
+});
+
+app.get('/admin',(req,res)=>res.sendFile(path.join(__dirname,'public','admin.html')));
 
 app.get('/health',(req,res)=>res.send('ClubBot IA Enterprise activo ✅'));
 app.listen(PORT,()=>{
