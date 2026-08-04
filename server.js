@@ -551,7 +551,7 @@ function signupStepPrompt(step, draft={}){
     notes: `7/8 ¿Querés agregar alguna observación?\n\nEjemplos: turno preferido, experiencia previa, apto médico, lesión, consulta especial.\n\nSi no hay observaciones, escribí NO.`,
     confirm: `8/8 Revisá los datos.\n\n${signupSummary(draft)}\n\n¿Confirmás la solicitud?\n\nA. Confirmar\nB. Modificar nombre\nC. Modificar edad\nD. Modificar teléfono\nE. Cancelar`
   };
-  return prompts[step] || prompts.name;
+  return prompts[step] || prompts.dni;
 }
 
 function startSignupFlow(data, s, activity='', category=''){
@@ -1686,17 +1686,24 @@ function derivationPriority(draft={}){
 
 function adminStepPrompt(step){
   const prompts = {
-    name: '1/4 Para derivarte bien, pasame tu nombre y apellido.',
-    phone: '2/4 Ahora pasame un teléfono de contacto.',
-    topic: '3/4 ¿Sobre qué tema es la consulta? Ejemplo: básquet, fútbol, cuota, inscripción, natatorio o reclamo.',
-    message: '4/4 Contame brevemente qué necesitás para que administración lo pueda responder.'
+    dni: '1/3 Ingresá el DNI o número de socio para identificarte.',
+    name: 'No pude encontrarte. Pasame tu nombre y apellido para continuar manualmente.',
+    phone: 'Ahora pasame un teléfono de contacto.',
+    topic: '2/3 ¿Sobre qué tema es la consulta? Ejemplo: básquet, fútbol, cuota, inscripción, natatorio o reclamo.',
+    message: '3/3 Contame brevemente qué necesitás para que Administración lo pueda responder.'
   };
-  return prompts[step] || prompts.name;
+  return prompts[step] || prompts.dni;
 }
 
 function adminSummary(draft={}){
+  const acts = Array.isArray(draft.activities) ? draft.activities.join(', ') : (draft.activities || '-');
   return `Consulta para administración:
 Nombre y apellido: ${draft.name || '-'}
+DNI: ${draft.dni || '-'}
+N.º de socio: ${draft.memberNo || '-'}
+Estado: ${draft.status || '-'}
+Cuota: ${draft.feeStatus || '-'}${draft.debt !== undefined && draft.debt !== null ? ` (deuda: $${Number(draft.debt||0).toLocaleString('es-AR')})` : ''}
+Actividades: ${acts || '-'}
 Teléfono: ${draft.phone || '-'}
 Tema: ${draft.topic || '-'}
 Mensaje: ${draft.message || '-'}`;
@@ -1704,15 +1711,15 @@ Mensaje: ${draft.message || '-'}`;
 
 function goAdmin(data, s, phone, rawText, note='Usuario pidió hablar con administración'){
   s.data = { ...(s.data||{}), adminDraft:{ originalText: rawText || '', note } };
-  setMenuContext(s,'admin_name');
-  return `📞 Te llevo con administración.
+  setMenuContext(s,'admin_dni');
+  return `📞 Te llevo con Administración.
 ${topicVibe('admin')}
 
-Antes necesito algunos datos para que el club pueda responderte correctamente.
+Primero voy a identificarte para que no tengas que volver a cargar todos tus datos.
 
-${adminStepPrompt('name')}
+${adminStepPrompt('dni')}
 
-${adminContact(data)}`;
+Escribí *OMITIR* si no sos socio o no tenés el dato a mano.`;
 }
 
 
@@ -2893,7 +2900,7 @@ function claimStepPrompt(step){
     area: '3/4 ¿A qué área o actividad está relacionado? Por ejemplo: básquet, fútbol, natatorio, socios, administración.',
     detail: '4/4 Contame qué ocurrió o qué sugerencia querés dejar.'
   };
-  return prompts[step] || prompts.name;
+  return prompts[step] || prompts.dni;
 }
 
 function claimSummary(draft={}){
@@ -2936,7 +2943,7 @@ async function smartReply(rawText, phone='demo'){
   const protectedMenus = [
     'signup_name','signup_age','signup_dni','signup_socio','signup_phone','signup_email','signup_notes','signup_confirm',
     'signup_edit_name','signup_edit_age','signup_edit_phone','signup_edit_dni','signup_edit_email','signup_edit_activity','signup_edit_notes','signup_duplicate','signup_done',
-    'admin_name','admin_phone','admin_topic','admin_message',
+    'admin_dni','admin_dni_not_found','admin_name','admin_phone','admin_topic','admin_message',
     'claim_name','claim_phone','claim_area','claim_detail'
   ];
 
@@ -4184,7 +4191,7 @@ C. 🏠 Menú principal`;
     }
   }
 
-  if(['admin','admin_name','admin_phone','admin_topic','admin_message','admin_done'].includes(menu)){
+  if(['admin','admin_dni','admin_dni_not_found','admin_name','admin_phone','admin_topic','admin_message','admin_done'].includes(menu)){
     if(containsAny(text,['menu','menú','inicio','salir','cancelar','volver'])){
       intent='menu'; confidence=.9;
       clearMenuContext(s);
@@ -4195,7 +4202,88 @@ C. 🏠 Menú principal`;
 
     s.data.adminDraft = s.data.adminDraft || {};
 
-    if(menu === 'admin' || menu === 'admin_name'){
+    if(menu === 'admin' || menu === 'admin_dni'){
+      intent='admin_identificacion'; confidence=.97;
+      if(containsAny(text,['omitir','no soy socio','no tengo'])){
+        setMenuContext(s,'admin_name');
+        reply = `No hay problema. Continuamos de forma manual.
+
+${adminStepPrompt('name')}
+
+Escribí MENÚ para cancelar.`;
+        return finish();
+      }
+      const idValue = String(rawText||'').replace(/[^0-9A-Za-z-]/g,'').trim();
+      if(idValue.length < 4){
+        reply = `No pude reconocer ese dato. Ingresá el DNI completo o el número de socio.
+
+También podés escribir *OMITIR*.`;
+        return finish();
+      }
+      let memberResult = null;
+      let source = 'local';
+      try{
+        if(digitalClubReady()){
+          const apiResult = await digitalClubFindMember(idValue);
+          memberResult = normalizeDigitalClubMember(apiResult);
+          source = 'DigitalClub';
+        } else {
+          memberResult = normalizeLocalMember(findMember(data,idValue));
+        }
+      } catch(e){
+        console.error('Error identificando socio:', e?.message||e);
+        memberResult = normalizeLocalMember(findMember(data,idValue));
+        source = memberResult ? 'base local' : 'sin resultado';
+      }
+      if(!memberResult){
+        s.data.adminDraft.lookupValue = idValue;
+        setMenuContext(s,'admin_dni_not_found');
+        reply = `No encontré un socio con ese DNI o número.
+
+A. Intentar nuevamente
+B. Continuar cargando los datos manualmente
+C. Volver al menú principal`;
+        return finish();
+      }
+      Object.assign(s.data.adminDraft, memberResult, {lookupSource:source, lookupValue:idValue});
+      setMenuContext(s,'admin_topic');
+      const acts = Array.isArray(memberResult.activities) ? memberResult.activities.join(', ') : (memberResult.activities||'Sin actividades cargadas');
+      reply = `✅ Socio identificado
+
+👤 ${memberResult.name || '-'}
+🎫 N.º de socio: ${memberResult.memberNo || '-'}
+📌 Estado: ${memberResult.status || '-'}
+💰 Cuota: ${memberResult.feeStatus || '-'}
+🏅 Actividades: ${acts}
+
+${adminStepPrompt('topic')}
+
+Escribí MENÚ para cancelar.`;
+      return finish();
+    }
+
+    if(menu === 'admin_dni_not_found'){
+      if(isLetter(rawText,['A'])){
+        setMenuContext(s,'admin_dni');
+        reply = adminStepPrompt('dni');
+        return finish();
+      }
+      if(isLetter(rawText,['B'])){
+        setMenuContext(s,'admin_name');
+        reply = adminStepPrompt('name');
+        return finish();
+      }
+      if(isLetter(rawText,['C'])){
+        clearMenuContext(s); s.data.adminDraft={}; reply=panchitoMenu(); return finish();
+      }
+      reply = `Elegí una opción:
+A. Intentar nuevamente
+B. Continuar manualmente
+C. Menú principal`;
+      return finish();
+    }
+
+    if(menu === 'admin_name'){
       intent='admin_nombre'; confidence=.92;
       s.data.adminDraft.name = rawText;
       setMenuContext(s,'admin_phone');
@@ -4238,6 +4326,12 @@ Escribí MENÚ para cancelar.`;
       const pending = addPending(data, phone, resumen, 'administracion', s.data.adminDraft.note || 'Derivación a administración');
       pending.name = s.data.adminDraft.name || '';
       pending.contactPhone = s.data.adminDraft.phone || '';
+      pending.dni = s.data.adminDraft.dni || '';
+      pending.memberNo = s.data.adminDraft.memberNo || '';
+      pending.memberStatus = s.data.adminDraft.status || '';
+      pending.feeStatus = s.data.adminDraft.feeStatus || '';
+      pending.activities = s.data.adminDraft.activities || [];
+      pending.lookupSource = s.data.adminDraft.lookupSource || '';
       pending.topic = s.data.adminDraft.topic || '';
       pending.message = s.data.adminDraft.message || '';
       pending.priority = derivationPriority(s.data.adminDraft);
@@ -4285,10 +4379,10 @@ ${adminContact(data)}`;
       if(isLetter(rawText,['A'])){
         intent='admin_nueva_consulta'; confidence=.95;
         s.data.adminDraft = {};
-        setMenuContext(s,'admin_name');
+        setMenuContext(s,'admin_dni');
         reply = `Dale, cargamos otra consulta.
 
-${adminStepPrompt('name')}`;
+${adminStepPrompt('dni')}`;
         return finish();
       }
       if(isLetter(rawText,['B'])){
@@ -5614,6 +5708,42 @@ app.get('/api/train/website/preview', (req,res)=>{
   res.json({ ok:true, documents: allBoysWebsiteDocuments });
 });
 
+
+// V98 - Normalización de socios para identificar por DNI o número de socio.
+function normalizeLocalMember(member){
+  if(!member) return null;
+  return {
+    name:member.name || member.fullName || '',
+    dni:String(member.dni||''),
+    memberNo:String(member.memberNo || member.numeroSocio || member.id || ''),
+    phone:member.phone || member.telefono || '',
+    status:member.status || member.estado || 'Activo',
+    feeStatus:member.feeStatus || member.estadoCuota || (Number(member.debt||0)>0?'Con deuda':'Al día'),
+    debt:Number(member.debt||member.deuda||0),
+    activities:Array.isArray(member.activities) ? member.activities.map(a=>typeof a==='string'?a:(a.name||a.nombre||a.activity||'')).filter(Boolean) : []
+  };
+}
+function normalizeDigitalClubMember(payload){
+  if(!payload) return null;
+  if(payload.encontrado === false || payload.found === false) return null;
+  const root = payload.socio || payload.member || payload.data?.socio || payload.data?.member || payload.data || payload;
+  if(!root || typeof root !== 'object' || Array.isArray(root)) return null;
+  const cuota = root.cuota || root.fee || {};
+  const rawActivities = root.actividades || root.activities || root.deportes || [];
+  const activities = Array.isArray(rawActivities) ? rawActivities.map(a=>typeof a==='string'?a:(a.nombre||a.name||a.actividad||a.activity||a.categoria||'')).filter(Boolean) : [];
+  const name = root.nombreCompleto || root.nombre_apellido || root.name || [root.nombre,root.apellido].filter(Boolean).join(' ');
+  if(!name && !root.dni && !root.numeroSocio && !root.memberNo) return null;
+  return {
+    name:name || '',
+    dni:String(root.dni || root.documento || ''),
+    memberNo:String(root.numeroSocio || root.numero_socio || root.memberNo || root.idSocio || ''),
+    phone:root.telefono || root.phone || root.celular || '',
+    status:root.estado || root.status || (root.activo===false?'Inactivo':'Activo'),
+    feeStatus:cuota.estado || root.estadoCuota || root.feeStatus || (Number(cuota.importeAdeudado||root.deuda||0)>0?'Con deuda':'Al día'),
+    debt:Number(cuota.importeAdeudado || cuota.deuda || root.deuda || root.debt || 0),
+    activities
+  };
+}
 
 // V97 - Base de integración de solo lectura con DigitalClub.
 function digitalClubConfig(){

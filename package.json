@@ -1,8 +1,8 @@
 {
   "name": "panchito-all-boys-bot",
-  "version": "96.0.0",
+  "version": "98.0.0",
   "private": true,
-  "description": "Bot de WhatsApp del Club All Boys con pase bot-humano, controles y base Meta",
+  "description": "Bot All Boys con identificación automática de socios por DNI, panel administrativo y base DigitalClub",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
