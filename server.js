@@ -183,8 +183,29 @@ function correctionHint(rawText=''){
 }
 
 function today(){ return new Date().toISOString().slice(0,10); }
-function getSession(data, phone){ let s=(data.sessions||[]).find(x=>x.phone===phone); if(!s){ s={phone,state:'idle',data:{},updatedAt:new Date().toISOString()}; data.sessions.unshift(s); } return s; }
+function phoneDigits(value=''){ return String(value||'').replace(/\D/g,''); }
+function findSessionByPhone(data, phone){
+  const exact=String(phone||'');
+  const digits=phoneDigits(phone);
+  return (data.sessions||[]).find(x => x.phone===exact || (digits && phoneDigits(x.phone)===digits));
+}
+function getSession(data, phone){
+  let s=findSessionByPhone(data, phone);
+  if(!s){ s={phone,state:'idle',data:{},updatedAt:new Date().toISOString()}; data.sessions.unshift(s); }
+  return s;
+}
 function setSession(s,state,extra={}){ s.state=state; s.data={...(s.data||{}),...extra}; s.updatedAt=new Date().toISOString(); }
+const SESSION_TIMEOUT_MS = Math.max(1, Number(process.env.SESSION_TIMEOUT_HOURS || 6)) * 60 * 60 * 1000;
+function sessionExpired(session, now=Date.now()){
+  if(!session?.updatedAt) return true;
+  const t=Date.parse(session.updatedAt);
+  return !Number.isFinite(t) || (now-t)>SESSION_TIMEOUT_MS;
+}
+function resetForNewConversation(session){
+  session.state='idle';
+  session.data={ attentionMode:'bot', seenPanchitoIntro:false, menu:'', topic:'' };
+  session.updatedAt=new Date().toISOString();
+}
 
 // V93 - Pase de atención automática a atención humana.
 function isHumanMode(session){ return session?.data?.attentionMode === 'human'; }
@@ -1646,6 +1667,31 @@ function resetToMainContext(s){
   s.data = { ...keep, menu:'', topic:'' };
   s.state = 'idle';
   s.updatedAt = new Date().toISOString();
+}
+
+function reactivateBotSession(s){
+  resetForNewConversation(s);
+  s.data.returnedToBotAt=new Date().toISOString();
+  s.data.attentionMode='bot';
+}
+
+// V100: Reactiva todas las sesiones que correspondan al mismo número.
+// Evita que una sesión guardada como +549... y otra como 549... dejen al bot pausado.
+function reactivateAllSessionsForPhone(data, phone){
+  const digits=phoneDigits(phone);
+  data.sessions=data.sessions||[];
+  const matches=data.sessions.filter(x => digits && phoneDigits(x.phone)===digits);
+  if(!matches.length){
+    const created=getSession(data,String(phone||''));
+    reactivateBotSession(created);
+    return created;
+  }
+  const canonical=matches[0];
+  reactivateBotSession(canonical);
+  canonical.phone=canonical.phone || String(phone||'');
+  // Quitamos duplicados del mismo teléfono para que no vuelva a aparecer un modo humano viejo.
+  data.sessions=data.sessions.filter(x => x===canonical || phoneDigits(x.phone)!==digits);
+  return canonical;
 }
 
 function adminWhatsAppLink(data, draft={}){
@@ -5364,17 +5410,18 @@ app.get('/api/handoffs',(req,res)=>{
 app.get('/api/handoffs/history',(req,res)=>{ const data=db(); res.json(data.handoffHistory||[]); });
 app.post('/api/handoffs/:phone/human',(req,res)=>{
   const data=db(); data.sessions=data.sessions||[];
-  const s=getSession(data, String(req.params.phone));
+  const requestedPhone=String(req.params.phone);
+  const s=findSessionByPhone(data,requestedPhone) || getSession(data,requestedPhone);
   setAttentionMode(s,'human',{handoffAt:new Date().toISOString(),handoffReason:req.body?.reason||'Tomado manualmente por Administración'});
   addHandoffHistory(data,s,'taken',{operator:req.body?.operator||'Administración'});
   save(data); res.json({ok:true,phone:s.phone,mode:'human'});
 });
 app.post('/api/handoffs/:phone/bot',(req,res)=>{
   const data=db(); data.sessions=data.sessions||[];
-  const s=getSession(data, String(req.params.phone));
-  addHandoffHistory(data,s,'returned_to_bot',{operator:req.body?.operator||'Administración'});
-  setAttentionMode(s,'bot',{returnedToBotAt:new Date().toISOString(),handoffReason:'',handoffId:null});
-  resetToMainContext(s);
+  const requestedPhone=String(req.params.phone);
+  const previous=findSessionByPhone(data,requestedPhone) || getSession(data,requestedPhone);
+  addHandoffHistory(data,previous,'returned_to_bot',{operator:req.body?.operator||'Administración'});
+  const s=reactivateAllSessionsForPhone(data,requestedPhone);
   save(data); res.json({ok:true,phone:s.phone,mode:'bot',message:botReturnedMessage()});
 });
 app.post('/api/handoffs/:phone/close', async (req,res)=>{
@@ -5382,11 +5429,11 @@ app.post('/api/handoffs/:phone/close', async (req,res)=>{
     const adminKey=process.env.ADMIN_API_KEY;
     if(adminKey && req.get('x-admin-key')!==adminKey) return res.status(401).json({ok:false,error:'No autorizado'});
     const data=db(); data.sessions=data.sessions||[];
-    const phone=String(req.params.phone).replace(/\D/g,'');
-    const s=getSession(data,phone);
-    addHandoffHistory(data,s,'closed',{operator:req.body?.operator||'Administración'});
-    setAttentionMode(s,'bot',{returnedToBotAt:new Date().toISOString(),handoffReason:'',handoffId:null});
-    resetToMainContext(s); save(data);
+    const requestedPhone=String(req.params.phone);
+    const previous=findSessionByPhone(data,requestedPhone) || getSession(data,requestedPhone);
+    const phone=phoneDigits(previous.phone || requestedPhone);
+    addHandoffHistory(data,previous,'closed',{operator:req.body?.operator||'Administración'});
+    reactivateAllSessionsForPhone(data,requestedPhone); save(data);
     let notified=false;
     if(process.env.WHATSAPP_ACCESS_TOKEN && process.env.WHATSAPP_PHONE_NUMBER_ID){
       await sendMetaText(phone,botReturnedMessage()); notified=true;
@@ -5483,13 +5530,18 @@ async function smartReplySafe(rawText, from){
   try{
     const dataFast = db();
     const phoneFast = normalizeTwilioPhone(from);
-    const sessionFast = (dataFast.sessions||[]).find(x => x.phone === phoneFast);
+    let sessionFast = findSessionByPhone(dataFast, phoneFast);
+    // V100: una atención humana también vence por inactividad. Así, al día siguiente
+    // un saludo inicia una conversación nueva en vez de dejar el número bloqueado.
+    if(sessionFast && sessionExpired(sessionFast)){
+      resetForNewConversation(sessionFast);
+      save(dataFast);
+    }
     if(isHumanMode(sessionFast)){
       // Control de prueba/administración. PIN configurable con ADMIN_CONTROL_PIN.
       if(isAdminControlCommand(rawText,'bot') || isAdminControlCommand(rawText,'cerrar')){
         addHandoffHistory(dataFast,sessionFast,'returned_to_bot_command',{channel:'whatsapp'});
-        setAttentionMode(sessionFast,'bot',{returnedToBotAt:new Date().toISOString(),handoffReason:'',handoffId:null});
-        resetToMainContext(sessionFast);
+        reactivateAllSessionsForPhone(dataFast,phoneFast);
         save(dataFast);
         return {reply:botReturnedMessage(),silent:false,intent:'admin_reactiva_bot',confidence:1};
       }
@@ -5509,7 +5561,7 @@ async function smartReplySafe(rawText, from){
       save(dataFast);
       return {reply:'✅ Conversación puesta en modo humano. Panchito queda pausado.',silent:false,intent:'admin_toma_chat',confidence:1};
     }
-    alreadyMetPanchitoFast = !!sessionFast?.data?.seenPanchitoIntro || (dataFast.conversations||[]).some(c => c.phone === phoneFast);
+    alreadyMetPanchitoFast = !!sessionFast?.data?.seenPanchitoIntro;
   }catch(e){ console.error('No se pudo comprobar modo humano:', e); }
   const quick = quickTwilioReply(rawText, alreadyMetPanchitoFast);
   if(quick){
@@ -5788,5 +5840,5 @@ app.get('/admin',(req,res)=>res.sendFile(path.join(__dirname,'public','admin.htm
 app.get('/health',(req,res)=>res.send('ClubBot IA Enterprise activo ✅'));
 app.listen(PORT,()=>{
   console.log(`ClubBot IA Enterprise en http://localhost:${PORT}`);
-  console.log('Panchito V40 menú gracioso activo - hola/menu muestran opciones completas');
+  console.log('Panchito V100 activo - retorno bot y nuevas conversaciones corregidos');
 });
