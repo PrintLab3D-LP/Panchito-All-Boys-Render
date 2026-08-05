@@ -3,11 +3,12 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Panchito · Centro de atención</title>
+<link rel="icon" type="image/png" href="/allboys-logo.png">
 <style>
 :root{--blue:#123b78;--yellow:#f5c400;--bg:#f3f6fb;--card:#fff;--text:#172033;--muted:#667085;--danger:#b42318;--ok:#067647;--line:#e6eaf0}
 *{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,Arial;background:var(--bg);color:var(--text)}
 header{background:var(--blue);color:#fff;padding:18px 24px;border-bottom:6px solid var(--yellow);display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;position:sticky;top:0;z-index:5}
-header h1{font-size:21px;margin:0}header small{opacity:.86}.wrap{max-width:1280px;margin:22px auto;padding:0 16px}.status{font-size:13px}.ok{color:#b8ffce}.bad{color:var(--danger)}
+header h1{font-size:21px;margin:0}header small{opacity:.86}.brand{display:flex;align-items:center;gap:14px}.club-logo{width:64px;height:64px;object-fit:contain;flex:0 0 auto;filter:drop-shadow(0 2px 4px #0004)}.wrap{max-width:1280px;margin:22px auto;padding:0 16px}.status{font-size:13px}.ok{color:#b8ffce}.bad{color:var(--danger)}
 .tabs{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}.tab{border:0;border-radius:10px;padding:10px 14px;font-weight:800;cursor:pointer;background:#e8edf5;color:#344054}.tab.active{background:var(--blue);color:#fff}
 .panel{display:none}.panel.active{display:block}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}.stat,.card,.box{background:var(--card);border-radius:14px;box-shadow:0 4px 18px #102a4312;border:1px solid var(--line)}.stat{padding:16px}.stat b{display:block;font-size:27px;color:var(--blue)}.stat span{font-size:13px;color:var(--muted)}
 .dashboard-grid{display:grid;grid-template-columns:1.3fr .7fr;gap:14px}.box{padding:16px}.box h2{font-size:17px;margin:0 0 14px}.chart{display:flex;align-items:end;gap:10px;height:190px;padding-top:12px}.bar-wrap{flex:1;display:flex;flex-direction:column;justify-content:end;align-items:center;height:100%;gap:6px}.bar{width:100%;max-width:42px;background:var(--blue);border-radius:7px 7px 2px 2px;min-height:3px}.bar.alt{background:var(--yellow)}.bar-label{font-size:11px;color:var(--muted)}.bar-value{font-size:11px;font-weight:800}.topic{display:grid;grid-template-columns:1fr 44px;gap:8px;align-items:center;margin:10px 0}.topic-track{height:9px;background:#edf1f6;border-radius:99px;overflow:hidden}.topic-fill{height:100%;background:var(--blue);border-radius:99px}.api-card{display:flex;justify-content:space-between;align-items:center;padding:14px;border-radius:12px;background:#f7f9fc;margin-top:12px}.dot{width:11px;height:11px;border-radius:50%;display:inline-block;background:#98a2b3;margin-right:7px}.dot.on{background:#12b76a}.dot.off{background:#f79009}
@@ -16,7 +17,7 @@ header h1{font-size:21px;margin:0}header small{opacity:.86}.wrap{max-width:1280p
 </style>
 </head>
 <body>
-<header><div><h1>🔵🟡 Panchito · Centro de atención</h1><small>Dashboard y bandeja de conversaciones derivadas</small></div><div id="apiStatus" class="status">Comprobando DigitalClub…</div></header>
+<header><div class="brand"><img class="club-logo" src="/allboys-logo.png" alt="Escudo Club All Boys"><div><h1>Panchito · Centro de atención</h1><small>Dashboard y bandeja de conversaciones derivadas</small></div></div><div id="apiStatus" class="status">Comprobando DigitalClub…</div></header>
 <main class="wrap">
 <div class="tabs"><button class="tab active" data-panel="dashboard">Resumen</button><button class="tab" data-panel="inbox">Conversaciones</button><button class="tab" data-panel="movements">Movimientos</button></div>
 <section id="dashboard" class="panel active">
