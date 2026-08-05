@@ -1,8 +1,8 @@
 {
   "name": "panchito-all-boys-bot",
-  "version": "101.0.0",
+  "version": "103.0.0",
   "private": true,
-  "description": "Bot All Boys con retorno real de modo humano a bot y reinicio de conversación por inactividad",
+  "description": "Panchito All Boys con flujos oficiales completos del documento del club, panel, modo humano y base DigitalClub",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",

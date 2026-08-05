@@ -526,28 +526,8 @@ C. ❌ No me sirvió
 Respondé con A, B o C.
 También podés escribir OMITIR.`;
 }
-function panchitoMenu(mode='volver'){
-  const saludoInicio = `🔵🟡 ¡Hola! Soy Panchito, el asistente virtual del Club All Boys. 🟡🔵
-
-Estoy para ayudarte con actividades, horarios, inscripciones, cuotas, pagos y mucho más.`;
-  const encabezado = mode === 'inicio' ? saludoInicio : `🔵🟡 Volvimos al menú principal. 🟡🔵`;
-  return `${encabezado}
-
-¿En qué puedo ayudarte hoy?
-A. Actividades, días y horarios 🏀⚽🤸🏊
-B. Precios e inscripción 📝
-C. Cuotas y pagos 💳
-D. Hablar con Administración 📞
-E. Reclamos o sugerencias 💬
-F. Prensa, CV, proveedores o propuestas 📩
-G. Predio 📍
-H. Otra consulta 🔎`;
-}
-function adminContact(data){
-  return `Secretaría Club All Boys
-Agustina Barreto
-WhatsApp: 2954 60-9312`;
-}
+function panchitoMenu(mode='volver'){ return v103MainMenu(mode); }
+function adminContact(data){ return V103_CONTACTS.secretaria; }
 
 
 function outsideHoursMessage(){
@@ -2957,6 +2937,146 @@ Teléfono: ${draft.phone || '-'}
 Qué ocurrió: ${draft.detail || '-'}`;
 }
 
+
+// ================= V103 - FLUJOS OFICIALES DEL DOCUMENTO DEL CLUB =================
+const V103_CONTACTS = {
+  secretaria: 'Secretaría Club All Boys\nWhatsApp: 2954 592313',
+  futbol: 'Secretaría Club All Boys\nWhatsApp: 2954 370053',
+  gimnasia: 'Patricia “Pato” Saavedra\nResponsable de Gimnasia artística\nWhatsApp: 2954 29-6451',
+  softbol: 'Ángel Yorgoban\nResponsable de Sóftbol\nWhatsApp: 2954 66-4276',
+  paleta: 'Lucas Gómez\nResponsable de Pelota a paleta\nWhatsApp: 2954 44-6373',
+  natacion: 'José Luis “Chino” Weighant\nWhatsApp: 2954 36-9045',
+  email: 'allboyseslapampa@gmail.com'
+};
+
+function v103MainMenu(mode='volver'){
+  const head = mode === 'inicio'
+    ? '¡Hola! Soy Panchito, el asistente virtual de All Boys 🤖🔵🟡\nBip bip, rueditas listas. ¿En qué te puedo ayudar?'
+    : 'Volvemos al menú principal 🤖🔵🟡';
+  return `${head}\n\nA. Actividades, días y horarios 🏀⚽🤸\nB. Precios e inscripción 📝\nC. Cuotas y pagos 💳\nD. Hablar con Administración 📞\nE. Reclamos o sugerencias 💬\nF. Prensa, CV, proveedores o propuestas 📩\nG. Predio 📍\nH. Otra consulta 🔎`;
+}
+
+function v103Activities(){ return `¡Dale! ¿Qué actividad querés consultar? 🤖\n\nA. Gimnasia artística 🤸\nB. Básquet 🏀\nC. Sóftbol\nD. Pelota a paleta\nE. Fútbol ⚽\nF. Natación 🏊\nG. Volver al menú principal\n\nRespondé con una letra o escribí el nombre de la actividad.`; }
+function v103AfterActivity(kind='otra'){ return `\n\n¿Qué querés hacer ahora?\nA. Consultar otra actividad\nB. Volver al menú principal\nC. Hablar con Administración`; }
+function v103Gym(){ return `Estos son los horarios de Gimnasia artística 🤸\n\nA. Pulgas, 3 y 4 años\nMartes y jueves de 18 a 19 hs.\n\nB. Escuela, 5 a 7 años\nMartes y jueves de 19 a 20 hs.\n\nC. Promocional, 8 a 10 años\nLunes, miércoles y viernes de 18 a 19 hs.\n\nD. Pre federadas, 11 años en adelante\nLunes, miércoles y viernes de 19 a 20 hs.\n\nE. Federadas\nLunes a viernes de 15 a 18 hs.\nTambién de lunes a viernes de 20 a 21.30 hs.\n\nPara consultar precios, cupos o inscripción:\n${V103_CONTACTS.gimnasia}${v103AfterActivity()}`; }
+function v103Basket(){ return `¡Vamos con Básquet! 🏀\n¿Qué querés consultar?\n\nA. Básquet femenino\nB. Básquet masculino\nC. Escuelita y categorías iniciales\nD. Volver a actividades\nE. Volver al menú principal`; }
+function v103BasketFem(){ return `Horarios de Básquet femenino 🏀\n\nMartes y jueves:\nSub 17 y Primera: de 16 a 17.15 hs.\nSub 13 y Sub 15: de 17.15 a 18.30 hs.\nSub 11: de 18.30 a 19.30 hs.\n\nViernes:\nSub 17 y Primera: de 16.30 a 18 hs.\n\nSábados:\nSub 13: de 8.30 a 9.30 hs.\nSub 15: de 9.30 a 10.30 hs.\nSub 11: de 10 a 11 hs.\n\nPara consultar precios, cupos o inscripción:\n${V103_CONTACTS.secretaria}\n\n¿Qué querés hacer ahora?\nA. Consultar otro grupo de Básquet\nB. Consultar otra actividad\nC. Volver al menú principal\nD. Hablar con Administración`; }
+function v103BasketMasc(){ return `Horarios de Básquet masculino 🏀\n\nSub 17:\nLunes y miércoles de 16.30 a 18 hs.\nViernes de 15 a 16.30 hs.\nPreparación física: lunes de 15.30 a 16.30 hs.; martes y jueves de 15.30 a 16.30 hs.\n\nSub 13:\nLunes y miércoles de 20 a 21 hs.\nMartes y jueves de 18.30 a 19.30 hs.\nPreparación física: martes y jueves de 17.30 a 18.30 hs.\n\nSub 15:\nLunes y miércoles de 15 a 16.30 hs.\nViernes de 16.30 a 18 hs.\nPreparación física: martes y jueves de 16.30 a 17.30 hs.\n\nPrimera división:\nMartes y jueves de 20.30 a 22 hs.\n\nAsociativo:\nMartes y jueves de 19.30 a 20.30 hs.\nViernes de 20 a 21 hs.\n\nPara consultar precios, cupos o inscripción:\n${V103_CONTACTS.secretaria}\n\n¿Qué querés hacer ahora?\nA. Consultar otro grupo de Básquet\nB. Consultar otra actividad\nC. Volver al menú principal\nD. Hablar con Administración`; }
+function v103BasketInitial(){ return `Horarios de Básquet para categorías iniciales 🏀\n\nSub 9:\nLunes, miércoles y viernes de 18 a 19 hs.\nSábados de 9 a 10 hs.\n\nSub 11:\nLunes, miércoles y viernes de 19 a 20 hs.\nSábados de 9 a 10 hs.\n\nEscuelita:\nLunes, miércoles y viernes de 18 a 19 hs.\n\nMosquitos:\nLunes, miércoles y viernes de 19 a 20 hs.\n\nPara consultar edades, precios, cupos o inscripción:\n${V103_CONTACTS.secretaria}\n\n¿Qué querés hacer ahora?\nA. Consultar otro grupo de Básquet\nB. Consultar otra actividad\nC. Volver al menú principal\nD. Hablar con Administración`; }
+function v103Softbol(){ return `Horarios de Sóftbol\n\nA. Pre infantil mixto\nMartes y jueves de 18 a 19.15 hs.\n\nB. Infantil cadete mixto\nLunes, miércoles y viernes de 18 a 19.30 hs.\n\nC. Femenino\nMiércoles y viernes de 20 a 21.30 hs.\n\nPara consultar edades, precios, cupos o inscripción:\n${V103_CONTACTS.softbol}${v103AfterActivity()}`; }
+function v103Paleta(){ return `Horarios de Pelota a paleta:\n\nA. Niños y niñas de 6 a 12 años\nMartes y jueves de 18 a 19 hs.\nSábados de 10.30 a 12.30 hs.\n\nB. Adultos\nMartes y jueves de 17 a 18 hs.\n\nPara consultar precios, cupos o inscripción:\n${V103_CONTACTS.paleta}${v103AfterActivity()}`; }
+function v103Football(){ return `¡Vamos con Fútbol! Panchito se pone botines imaginarios ⚽🤖\n¿Qué categoría querés consultar?\n\nA. Cuarta, Quinta y Sexta División\nB. Séptima y Octava División\nC. Novena y Décima División\nD. Categorías 2017, 2018, 2019, 2020 y 2021\nE. Femenino Sub 12 y Sub 14\nF. Volver a actividades\nG. Volver al menú principal`; }
+function v103FootballDetail(title, schedule){ return `${title} ⚽\n${schedule}\n\nPara consultar edades, precios, lugar de entrenamiento o inscripción:\n${V103_CONTACTS.futbol}\n\n¿Qué querés hacer ahora?\nA. Consultar otra categoría de Fútbol\nB. Consultar otra actividad\nC. Volver al menú principal\nD. Hablar con Administración`; }
+function v103FootballYears(){ return `Horarios de Fútbol por categoría ⚽\n\n1. Categoría 2017\nLunes, miércoles y viernes de 18 a 19.30 hs.\n\n2. Categoría 2018\nMartes, jueves y viernes de 18 a 19.30 hs.\n\n3. Categoría 2019\nLunes, miércoles y viernes de 18 a 19.30 hs.\n\n4. Categorías 2020 y 2021\nMartes, jueves y viernes de 18 a 19.30 hs.\n\nPara consultar precios, lugar de entrenamiento o inscripción:\n${V103_CONTACTS.futbol}\n\n¿Qué querés hacer ahora?\nA. Consultar otra categoría de Fútbol\nB. Consultar otra actividad\nC. Volver al menú principal\nD. Hablar con Administración`; }
+function v103Natacion(){ return `Para consultar por Natación, comunicate directamente con el coordinador del área 🏊\n\n${V103_CONTACTS.natacion}\n\nNatación cuenta con diferentes niveles, edades, horarios y opciones de clases. Además, los cupos pueden variar, por eso el coordinador te va a indicar cuál es la alternativa más adecuada y si hay disponibilidad.\n\nPara que pueda orientarte mejor, podés enviarle:\n• Edad de la persona interesada.\n• Si sabe nadar o está comenzando.\n• Días u horarios disponibles.\n\n¿Qué querés hacer ahora?\nA. Consultar otra actividad\nB. Consultar el Plan de Natación\nC. Volver al menú principal\nD. Hablar con Administración`; }
+function v103PlanNatacion(){ return `El Plan de Natación está destinado a personas con discapacidad que quieran iniciarse en el aprendizaje y en la práctica deportiva 🏊\n\nLa información y la inscripción se consultan presencialmente en:\nDirección de Deportes Provincial\nQuintana y Pellegrini, Santa Rosa\n\nHorario de atención:\nLunes a viernes de 9 a 12 hs.\n\nEl Plan tiene cupos limitados. Si no hay una vacante disponible, la persona puede quedar anotada para ser contactada cuando haya disponibilidad.\n\n¿Qué querés hacer ahora?\nA. Volver a Natación\nB. Consultar otra actividad\nC. Volver al menú principal\nD. Hablar con Administración`; }
+function v103Prices(){ return `Te ayudo con precios e inscripción 📝\n¿Qué necesitás?\n\nA. Consultar el precio de una actividad\nB. Inscribirme en una actividad\nC. Asociarme al club\nD. Inscripción para un menor\nE. Volver al menú principal`; }
+function v103ChoosePrice(mode='price'){ return `${mode==='signup'?'¿En qué actividad querés inscribirte?':'¿Sobre qué actividad querés consultar?'}\n\nA. Gimnasia artística\nB. Sóftbol\nC. Pelota a paleta\nD. Natación\nE. Otra actividad\nF. Volver`; }
+function v103PriceContact(letter){
+  const map={A:['Gimnasia artística',V103_CONTACTS.gimnasia],B:['Sóftbol',V103_CONTACTS.softbol],C:['Pelota a paleta',V103_CONTACTS.paleta],D:['Natación',V103_CONTACTS.natacion],E:['Básquet, Fútbol u otra actividad',V103_CONTACTS.secretaria]};
+  const x=map[letter]; if(!x) return '';
+  return `Para consultar ${letter==='D'?'precios, horarios, niveles y cupos de':'el precio actualizado de'} ${x[0]}:\n${x[1]}\n\n¿Qué querés hacer ahora?\nA. Consultar otra actividad\nB. Volver al menú principal`;
+}
+function v103SignupContact(letter){
+ const map={A:['Gimnasia artística',V103_CONTACTS.gimnasia],B:['Sóftbol',V103_CONTACTS.softbol],C:['Pelota a paleta',V103_CONTACTS.paleta],D:['Natación',V103_CONTACTS.natacion],E:['Para Básquet, Fútbol u otra actividad',V103_CONTACTS.secretaria]};
+ const x=map[letter]; if(!x) return '';
+ return `${x[0]}:\n${x[1]}\n\n¿Qué querés hacer ahora?\nA. Consultar otra actividad\nB. Volver al menú principal`;
+}
+function v103Minor(){ return `Si la inscripción es para un menor, por favor que continúe un adulto responsable 😊\n\n¿Qué actividad querés consultar?\nA. Gimnasia artística\nB. Sóftbol o Pelota a paleta\nC. Básquet o Fútbol\nD. Natación\nE. Plan de Natación\nF. Volver`; }
+function v103Payments(){ return `Para consultas sobre cuotas, deuda, pagos, comprobantes o medios de pago, comunicate directamente con Administración 💳\n\n${V103_CONTACTS.secretaria}\n\nPara que puedan ayudarte más rápido, enviá en un solo mensaje:\n• Nombre y apellido.\n• DNI o número de socio.\n• Motivo de la consulta.\n• Comprobante, si ya realizaste un pago.\n\nPor seguridad, Panchito no informa deudas ni datos personales directamente por el momento. En una nueva actualización podré hacerlo.\n\n¿Qué querés hacer ahora?\nA. Volver al menú principal\nB. Hablar con Administración`; }
+function v103Institutional(){ return `Gracias por escribirle al club 📩\n¿Qué querés enviar?\n\nA. Consulta de prensa o medios\nB. Dejar un CV\nC. Proponer un proyecto\nD. Ofrecer productos o servicios\nE. Sponsoreo, publicidad o auspicio\nF. Volver al menú principal`; }
+function v103InstitutionalDetail(kind){
+ const d={
+  A:['Prensa o medios','• Nombre y medio.\n• Motivo de la consulta.\n• Fecha o evento relacionado.\n• Teléfono y correo electrónico.'],
+  B:['Dejar CV','• Nombre y apellido.\n• Área o actividad de interés.\n• Experiencia.\n• Teléfono y correo electrónico.\n• CV adjunto.'],
+  C:['Proponer un proyecto','• Nombre y apellido.\n• Tipo de proyecto.\n• Resumen breve.\n• Público al que está dirigido.\n• Teléfono y correo electrónico.'],
+  D:['Proveedores','• Nombre o empresa.\n• Rubro.\n• Producto o servicio ofrecido.\n• Teléfono y correo electrónico.'],
+  E:['Sponsoreo, publicidad o auspicio','• Nombre o empresa.\n• Tipo de propuesta.\n• Teléfono y correo electrónico.\n• Breve detalle de la propuesta.']
+ }[kind]; if(!d) return '';
+ return `${d[0]} 📩\n\nEnviá:\n${d[1]}\n\nContacto:\n${V103_CONTACTS.secretaria}${kind==='A'?'':`\nE-mail: ${V103_CONTACTS.email}`}\n\n¿Qué querés hacer ahora?\nA. Volver al menú institucional\nB. Volver al menú principal`;
+}
+function v103Predio(){ return `Para consultas del Predio:\n\nAll Boys Predio\nRuta 35, pegado al Aeropuerto\nWhatsApp: 2954 37-0053\n\n¿Qué querés hacer ahora?\nA. Volver al menú principal\nB. Hablar con Secretaría del Club`; }
+function v103Error(){ return `Perdón, no terminé de entender la consulta. Mis circuitos hicieron “piiip” 🤖\n\nPodés elegir una opción:\n${v103MainMenu('volver').split('\n\n').slice(1).join('\n\n')}`; }
+
+function v103SetMenu(s, menu){ setMenuContext(s, menu); s.data.v103Flow=true; }
+function v103Admin(data,s,phone,rawText,note){ return goAdmin(data,s,phone,rawText,note); }
+
+function v103HandleOfficialFlow(data,s,phone,rawText,text,letter,menu){
+  const isL=(...xs)=>xs.includes(letter);
+  const mainLike = !menu || menu==='main';
+  if(mainLike && isLetter(rawText,['A','B','C','D','E','F','G','H'])){
+    if(isL('A')){v103SetMenu(s,'v103_activities'); return v103Activities();}
+    if(isL('B')){v103SetMenu(s,'v103_prices'); return v103Prices();}
+    if(isL('C')){v103SetMenu(s,'v103_payments'); return v103Payments();}
+    if(isL('D')) return v103Admin(data,s,phone,rawText,'Administración desde menú oficial');
+    if(isL('E')){ setSession(s,'idle',{claimDraft:{}}); setMenuContext(s,'claim_name'); s.data.claimDraft={}; return responseClaimMenu(); }
+    if(isL('F')){v103SetMenu(s,'v103_institutional'); return v103Institutional();}
+    if(isL('G')){v103SetMenu(s,'v103_predio'); return v103Predio();}
+    if(isL('H')){v103SetMenu(s,'v103_other'); return `No hay problema 😊\nContame brevemente qué necesitás y trato de orientarte.\n\nTambién podés elegir:\nA. Volver al menú principal\nB. Hablar con Administración`;}
+  }
+  if(menu==='v103_activities'){
+    const a = isL('A')||text.includes('gimnasia'); const b=isL('B')||text.includes('basquet'); const c=isL('C')||text.includes('softbol'); const d=isL('D')||text.includes('paleta'); const e=isL('E')||text.includes('futbol'); const f=isL('F')||text.includes('natacion');
+    if(a){v103SetMenu(s,'v103_after_activity'); return v103Gym();} if(b){v103SetMenu(s,'v103_basket'); return v103Basket();} if(c){v103SetMenu(s,'v103_after_activity'); return v103Softbol();} if(d){v103SetMenu(s,'v103_after_activity'); return v103Paleta();} if(e){v103SetMenu(s,'v103_football'); return v103Football();} if(f){v103SetMenu(s,'v103_natacion'); return v103Natacion();} if(isL('G')){clearMenuContext(s);return v103MainMenu('volver');}
+  }
+  if(menu==='v103_after_activity'){
+    if(isL('A')){v103SetMenu(s,'v103_activities');return v103Activities();} if(isL('B')){clearMenuContext(s);return v103MainMenu('volver');} if(isL('C'))return v103Admin(data,s,phone,rawText,'Administración desde actividad');
+  }
+  if(menu==='v103_basket'){
+    if(isL('A')){v103SetMenu(s,'v103_after_basket');return v103BasketFem();} if(isL('B')){v103SetMenu(s,'v103_after_basket');return v103BasketMasc();} if(isL('C')){v103SetMenu(s,'v103_after_basket');return v103BasketInitial();} if(isL('D')){v103SetMenu(s,'v103_activities');return v103Activities();} if(isL('E')){clearMenuContext(s);return v103MainMenu('volver');}
+  }
+  if(menu==='v103_after_basket'){
+    if(isL('A')){v103SetMenu(s,'v103_basket');return v103Basket();} if(isL('B')){v103SetMenu(s,'v103_activities');return v103Activities();} if(isL('C')){clearMenuContext(s);return v103MainMenu('volver');} if(isL('D'))return v103Admin(data,s,phone,rawText,'Administración desde Básquet');
+  }
+  if(menu==='v103_football'){
+    if(isL('A')){v103SetMenu(s,'v103_after_football');return v103FootballDetail('Cuarta, Quinta y Sexta División','Lunes a viernes a las 16 hs.');} if(isL('B')){v103SetMenu(s,'v103_after_football');return v103FootballDetail('Séptima y Octava División','Lunes, miércoles, jueves y viernes a las 18 hs.');} if(isL('C')){v103SetMenu(s,'v103_after_football');return v103FootballDetail('Novena y Décima División','Lunes a jueves a las 18 hs.');} if(isL('D')){v103SetMenu(s,'v103_after_football');return v103FootballYears();} if(isL('E')){v103SetMenu(s,'v103_after_football');return v103FootballDetail('Fútbol femenino Sub 12 y Sub 14','Lunes, miércoles y viernes de 18 a 19.30 hs.');} if(isL('F')){v103SetMenu(s,'v103_activities');return v103Activities();} if(isL('G')){clearMenuContext(s);return v103MainMenu('volver');}
+  }
+  if(menu==='v103_after_football'){
+    if(isL('A')){v103SetMenu(s,'v103_football');return v103Football();} if(isL('B')){v103SetMenu(s,'v103_activities');return v103Activities();} if(isL('C')){clearMenuContext(s);return v103MainMenu('volver');} if(isL('D'))return v103Admin(data,s,phone,rawText,'Administración desde Fútbol');
+  }
+  if(menu==='v103_natacion'){
+    if(isL('A')){v103SetMenu(s,'v103_activities');return v103Activities();} if(isL('B')){v103SetMenu(s,'v103_plan_natacion');return v103PlanNatacion();} if(isL('C')){clearMenuContext(s);return v103MainMenu('volver');} if(isL('D'))return v103Admin(data,s,phone,rawText,'Administración desde Natación');
+  }
+  if(menu==='v103_plan_natacion'){
+    if(isL('A')){v103SetMenu(s,'v103_natacion');return v103Natacion();} if(isL('B')){v103SetMenu(s,'v103_activities');return v103Activities();} if(isL('C')){clearMenuContext(s);return v103MainMenu('volver');} if(isL('D'))return v103Admin(data,s,phone,rawText,'Administración desde Plan de Natación');
+  }
+  if(menu==='v103_prices'){
+    if(isL('A')){v103SetMenu(s,'v103_price_choose');return v103ChoosePrice('price');} if(isL('B')){v103SetMenu(s,'v103_signup_choose');return v103ChoosePrice('signup');} if(isL('C')){v103SetMenu(s,'v103_simple_back');return `¡Qué bueno que quieras sumarte al club! 🔵🟡\n\nPara conocer requisitos, valores y documentación necesaria, comunicate con:\n${V103_CONTACTS.secretaria}\n\n¿Qué querés hacer ahora?\nA. Consultar actividades\nB. Volver al menú principal`;} if(isL('D')){v103SetMenu(s,'v103_minor');return v103Minor();} if(isL('E')){clearMenuContext(s);return v103MainMenu('volver');}
+  }
+  if(menu==='v103_price_choose'){
+    if(['A','B','C','D','E'].includes(letter)){v103SetMenu(s,'v103_price_after');return v103PriceContact(letter);} if(isL('F')){v103SetMenu(s,'v103_prices');return v103Prices();}
+  }
+  if(menu==='v103_signup_choose'){
+    if(['A','B','C','D','E'].includes(letter)){v103SetMenu(s,'v103_price_after');return v103SignupContact(letter);} if(isL('F')){v103SetMenu(s,'v103_prices');return v103Prices();}
+  }
+  if(menu==='v103_price_after'){
+    if(isL('A')){v103SetMenu(s,'v103_price_choose');return v103ChoosePrice('price');} if(isL('B')){clearMenuContext(s);return v103MainMenu('volver');}
+  }
+  if(menu==='v103_simple_back'){
+    if(isL('A')){v103SetMenu(s,'v103_activities');return v103Activities();} if(isL('B')){clearMenuContext(s);return v103MainMenu('volver');}
+  }
+  if(menu==='v103_minor'){
+    if(isL('A')){v103SetMenu(s,'v103_simple_back');return `${V103_CONTACTS.gimnasia}\n\nA. Consultar actividades\nB. Volver al menú principal`;} if(isL('B')){v103SetMenu(s,'v103_simple_back');return `Sóftbol:\n${V103_CONTACTS.softbol}\n\nPelota a paleta:\n${V103_CONTACTS.paleta}\n\nA. Consultar actividades\nB. Volver al menú principal`;} if(isL('C')){v103SetMenu(s,'v103_simple_back');return `${V103_CONTACTS.secretaria}\n\nA. Consultar actividades\nB. Volver al menú principal`;} if(isL('D')){v103SetMenu(s,'v103_simple_back');return `${V103_CONTACTS.natacion}\n\nA. Consultar actividades\nB. Volver al menú principal`;} if(isL('E')){v103SetMenu(s,'v103_simple_back');return `Dirección de Deportes Provincial\nQuintana y Pellegrini, Santa Rosa\nLunes a viernes de 9 a 12 hs.\nConsulta presencial.\nEl Plan tiene cupos limitados.\n\nA. Consultar actividades\nB. Volver al menú principal`;} if(isL('F')){v103SetMenu(s,'v103_prices');return v103Prices();}
+  }
+  if(menu==='v103_payments'){
+    if(isL('A')){clearMenuContext(s);return v103MainMenu('volver');} if(isL('B'))return v103Admin(data,s,phone,rawText,'Cuotas y pagos');
+  }
+  if(menu==='v103_institutional'){
+    if(['A','B','C','D','E'].includes(letter)){v103SetMenu(s,'v103_institutional_after');return v103InstitutionalDetail(letter);} if(isL('F')){clearMenuContext(s);return v103MainMenu('volver');}
+  }
+  if(menu==='v103_institutional_after'){
+    if(isL('A')){v103SetMenu(s,'v103_institutional');return v103Institutional();} if(isL('B')){clearMenuContext(s);return v103MainMenu('volver');}
+  }
+  if(menu==='v103_predio'){
+    if(isL('A')){clearMenuContext(s);return v103MainMenu('volver');} if(isL('B'))return v103Admin(data,s,phone,rawText,'Consulta del Predio');
+  }
+  if(menu==='v103_other'){
+    if(isL('A')){clearMenuContext(s);return v103MainMenu('volver');} if(isL('B'))return v103Admin(data,s,phone,rawText,'Otra consulta');
+    if(rawText && !isLetter(rawText,['A','B'])) return v103Admin(data,s,phone,rawText,`Otra consulta: ${rawText}`);
+  }
+  return '';
+}
+// ================= FIN V103 =================
+
 async function smartReply(rawText, phone='demo'){
   const data = db();
   data.sessions = data.sessions || [];
@@ -3010,6 +3130,9 @@ async function smartReply(rawText, phone='demo'){
     reply = softSocialMessage(s);
     return finish();
   }
+
+  const officialV103Reply = v103HandleOfficialFlow(data,s,phone,rawText,text,letter,menu);
+  if(officialV103Reply){ intent='flujo_oficial_v103'; confidence=.99; reply=officialV103Reply; return finish(); }
 
   // V79: opciones cuando una edad no tiene categoría dentro de una actividad elegida.
   if(menu === 'activity_age_invalid'){
