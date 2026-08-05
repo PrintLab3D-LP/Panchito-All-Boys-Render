@@ -5408,6 +5408,77 @@ app.get('/api/handoffs',(req,res)=>{
   res.json(items);
 });
 app.get('/api/handoffs/history',(req,res)=>{ const data=db(); res.json(data.handoffHistory||[]); });
+
+app.get('/api/admin/dashboard',(req,res)=>{
+  const data=db();
+  const now=Date.now();
+  const dayKey=new Date().toISOString().slice(0,10);
+  const weekStart=now-(6*24*60*60*1000);
+  const conversations=data.conversations||[];
+  const history=data.handoffHistory||[];
+  const pending=data.pendingQueries||[];
+  const sessions=data.sessions||[];
+
+  const humanSessions=sessions.filter(isHumanMode);
+  const activeBotSessions=sessions.filter(s=>!isHumanMode(s) && s.updatedAt && (now-Date.parse(s.updatedAt))<=15*60*1000);
+  const todayConversations=conversations.filter(c=>(c.createdAt||'').slice(0,10)===dayKey);
+  const todayDerived=history.filter(h=>(h.at||'').slice(0,10)===dayKey && h.action==='derived');
+  const claimsToday=pending.filter(p=>(p.createdAt||'').slice(0,10)===dayKey && clean(`${p.category||''} ${p.topic||''} ${p.priority||''}`).includes('reclamo'));
+
+  const waitSamples=[];
+  const derivedByPhone={};
+  for(const h of [...history].reverse()){
+    const key=phoneDigits(h.phone||'');
+    if(!key) continue;
+    if(h.action==='derived') derivedByPhone[key]=Date.parse(h.at||'');
+    if(['taken','closed','returned_to_bot'].includes(h.action) && derivedByPhone[key]){
+      const end=Date.parse(h.at||'');
+      if(Number.isFinite(end) && end>=derivedByPhone[key]) waitSamples.push(end-derivedByPhone[key]);
+      delete derivedByPhone[key];
+    }
+  }
+  const avgWaitMinutes=waitSamples.length?Math.round(waitSamples.reduce((a,b)=>a+b,0)/waitSamples.length/60000):0;
+
+  const topicCounts={};
+  for(const c of conversations.filter(c=>Date.parse(c.createdAt||0)>=weekStart)){
+    const topic=String(c.topic||c.intent||'Otra consulta').trim()||'Otra consulta';
+    topicCounts[topic]=(topicCounts[topic]||0)+1;
+  }
+  const topTopics=Object.entries(topicCounts).sort((a,b)=>b[1]-a[1]).slice(0,7).map(([name,count])=>({name,count}));
+
+  const daily=[];
+  for(let i=6;i>=0;i--){
+    const d=new Date(now-i*86400000).toISOString().slice(0,10);
+    daily.push({
+      date:d,
+      conversations:conversations.filter(c=>(c.createdAt||'').slice(0,10)===d).length,
+      handoffs:history.filter(h=>(h.at||'').slice(0,10)===d && h.action==='derived').length,
+      claims:pending.filter(p=>(p.createdAt||'').slice(0,10)===d && clean(`${p.category||''} ${p.topic||''} ${p.priority||''}`).includes('reclamo')).length
+    });
+  }
+
+  const resolvedByBot=Math.max(0,todayConversations.length-todayDerived.length);
+  const botResolutionRate=todayConversations.length?Math.round(resolvedByBot/todayConversations.length*100):0;
+  const c=digitalClubConfig();
+  res.json({
+    generatedAt:new Date().toISOString(),
+    metrics:{
+      activeNow:activeBotSessions.length,
+      waitingHuman:humanSessions.length,
+      conversationsToday:todayConversations.length,
+      handoffsToday:todayDerived.length,
+      claimsToday:claimsToday.length,
+      avgWaitMinutes,
+      botResolutionRate,
+      registrationsPending:(data.registrations||[]).filter(r=>(r.status||'Pendiente')==='Pendiente').length
+    },
+    topTopics,
+    daily,
+    digitalClub:{ready:digitalClubReady(),baseUrl:c.baseUrl||'',checkedAt:new Date().toISOString()},
+    recent:history.slice(0,30)
+  });
+});
+
 app.post('/api/handoffs/:phone/human',(req,res)=>{
   const data=db(); data.sessions=data.sessions||[];
   const requestedPhone=String(req.params.phone);
