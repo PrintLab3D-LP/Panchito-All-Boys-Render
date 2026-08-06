@@ -21,9 +21,33 @@ app.use((req,res,next)=>{
 });
 app.use(express.static(path.join(__dirname, 'public')));
 
-// V104 - Acceso protegido al panel de Administración.
+// V105 - Usuarios separados y permisos por rol para el panel de Administración.
 const ADMIN_USERNAME = String(process.env.ADMIN_USERNAME || 'administracion');
 const ADMIN_PASSWORD = String(process.env.ADMIN_PASSWORD || '2416');
+
+function normalizeScope(value=''){
+  return clean(String(value)).replace(/[^a-z0-9]+/g,' ').trim();
+}
+function loadAdminUsers(){
+  const raw=String(process.env.ADMIN_USERS_JSON||'').trim();
+  if(raw){
+    try{
+      const parsed=JSON.parse(raw);
+      if(Array.isArray(parsed)){
+        const users=parsed.map((u,i)=>({
+          username:String(u.username||u.user||'').trim(),
+          password:String(u.password||''),
+          displayName:String(u.displayName||u.name||u.username||`Usuario ${i+1}`).trim(),
+          role:String(u.role||'secretaria').toLowerCase().trim(),
+          scopes:Array.isArray(u.scopes)?u.scopes.map(normalizeScope).filter(Boolean):[]
+        })).filter(u=>u.username&&u.password);
+        if(users.length) return users;
+      }
+    }catch(e){ console.error('ADMIN_USERS_JSON inválido:',e.message); }
+  }
+  return [{username:ADMIN_USERNAME,password:ADMIN_PASSWORD,displayName:'Administración',role:'admin',scopes:[]}];
+}
+const ADMIN_USERS=loadAdminUsers();
 const ADMIN_SESSION_SECRET = String(process.env.ADMIN_SESSION_SECRET || process.env.ADMIN_API_KEY || 'cambiar-esta-clave-en-render');
 const ADMIN_COOKIE = 'panchito_admin';
 const ADMIN_SESSION_HOURS = Math.max(1, Number(process.env.ADMIN_SESSION_HOURS || 12));
@@ -47,8 +71,8 @@ function safeEqual(a,b){
 function signAdminPayload(payload){
   return crypto.createHmac('sha256',ADMIN_SESSION_SECRET).update(payload).digest('base64url');
 }
-function createAdminToken(username){
-  const payload=Buffer.from(JSON.stringify({u:username,exp:Date.now()+ADMIN_SESSION_HOURS*3600000})).toString('base64url');
+function createAdminToken(user){
+  const payload=Buffer.from(JSON.stringify({u:user.username,n:user.displayName,r:user.role,s:user.scopes||[],exp:Date.now()+ADMIN_SESSION_HOURS*3600000})).toString('base64url');
   return `${payload}.${signAdminPayload(payload)}`;
 }
 function readAdminSession(req){
@@ -59,6 +83,7 @@ function readAdminSession(req){
   try{
     const data=JSON.parse(Buffer.from(payload,'base64url').toString('utf8'));
     if(!data?.u || !data?.exp || Date.now()>Number(data.exp)) return null;
+    data.r=String(data.r||'secretaria'); data.s=Array.isArray(data.s)?data.s:[]; data.n=String(data.n||data.u);
     return data;
   }catch{return null;}
 }
@@ -78,6 +103,21 @@ function requireAdminApi(req,res,next){
   const session=readAdminSession(req);
   if(!session) return res.status(401).json({ok:false,error:'Sesión de Administración vencida o no iniciada'});
   req.admin=session; next();
+}
+
+function adminCanSeeAll(admin){ return ['admin','secretaria'].includes(String(admin?.r||'')); }
+function handoffSearchText(item={}){
+  return normalizeScope(`${item.topic||''} ${item.reason||''} ${item.message||''} ${item.name||''}`);
+}
+function adminCanAccessItem(admin,item={}){
+  if(adminCanSeeAll(admin)) return true;
+  const scopes=(admin?.s||[]).map(normalizeScope).filter(Boolean);
+  if(!scopes.length) return false;
+  const text=handoffSearchText(item);
+  return scopes.some(scope=>text.includes(scope));
+}
+function requireRole(...roles){
+  return (req,res,next)=> roles.includes(String(req.admin?.r||'')) ? next() : res.status(403).json({ok:false,error:'No tenés permiso para realizar esta acción'});
 }
 
 const DEFAULT_DB = {
@@ -5558,36 +5598,37 @@ app.post('/api/import/activities', (req,res)=>{
 });
 
 
-app.get('/api/registrations',(req,res)=>{ const data=db(); res.json(data.registrations||[]); });
-app.put('/api/registrations/:id',(req,res)=>{
+app.get('/api/registrations',requireAdminApi,requireRole('admin','secretaria'),(req,res)=>{ const data=db(); res.json(data.registrations||[]); });
+app.put('/api/registrations/:id',requireAdminApi,requireRole('admin','secretaria'),(req,res)=>{
   const data=db();
   const id=Number(req.params.id);
   data.registrations=(data.registrations||[]).map(r=>r.id===id?{...r,...req.body,id,status:registrationStatusLabel(req.body.status||r.status),updatedAt:new Date().toISOString()}:r);
   save(data);
   res.json({ok:true});
 });
-app.delete('/api/registrations/:id',(req,res)=>{
+app.delete('/api/registrations/:id',requireAdminApi,requireRole('admin','secretaria'),(req,res)=>{
   const data=db();
   data.registrations=(data.registrations||[]).filter(r=>r.id!==Number(req.params.id));
   save(data);
   res.json({ok:true});
 });
-app.get('/api/pending',(req,res)=>{ const data=db(); res.json(data.pendingQueries||[]); });
-app.put('/api/pending/:id',(req,res)=>{ const data=db(); const id=Number(req.params.id); data.pendingQueries=(data.pendingQueries||[]).map(p=>p.id===id?{...p,...req.body,id,updatedAt:new Date().toISOString()}:p); save(data); res.json({ok:true}); });
-app.delete('/api/pending/:id',(req,res)=>{ const data=db(); data.pendingQueries=(data.pendingQueries||[]).filter(p=>p.id!==Number(req.params.id)); save(data); res.json({ok:true}); });
+app.get('/api/pending',requireAdminApi,requireRole('admin','secretaria'),(req,res)=>{ const data=db(); res.json(data.pendingQueries||[]); });
+app.put('/api/pending/:id',requireAdminApi,requireRole('admin','secretaria'),(req,res)=>{ const data=db(); const id=Number(req.params.id); data.pendingQueries=(data.pendingQueries||[]).map(p=>p.id===id?{...p,...req.body,id,updatedAt:new Date().toISOString()}:p); save(data); res.json({ok:true}); });
+app.delete('/api/pending/:id',requireAdminApi,requireRole('admin','secretaria'),(req,res)=>{ const data=db(); data.pendingQueries=(data.pendingQueries||[]).filter(p=>p.id!==Number(req.params.id)); save(data); res.json({ok:true}); });
 
 // V104 - Inicio/cierre de sesión antes de proteger el resto de las rutas administrativas.
 app.post('/api/admin/login',(req,res)=>{
   const username=String(req.body?.username||'').trim();
   const password=String(req.body?.password||'');
-  if(!safeEqual(username,ADMIN_USERNAME) || !safeEqual(password,ADMIN_PASSWORD)){
+  const user=ADMIN_USERS.find(u=>safeEqual(username,u.username));
+  if(!user || !safeEqual(password,user.password)){
     return res.status(401).json({ok:false,error:'Usuario o contraseña incorrectos'});
   }
-  setAdminCookie(res,createAdminToken(username));
-  res.json({ok:true,user:username});
+  setAdminCookie(res,createAdminToken(user));
+  res.json({ok:true,user:user.username,displayName:user.displayName,role:user.role,scopes:user.scopes});
 });
 app.post('/api/admin/logout',(req,res)=>{ clearAdminCookie(res); res.json({ok:true}); });
-app.get('/api/admin/me',requireAdminApi,(req,res)=>res.json({ok:true,user:req.admin.u,expiresAt:req.admin.exp}));
+app.get('/api/admin/me',requireAdminApi,(req,res)=>res.json({ok:true,user:req.admin.u,displayName:req.admin.n,role:req.admin.r,scopes:req.admin.s,expiresAt:req.admin.exp}));
 // Todas las demás rutas de bandeja y métricas requieren sesión.
 app.use(['/api/handoffs','/api/admin'], requireAdminApi);
 
@@ -5608,9 +5649,15 @@ app.get('/api/handoffs',(req,res)=>{
         updatedAt:s.updatedAt
       };
     });
-  res.json(items);
+  res.json(items.filter(item=>adminCanAccessItem(req.admin,item)));
 });
-app.get('/api/handoffs/history',(req,res)=>{ const data=db(); res.json(data.handoffHistory||[]); });
+app.get('/api/handoffs/history',(req,res)=>{
+  const data=db();
+  const history=data.handoffHistory||[];
+  if(adminCanSeeAll(req.admin)) return res.json(history);
+  const pendingById=new Map((data.pendingQueries||[]).map(p=>[String(p.id),p]));
+  res.json(history.filter(h=>adminCanAccessItem(req.admin,{...h,...(pendingById.get(String(h.handoffId||''))||{})})));
+});
 
 app.get('/api/admin/dashboard',(req,res)=>{
   const data=db();
@@ -5621,16 +5668,20 @@ app.get('/api/admin/dashboard',(req,res)=>{
   const history=data.handoffHistory||[];
   const pending=data.pendingQueries||[];
   const sessions=data.sessions||[];
+  const scopedPending=adminCanSeeAll(req.admin)?pending:pending.filter(p=>adminCanAccessItem(req.admin,p));
+  const allowedPhones=new Set(scopedPending.map(p=>phoneDigits(p.phone||p.contactPhone||'')));
+  const scopedConversations=adminCanSeeAll(req.admin)?conversations:conversations.filter(c=>allowedPhones.has(phoneDigits(c.phone||'')) || adminCanAccessItem(req.admin,c));
+  const scopedHistory=adminCanSeeAll(req.admin)?history:history.filter(h=>allowedPhones.has(phoneDigits(h.phone||'')) || adminCanAccessItem(req.admin,h));
 
-  const humanSessions=sessions.filter(isHumanMode);
-  const activeBotSessions=sessions.filter(s=>!isHumanMode(s) && s.updatedAt && (now-Date.parse(s.updatedAt))<=15*60*1000);
-  const todayConversations=conversations.filter(c=>(c.createdAt||'').slice(0,10)===dayKey);
-  const todayDerived=history.filter(h=>(h.at||'').slice(0,10)===dayKey && h.action==='derived');
-  const claimsToday=pending.filter(p=>(p.createdAt||'').slice(0,10)===dayKey && clean(`${p.category||''} ${p.topic||''} ${p.priority||''}`).includes('reclamo'));
+  const humanSessions=sessions.filter(isHumanMode).filter(s=>adminCanSeeAll(req.admin)||allowedPhones.has(phoneDigits(s.phone||'')));
+  const activeBotSessions=sessions.filter(s=>!isHumanMode(s) && s.updatedAt && (now-Date.parse(s.updatedAt))<=15*60*1000).filter(s=>adminCanSeeAll(req.admin)||allowedPhones.has(phoneDigits(s.phone||''))||adminCanAccessItem(req.admin,{topic:s.data?.currentActivity||s.data?.topic||'',reason:s.data?.handoffReason||''}));
+  const todayConversations=scopedConversations.filter(c=>(c.createdAt||'').slice(0,10)===dayKey);
+  const todayDerived=scopedHistory.filter(h=>(h.at||'').slice(0,10)===dayKey && h.action==='derived');
+  const claimsToday=scopedPending.filter(p=>(p.createdAt||'').slice(0,10)===dayKey && clean(`${p.category||''} ${p.topic||''} ${p.priority||''}`).includes('reclamo'));
 
   const waitSamples=[];
   const derivedByPhone={};
-  for(const h of [...history].reverse()){
+  for(const h of [...scopedHistory].reverse()){
     const key=phoneDigits(h.phone||'');
     if(!key) continue;
     if(h.action==='derived') derivedByPhone[key]=Date.parse(h.at||'');
@@ -5643,7 +5694,7 @@ app.get('/api/admin/dashboard',(req,res)=>{
   const avgWaitMinutes=waitSamples.length?Math.round(waitSamples.reduce((a,b)=>a+b,0)/waitSamples.length/60000):0;
 
   const topicCounts={};
-  for(const c of conversations.filter(c=>Date.parse(c.createdAt||0)>=weekStart)){
+  for(const c of scopedConversations.filter(c=>Date.parse(c.createdAt||0)>=weekStart)){
     const topic=String(c.topic||c.intent||'Otra consulta').trim()||'Otra consulta';
     topicCounts[topic]=(topicCounts[topic]||0)+1;
   }
@@ -5654,9 +5705,9 @@ app.get('/api/admin/dashboard',(req,res)=>{
     const d=new Date(now-i*86400000).toISOString().slice(0,10);
     daily.push({
       date:d,
-      conversations:conversations.filter(c=>(c.createdAt||'').slice(0,10)===d).length,
-      handoffs:history.filter(h=>(h.at||'').slice(0,10)===d && h.action==='derived').length,
-      claims:pending.filter(p=>(p.createdAt||'').slice(0,10)===d && clean(`${p.category||''} ${p.topic||''} ${p.priority||''}`).includes('reclamo')).length
+      conversations:scopedConversations.filter(c=>(c.createdAt||'').slice(0,10)===d).length,
+      handoffs:scopedHistory.filter(h=>(h.at||'').slice(0,10)===d && h.action==='derived').length,
+      claims:scopedPending.filter(p=>(p.createdAt||'').slice(0,10)===d && clean(`${p.category||''} ${p.topic||''} ${p.priority||''}`).includes('reclamo')).length
     });
   }
 
@@ -5673,18 +5724,33 @@ app.get('/api/admin/dashboard',(req,res)=>{
       claimsToday:claimsToday.length,
       avgWaitMinutes,
       botResolutionRate,
-      registrationsPending:(data.registrations||[]).filter(r=>(r.status||'Pendiente')==='Pendiente').length
+      registrationsPending:(adminCanSeeAll(req.admin)?(data.registrations||[]):(data.registrations||[]).filter(r=>adminCanAccessItem(req.admin,r))).filter(r=>(r.status||'Pendiente')==='Pendiente').length
     },
     topTopics,
     daily,
     digitalClub:{ready:digitalClubReady(),baseUrl:c.baseUrl||'',checkedAt:new Date().toISOString()},
-    recent:history.slice(0,30)
+    recent:scopedHistory.slice(0,30),
+    user:{displayName:req.admin.n,role:req.admin.r,scopes:req.admin.s}
   });
 });
+
+
+function findHandoffItem(data,requestedPhone){
+  const s=findSessionByPhone(data,requestedPhone);
+  if(!s) return {session:null,item:null};
+  const pending=(data.pendingQueries||[]).find(p=>String(p.id)===String(s.data?.handoffId||''))||{};
+  return {session:s,item:{phone:s.phone,reason:s.data?.handoffReason||'',topic:pending.topic||'',message:pending.message||'',name:pending.name||''}};
+}
+function denyIfNoHandoffAccess(req,res,data,requestedPhone){
+  const found=findHandoffItem(data,requestedPhone);
+  if(found.item && !adminCanAccessItem(req.admin,found.item)){ res.status(403).json({ok:false,error:'No tenés permiso para atender esta conversación'}); return true; }
+  return false;
+}
 
 app.post('/api/handoffs/:phone/human',(req,res)=>{
   const data=db(); data.sessions=data.sessions||[];
   const requestedPhone=String(req.params.phone);
+  if(denyIfNoHandoffAccess(req,res,data,requestedPhone)) return;
   const s=findSessionByPhone(data,requestedPhone) || getSession(data,requestedPhone);
   setAttentionMode(s,'human',{handoffAt:new Date().toISOString(),handoffReason:req.body?.reason||'Tomado manualmente por Administración'});
   addHandoffHistory(data,s,'taken',{operator:req.body?.operator||'Administración'});
@@ -5693,6 +5759,7 @@ app.post('/api/handoffs/:phone/human',(req,res)=>{
 app.post('/api/handoffs/:phone/bot',(req,res)=>{
   const data=db(); data.sessions=data.sessions||[];
   const requestedPhone=String(req.params.phone);
+  if(denyIfNoHandoffAccess(req,res,data,requestedPhone)) return;
   const previous=findSessionByPhone(data,requestedPhone) || getSession(data,requestedPhone);
   addHandoffHistory(data,previous,'returned_to_bot',{operator:req.body?.operator||'Administración'});
   const s=reactivateAllSessionsForPhone(data,requestedPhone);
@@ -5704,6 +5771,7 @@ app.post('/api/handoffs/:phone/close', async (req,res)=>{
     if(adminKey && req.get('x-admin-key')!==adminKey) return res.status(401).json({ok:false,error:'No autorizado'});
     const data=db(); data.sessions=data.sessions||[];
     const requestedPhone=String(req.params.phone);
+    if(denyIfNoHandoffAccess(req,res,data,requestedPhone)) return;
     const previous=findSessionByPhone(data,requestedPhone) || getSession(data,requestedPhone);
     const phone=phoneDigits(previous.phone || requestedPhone);
     addHandoffHistory(data,previous,'closed',{operator:req.body?.operator||'Administración'});
