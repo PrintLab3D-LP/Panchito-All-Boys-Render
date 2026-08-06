@@ -1,8 +1,8 @@
 {
   "name": "panchito-all-boys-bot",
-  "version": "103.0.0",
+  "version": "104.0.0",
   "private": true,
-  "description": "Panchito All Boys con flujos oficiales completos del documento del club, panel, modo humano y base DigitalClub",
+  "description": "Panchito All Boys con flujos oficiales, panel protegido, modo humano y base DigitalClub",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",

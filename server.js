@@ -3,6 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
+const crypto = require('crypto');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -13,7 +14,71 @@ app.use(express.json({ limit: '15mb' }));
 // Twilio WhatsApp envía los mensajes como application/x-www-form-urlencoded.
 // Esta línea permite leer req.body.Body, req.body.From, etc.
 app.use(express.urlencoded({ extended: false, limit: '2mb' }));
+// Evita que el panel pueda abrirse directamente como /admin.html sin autenticación.
+app.use((req,res,next)=>{
+  if(req.path === '/admin.html') return res.redirect('/admin');
+  next();
+});
 app.use(express.static(path.join(__dirname, 'public')));
+
+// V104 - Acceso protegido al panel de Administración.
+const ADMIN_USERNAME = String(process.env.ADMIN_USERNAME || 'administracion');
+const ADMIN_PASSWORD = String(process.env.ADMIN_PASSWORD || '2416');
+const ADMIN_SESSION_SECRET = String(process.env.ADMIN_SESSION_SECRET || process.env.ADMIN_API_KEY || 'cambiar-esta-clave-en-render');
+const ADMIN_COOKIE = 'panchito_admin';
+const ADMIN_SESSION_HOURS = Math.max(1, Number(process.env.ADMIN_SESSION_HOURS || 12));
+
+function parseCookies(req){
+  const out={};
+  const raw=String(req.headers.cookie||'');
+  for(const part of raw.split(';')){
+    const i=part.indexOf('=');
+    if(i<0) continue;
+    const k=part.slice(0,i).trim();
+    const v=part.slice(i+1).trim();
+    try{ out[k]=decodeURIComponent(v); }catch{ out[k]=v; }
+  }
+  return out;
+}
+function safeEqual(a,b){
+  const aa=Buffer.from(String(a)); const bb=Buffer.from(String(b));
+  return aa.length===bb.length && crypto.timingSafeEqual(aa,bb);
+}
+function signAdminPayload(payload){
+  return crypto.createHmac('sha256',ADMIN_SESSION_SECRET).update(payload).digest('base64url');
+}
+function createAdminToken(username){
+  const payload=Buffer.from(JSON.stringify({u:username,exp:Date.now()+ADMIN_SESSION_HOURS*3600000})).toString('base64url');
+  return `${payload}.${signAdminPayload(payload)}`;
+}
+function readAdminSession(req){
+  const token=parseCookies(req)[ADMIN_COOKIE];
+  if(!token || !token.includes('.')) return null;
+  const [payload,sig]=token.split('.',2);
+  if(!safeEqual(sig,signAdminPayload(payload))) return null;
+  try{
+    const data=JSON.parse(Buffer.from(payload,'base64url').toString('utf8'));
+    if(!data?.u || !data?.exp || Date.now()>Number(data.exp)) return null;
+    return data;
+  }catch{return null;}
+}
+function setAdminCookie(res,token){
+  const secure=String(process.env.NODE_ENV||'').toLowerCase()==='production' || String(process.env.RENDER||'').toLowerCase()==='true';
+  res.setHeader('Set-Cookie',`${ADMIN_COOKIE}=${encodeURIComponent(token)}; Path=/; HttpOnly; SameSite=Strict; Max-Age=${ADMIN_SESSION_HOURS*3600}${secure?'; Secure':''}`);
+}
+function clearAdminCookie(res){
+  res.setHeader('Set-Cookie',`${ADMIN_COOKIE}=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0`);
+}
+function requireAdminPage(req,res,next){
+  const session=readAdminSession(req);
+  if(!session) return res.redirect('/admin/login');
+  req.admin=session; next();
+}
+function requireAdminApi(req,res,next){
+  const session=readAdminSession(req);
+  if(!session) return res.status(401).json({ok:false,error:'Sesión de Administración vencida o no iniciada'});
+  req.admin=session; next();
+}
 
 const DEFAULT_DB = {
   club: { name: 'Club All Boys', whatsapp: '2954592313' },
@@ -5511,6 +5576,21 @@ app.get('/api/pending',(req,res)=>{ const data=db(); res.json(data.pendingQuerie
 app.put('/api/pending/:id',(req,res)=>{ const data=db(); const id=Number(req.params.id); data.pendingQueries=(data.pendingQueries||[]).map(p=>p.id===id?{...p,...req.body,id,updatedAt:new Date().toISOString()}:p); save(data); res.json({ok:true}); });
 app.delete('/api/pending/:id',(req,res)=>{ const data=db(); data.pendingQueries=(data.pendingQueries||[]).filter(p=>p.id!==Number(req.params.id)); save(data); res.json({ok:true}); });
 
+// V104 - Inicio/cierre de sesión antes de proteger el resto de las rutas administrativas.
+app.post('/api/admin/login',(req,res)=>{
+  const username=String(req.body?.username||'').trim();
+  const password=String(req.body?.password||'');
+  if(!safeEqual(username,ADMIN_USERNAME) || !safeEqual(password,ADMIN_PASSWORD)){
+    return res.status(401).json({ok:false,error:'Usuario o contraseña incorrectos'});
+  }
+  setAdminCookie(res,createAdminToken(username));
+  res.json({ok:true,user:username});
+});
+app.post('/api/admin/logout',(req,res)=>{ clearAdminCookie(res); res.json({ok:true}); });
+app.get('/api/admin/me',requireAdminApi,(req,res)=>res.json({ok:true,user:req.admin.u,expiresAt:req.admin.exp}));
+// Todas las demás rutas de bandeja y métricas requieren sesión.
+app.use(['/api/handoffs','/api/admin'], requireAdminApi);
+
 // V93 - Bandeja/controles básicos para atención humana.
 app.get('/api/handoffs',(req,res)=>{
   const data=db();
@@ -6029,7 +6109,11 @@ app.post('/api/integrations/digitalclub/member-test',async(req,res)=>{
   catch(e){ res.status(400).json({ok:false,error:e?.message||'No se pudo consultar DigitalClub'}); }
 });
 
-app.get('/admin',(req,res)=>res.sendFile(path.join(__dirname,'public','admin.html')));
+app.get('/admin/login',(req,res)=>{
+  if(readAdminSession(req)) return res.redirect('/admin');
+  res.sendFile(path.join(__dirname,'public','admin-login.html'));
+});
+app.get('/admin',requireAdminPage,(req,res)=>res.sendFile(path.join(__dirname,'public','admin.html')));
 
 app.get('/health',(req,res)=>res.send('ClubBot IA Enterprise activo ✅'));
 app.listen(PORT,()=>{
